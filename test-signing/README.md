@@ -1,0 +1,1 @@
+İmzalama anahtarı Git deposuna eklenmez. Yerel indirx-debug.keystore mevcutsa test derlemesinde kullanılır; yoksa Android'in varsayılan debug anahtarı kullanılır. Farklı anahtarla üretilen APK önceki kurulumun üzerine yüklenemez. Üretim dağıtımı için ayrı, güvenli bir imzalama anahtarı kullanın.
