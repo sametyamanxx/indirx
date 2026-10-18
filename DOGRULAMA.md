@@ -5,7 +5,10 @@
 - Beyaz yüzey yerel olarak yeniden üretildi: gerçek bekleme durumunda liste devre dışı kalınca WPF'nin varsayılan ListBox şablonu beyaz arka plan gösteriyordu. Sorunu gösteren örnek ekran görüntüsü alındı.
 - Listeye devre dışı durumda da koyu kalan özel şablon; kaydırma çubuklarına koyu stil eklendi. Gerçek indirme bekleme durumunu açan ortak yöntem korunup tema testinde de kullanılır.
 - Yerel derleme 0 hata / 0 uyarıyla başarılı. Örnek tek video / 12 öğeli liste, %37 indirme / belirsiz dönüştürme durumlarında piksel denetimi başarılı (`DownloadThemeCorrect=true`, liste açık yüzey oranı 0). İndirme ve dönüştürme örnek görüntüleri incelendi; aynı kutuda tespit ve ilk yerleşim kontrolleri de başarılı.
-- Bu test ağ isteği yapmaz ve dosya indirme başarısı iddia etmez; örnek içerik kullanır ve sonunda başlangıç durumunu geri yükler. Paketli Setup/kurulum/yayın sonuçları tamamlanınca eklenecektir.
+- Bu test ağ isteği yapmaz ve dosya indirme başarısı iddia etmez; örnek içerik kullanır ve sonunda başlangıç durumunu geri yükler.
+- [Windows Setup derlemesi](https://github.com/sametyamanxx/indirx/actions/runs/39142829707), commit `e0a029157c55da117d29b3435235d8494228104b`: başarılı. 57 çevrimdışı assertion, devre dışı liste/indirme/dönüştürme tema testi, önceki arayüz/yerleşim/simge kontrolleri, paketli araçlar, Setup üretimi ve sessiz kurulum/açılış/kaldırma geçti.
+- [Windows 0.2.11 yayın iş akışı](https://github.com/sametyamanxx/indirx/actions/runs/39143095359) başarılı. Setup, portable ZIP ve SHA-256 dosyaları `windows-v0.2.11` yayınına eklendi; Setup bağlantısı anonim HTTP HEAD isteğine 200 döndü.
+- Setup: 176.996.095 bayt; SHA-256 `79f2c26e1acdd69e6c0b9e327534528c1dcc874d60124b91f8fb9669eac4c8ee`. Portable ZIP: 205.509.642 bayt; SHA-256 `84eb9934c91c9e83743ed69b00b7ba3c173b61ed22cda53d31e709194d5353a5`.
 
 ## Windows 0.2.10 — Tespit edilen içeriği mevcut İndirmeler kutusunda gösterme
 
