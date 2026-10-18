@@ -2,13 +2,23 @@
 
 Tamamen Türkçe; koyu lacivert zemin, antrasit kartlar ve yumuşak mavi vurgularla tasarlanmış video/ses indirme uygulaması.
 
-## 0.2.4 indirme geçmişini açılışta temizleme
+## 0.2.5 geçmiş düzeltmesi ve üç platform desteği
+
+- İndirme servisi artık geçmişi cihazın kalıcı ayarlarına yazmaz veya oradan okumaz.
+- Uygulama yeniden açıldığında, arka plandan dönüldüğünde de eski indirme kayıtları temizlenir. Devam eden indirme kesilmez; bitmiş işlemin durum ve ilerleme bilgileri sıfırlanır.
+- Kayıt klasörü, biçim tercihleri ve kaydedilmiş medya dosyaları korunur.
+- Yalnızca YouTube, Instagram ve TikTok bağlantıları kabul edilir. Paylaş menüsü, içerik çözümleme ve indirme kuyruğu aynı kurala uyar; diğer sitelerin çözücüleri devre dışıdır.
+- YouTube kısa bağlantıları ve çalma listeleri, Instagram gönderi/reel bağlantıları ve TikTok kısa bağlantıları kabul edilir. Her bağlantının indirilebilir olduğu garanti edilmez.
+- Sürüm adı uygulamanın derleme bilgisinden gösterilir.
+
+**İmza:** Depoda önceki APK'nın imzalama anahtarı yoktur. Aynı anahtar sağlanmadan eski sürümün üzerine kurulabilen bir APK garanti edilemez. Varsayılan debug anahtarı test içindir; GitHub Actions'ta ayrı çalıştırmalar aynı anahtarı üretmez. Kalıcı dağıtım için aynı imzalama anahtarını güvenli biçimde kullanın, depoya eklemeyin.
+
+## 0.2.4 açılış temizleme girişimi (önceki sürüm)
 
 - Eski bağlantı ve bulunan içerikler yeniden açılışta geri yüklenmez.
 - Önceki sürümlerin sakladığı arama sonuçları otomatik temizlenir.
-- Kayıt klasörü, biçim tercihleri ve indirme geçmişi korunur.
+- Kayıt klasörü ve biçim tercihleri korunur. İndirme servisindeki kalıcı geçmiş yazımı 0.2.5'te kaldırılmıştır.
 - Arama sonuçları yalnızca açık ekran boyunca tutulur; ekran yeniden oluşturulursa bağlantıyı yeniden bulmak gerekir.
-- Teslim edilen APK, 0.2.2 ile aynı test anahtarıyla imzalanır.
 
 ## 0.2.2 içerik ve biçim seçimi
 
@@ -80,13 +90,13 @@ Android Studio ile bu klasörü aç, Gradle eşitlemesini tamamla ve `Build APK(
 Gradle wrapper varsa komut satırında:
 
 ```sh
-./gradlew :app:assembleDebug
+./gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebug
 ```
 
 Windows:
 
 ```bat
-gradlew.bat :app:assembleDebug
+gradlew.bat :app:testDebugUnitTest :app:lintDebug :app:assembleDebug
 ```
 
 Çıktı: `app/build/outputs/apk/debug/app-debug.apk`.

@@ -9,16 +9,6 @@ import com.yausername.youtubedl_android.YoutubeDL
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
-import java.util.concurrent.atomic.AtomicBoolean
-
-object DownloadState {
-    val running = AtomicBoolean(false)
-    @Volatile var cancelled = false
-    @Volatile var progress = 0
-    @Volatile var status = "İndirmeye hazır"
-    @Volatile var detail = "Seçtiğin içerikler burada görünecek."
-    @Volatile var history = ""
-}
 
 class DownloadService : Service() {
     private val manager by lazy { getSystemService(NotificationManager::class.java) }
@@ -72,9 +62,7 @@ class DownloadService : Service() {
         return START_NOT_STICKY
     }
     private fun record(value: String) {
-        val prefs = getSharedPreferences("indirx", MODE_PRIVATE)
-        DownloadState.history = (value + "\n\n" + prefs.getString("history", "")).take(24000)
-        prefs.edit().putString("history", DownloadState.history).apply()
+        DownloadState.record(value)
     }
     private fun download(queue: String, tree: String, format: String) {
         cacheDir.listFiles()?.filter { it.isDirectory && it.name.startsWith("download-") }?.forEach { it.deleteRecursively() }

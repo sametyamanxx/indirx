@@ -1,7 +1,6 @@
 package com.indirx.app
 
 import android.content.Context
-import android.net.Uri
 import com.yausername.youtubedl_android.YoutubeDL
 import com.yausername.youtubedl_android.YoutubeDLRequest
 import com.yausername.ffmpeg.FFmpeg
@@ -13,11 +12,12 @@ import java.io.File
 
 object Engine {
     @Synchronized fun init(context: Context) { YoutubeDL.init(context.applicationContext); FFmpeg.init(context.applicationContext) }
-    fun validUrl(value: String): Boolean = runCatching { val u = Uri.parse(value); u.scheme in listOf("https", "http") && !u.host.isNullOrBlank() }.getOrDefault(false)
+    fun validUrl(value: String): Boolean = SupportedPlatforms.accepts(value)
     fun inspect(context: Context, url: String): MediaResult {
-        require(validUrl(url)) { "Geçerli bir video bağlantısı yapıştır." }
+        require(validUrl(url)) { SupportedPlatforms.message }
         init(context)
         val r = YoutubeDLRequest(url)
+        r.addOption("--use-extractors", SupportedPlatforms.extractors)
         r.addOption("--dump-single-json"); r.addOption("--flat-playlist"); r.addOption("--skip-download")
         r.addOption("--yes-playlist")
         r.addOption("--socket-timeout", "30")
@@ -40,7 +40,9 @@ object Engine {
         return MediaResult(data.optString("title", "Bulunan içerikler"), items, entries != null)
     }
     fun request(url: String, format: String, dir: File): YoutubeDLRequest {
+        require(validUrl(url)) { SupportedPlatforms.message }
         val r = YoutubeDLRequest(url)
+        r.addOption("--use-extractors", SupportedPlatforms.extractors)
         r.addOption("--no-playlist"); r.addOption("--newline"); r.addOption("--no-mtime")
         r.addOption("--socket-timeout", "30"); r.addOption("--retries", "3")
         r.addOption("--trim-filenames", "160")

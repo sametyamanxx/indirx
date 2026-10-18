@@ -1,4 +1,28 @@
-# İndirX 0.2.4 — doğrulama durumu
+# İndirX 0.2.5 — doğrulama durumu
+
+18 Ekim 2026.
+
+## 0.2.5 değişiklikleri ve test kapsamı
+
+- Geçmiş yalnızca bellekte tutulur. Servis SharedPreferences üzerinden eski geçmişi okumaz ve yeni geçmiş yazmaz. Eski kalıcı kayıt açılışta silinir.
+- `onStart` her görünür oturumda geçmişi temizler; aktif indirme korunur, bitmiş durum bilgisi sıfırlanır.
+- Bağlantı alan adı denetimi ve yt-dlp çözücü seçimi YouTube, Instagram ve TikTok ile sınırlandı.
+- Birim testleri: desteklenen normal/kısa bağlantılar, diğer siteler ve yanıltıcı alan adları; yeniden açılışta geçmiş/durum temizliği; yeni indirmede eski kaydın geri gelmemesi; aktif indirme korunması.
+- Bu sürümün derleme, test ve imza sonuçları işlem tamamlandığında aşağıya eklenecektir. Önceki sürüm sonuçları 0.2.5 için doğrulama sayılmaz.
+- Önceki imzalama anahtarı depoda bulunmuyor; eski APK üzerine kurulum doğrulanmadı.
+
+### Telefon üzerinde ek kabul kontrolleri
+
+1. Bir dosya indir; geri tuşuyla çıkıp tekrar aç: eski dosya adı, tamamlanma mesajı ve yüzde görünmemeli.
+2. Bir dosya indir; ana ekrana dönüp uygulamayı tekrar aç: eski geçmiş görünmemeli. Uygulamayı son uygulamalardan kapatarak ve zorla durdurarak da tekrarla.
+3. Yeni dosya indir: önceki oturumun dosya adları geri gelmemeli. Dış klasördeki dosyalar korunmalı.
+4. Aktif indirme sırasında uygulamadan çıkıp dön: işlem kesilmemeli ve aktif ilerleme görünmeli.
+5. YouTube, Instagram ve TikTok için erişim hakkın olan birer normal/kısa bağlantıyı bul ve indir. YouTube çalma listesi seçimini kontrol et.
+6. Facebook, X, Vimeo, Dailymotion ve rastgele bir site bağlantısını elle ve paylaş menüsüyle dene: desteklenmediği bildirilmeli.
+
+Fiziksel cihazda bu kontroller henüz yapılmadı; gerçek platform indirmeleri doğrulanmış sayılmaz.
+
+## Önceki 0.2.4 sürümüne ait notlar
 
 13 Ekim 2026.
 

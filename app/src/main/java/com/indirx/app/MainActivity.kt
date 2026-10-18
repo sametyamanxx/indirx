@@ -99,9 +99,9 @@ class MainActivity : Activity() {
         }
         root.add(ImageView(this).apply { setImageResource(R.drawable.logo); contentDescription = "X ve altında indirme oku"; scaleType = ImageView.ScaleType.FIT_CENTER }, 76)
         root.add(text("İNDİRX", 28f).apply { gravity = Gravity.CENTER; letterSpacing = .10f; typeface = Typeface.DEFAULT_BOLD })
-        root.add(text("YouTube · Instagram · TikTok\nFacebook · X · Vimeo · Dailymotion", 13f, muted).apply { gravity = Gravity.CENTER })
+        root.add(text("YouTube · Instagram · TikTok", 13f, muted).apply { gravity = Gravity.CENTER })
         section("Bağlantı ekle").apply {
-            add(text("YouTube ve desteklenen halka açık video siteleri", 12f, muted))
+            add(text("Yalnızca YouTube, Instagram ve TikTok bağlantıları", 12f, muted))
             link = EditText(this@MainActivity).apply {
                 hint = "Video veya çalma listesi bağlantısı"; setTextColor(ink); setHintTextColor(muted)
                 textSize = 14f; maxLines = 3; inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_URI
@@ -158,19 +158,27 @@ class MainActivity : Activity() {
             history = text("", 13f); add(history)
         }
         root.add(button("İndirme altyapısını güncelle") { updateEngine() })
-        root.add(text("İndirX • 0.2.3\nYalnızca indirme hakkın olan içerikleri kaydet.", 11f, muted).apply { gravity = Gravity.CENTER })
+        root.add(text("İndirX • ${BuildConfig.VERSION_NAME}\nYalnızca indirme hakkın olan içerikleri kaydet.", 11f, muted).apply { gravity = Gravity.CENTER })
         // Önceki indirme kayıtları uygulama yeniden açıldığında gösterilmez.
-        DownloadState.history = ""
         prefs.edit().remove("history").apply()
         // Search results are session-only. Remove data persisted by older versions.
         prefs.edit().remove("link").remove("items").remove("collection").remove("playlist").apply()
         receive(intent)
         if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 42)
     }
-    private fun receive(intent: Intent?) { if (intent?.action == Intent.ACTION_SEND) intent.getStringExtra(Intent.EXTRA_TEXT)?.let { raw -> Regex("https?://[^\\s]+").find(raw)?.value?.let { link.setText(it) } } }
+    private fun receive(intent: Intent?) {
+        if (intent?.action != Intent.ACTION_SEND) return
+        val url = intent.getStringExtra(Intent.EXTRA_TEXT)?.let { Regex("https?://[^\\s]+").find(it)?.value }
+        if (url != null && Engine.validUrl(url)) link.setText(url)
+        else toast(SupportedPlatforms.message)
+    }
     override fun onNewIntent(intent: Intent) { super.onNewIntent(intent); receive(intent) }
     @Suppress("DEPRECATION")
     override fun onBackPressed() { finish() }
+    override fun onStart() {
+        super.onStart()
+        DownloadState.beginVisibleSession()
+    }
     override fun onResume() { super.onResume(); handler.post(refresh) }
     override fun onPause() { handler.removeCallbacks(refresh); prefs.edit().putBoolean("format_schema2", true).putInt("format", selectedFormat).putInt("video_format", videoFormat).putInt("audio_format", audioFormat).apply(); super.onPause() }
     private fun updateCount() {
@@ -232,7 +240,7 @@ class MainActivity : Activity() {
     private fun inspect() {
         if (loading) return
         val url = link.text.toString().trim()
-        if (!Engine.validUrl(url)) { toast("Geçerli bir bağlantı yapıştır."); return }
+        if (!Engine.validUrl(url)) { toast(SupportedPlatforms.message); return }
         loading = true; find.isEnabled = false; find.text = "İçerikler aranıyor…"
         boxes.clear(); results.removeAllViews(); isPlaylist = false; selectAll.visibility = View.GONE; contentSection.visibility = View.VISIBLE; count.text = "Bağlantı çözümleniyor…"; collectionName.text = "İçerik seçimi"
         Thread {
