@@ -61,7 +61,7 @@ YouTube uygulamasındaki Paylaş menüsünden de bağlantı gönderebilirsin. Li
 - Android klasör izni, uygulama içi geçici indirme, tamamlanınca seçilen klasöre kopyalama.
 - Gerçek ilerleme, arka plan ön plan servisi, bildirim ve iptal.
 - Başarısız bir içerik kalan seçili içerikleri engellemez.
-- İndirme geçmişi, biçim ve klasör tercihleri cihazda saklanır. Arama bağlantısı ve bulunan içerikler kalıcı olarak saklanmaz.
+- İndirme geçmişi yalnızca uygulamanın açık olduğu oturum boyunca gösterilir; uygulama her yeniden açıldığında önceki kayıtlar temizlenir. Biçim ve klasör tercihleri cihazda saklanır. Arama bağlantısı ve bulunan içerikler kalıcı olarak saklanmaz.
 - Uygulama içinden indirme altyapısını güncelleme.
 
 ## Gerçek sınırlar
