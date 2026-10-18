@@ -5,7 +5,10 @@
 - Ayrı alt İndirmeler kartı kaldırıldı; durum, detay, ilerleme, iptal ve oturum kayıtları Bulunan içerikler bölümünün içinde aynı alana yerleştirildi.
 - İşlem alanı yalnızca aktif/tamamlanmış oturum işlemi için görünür; aktif indirmede yeniden açılışta liste yoksa bile bölüm ve iptal erişilebilir kalır. Yeni oturumda boş durum ve eski geçmiş gösterilmez.
 - Robolectric/SDK 28 arayüz testleri eklendi: başlangıçta alt bölümün yokluğu, tek içerik/liste gösterimi, ilerleme ve dönüştürme, tamamlanma, arka plandaki indirmeye dönüş ve gerçek iptal servis niyetinin gönderilmesi. İnternet ya da yerel yt-dlp işlemi başlatılmaz; gerçek Android cihaz testi değildir.
-- İndirme durumuna ait oturum işareti ve temizlenmesi birim testlerine eklendi. Test/derleme/yayın sonuçları tamamlandığında kaydedilecektir.
+- İndirme durumuna ait oturum işareti ve temizlenmesi birim testlerine eklendi. Yerel Windows ortamında APK ve test kaynakları derlendi; arayüz testlerinin yürütülmesi Linux CI ortamında doğrulandı.
+- [Android APK derlemesi](https://github.com/sametyamanxx/indirx/actions/runs/39145192581), commit `be16742e15852d91b0bbad09574a691b5046eb18`: başarılı. JUnit/Robolectric arayüz ve oturum testleri, lint, APK derlemesi, yalnızca YouTube/Instagram çözücü kontrolü ve imza doğrulaması geçti; test/lint raporları artifact olarak saklandı.
+- [Android 0.2.8 yayın iş akışı](https://github.com/sametyamanxx/indirx/actions/runs/39145449405) başarılı. Aynı kontroller yayın etiketinde de geçti; `IndirX-0.2.8.apk` `v0.2.8` yayınına eklendi. APK bağlantısı anonim HTTP HEAD isteğine 200 döndü.
+- APK: 153.714.291 bayt; SHA-256 `1d2c0b5fa57d39ff96b5cfc70477bc2823a9a311a8839a73e66acd9c6f58cdae`.
 - Önceki Android APK'nın özel imzalama anahtarı depoda yoktur. Güncelleme olarak üzerine kurulum doğrulanmadı; fiziksel telefon/emülatör veya uçtan uca platform indirmesi bu değişiklik için denenmedi. Windows 0.2.11 değişmedi.
 
 ## Windows 0.2.11 — İndirme sırasında koyu tema
