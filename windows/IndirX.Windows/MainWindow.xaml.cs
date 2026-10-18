@@ -6,8 +6,8 @@ using System.Reflection;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using IndirX.Core;
 using Microsoft.Win32;
 
@@ -33,6 +33,7 @@ public partial class MainWindow : Window
     private CancellationTokenSource? cancellation;
     private Task? operation;
     private bool initialized, playlist, closing;
+    private string resultsLayoutDetail = "";
 
     public MainWindow()
     {
@@ -93,49 +94,72 @@ public partial class MainWindow : Window
 
     private bool ResultsStayInFlow(string? previewFile)
     {
-        // Exercise the same renderer used by successful inspection, without network
-        // requests or persistent data. Both single-video and playlist detection
-        // must replace the placeholder inside the existing, fixed-size card.
+        // Exercise the real renderer and routed wheel event, without network or
+        // settings writes. Single media stays compact; playlists fill the column.
         if (items.Count != 0 || history.Count != 0 || cancellation != null) return false;
-        var initial = new[] { Position(LinkCard), Position(DownloadsCard), Position(PreferencesCard), Position(UpdateCard) };
-        var height = DownloadsCard.ActualHeight;
+        var originalWidth = Width; var originalHeight = Height;
         try
         {
-            foreach (var collection in new[] { false, true })
+            foreach (var size in new[] { (1120, 900), (1120, 800), (840, 640), (1440, 1000) })
             {
-                var media = Enumerable.Range(1, collection ? 12 : 1)
-                    .Select(index => new MediaItem($"Örnek video {index} — yerleşim testi", "https://www.youtube.com/watch?v=BaW_jenozKc", "0:30")).ToArray();
-                RenderFound(new MediaResult("Örnek liste — yerleşim testi", media, collection));
+                ResetFound(); ClearStatus();
+                Width = size.Item1; Height = size.Item2;
                 UpdateLayout();
-                var current = new[] { Position(LinkCard), Position(DownloadsCard), Position(PreferencesCard), Position(UpdateCard) };
-                if (initial.Where((point, index) => (point - current[index]).Length > 1).Any() ||
-                    Math.Abs(DownloadsCard.ActualHeight - height) > 1 || !LayoutMatchesRequest() ||
-                    !ResultsPanel.IsDescendantOf(DownloadsCard) || ResultsList.Items.Count != media.Length ||
-                    EmptyContentHint.Visibility != Visibility.Collapsed || OperationPanel.Visibility != Visibility.Collapsed ||
-                    PlaylistHeader.Visibility != (collection ? Visibility.Visible : Visibility.Collapsed) ||
-                    (!collection && SelectionText.Text.Length != 0)) return false;
-                if (collection)
+                foreach (var (collection, count) in new[] { (false, 1), (true, 1), (true, 500), (false, 1) })
                 {
-                    if (items.Any(item => item.Selected)) return false;
-                    SelectAll_Click(this, new RoutedEventArgs());
-                    if (!items.All(item => item.Selected)) return false;
-                    SelectAll_Click(this, new RoutedEventArgs());
-                    if (items.Any(item => item.Selected)) return false;
-                }
-                else if (!items.Single().Selected) return false;
-                if (!collection && previewFile != null)
-                {
-                    var bitmap = new RenderTargetBitmap((int)ActualWidth, (int)ActualHeight, 96, 96, PixelFormats.Pbgra32);
-                    bitmap.Render(this);
-                    var encoder = new PngBitmapEncoder();
-                    encoder.Frames.Add(BitmapFrame.Create(bitmap));
-                    using var stream = File.Create(previewFile);
-                    encoder.Save(stream);
+                    var media = Enumerable.Range(1, count)
+                        .Select(index => new MediaItem($"Örnek video {index} — yerleşim testi", "https://www.youtube.com/watch?v=BaW_jenozKc", "0:30")).ToArray();
+                    RenderFound(new MediaResult("Örnek liste — yerleşim testi", media, collection));
+                    UpdateLayout();
+                    if (!LayoutMatchesRequest() ||
+                        !ResultsPanel.IsDescendantOf(DownloadsCard) || ResultsList.Items.Count != media.Length ||
+                        EmptyContentHint.Visibility != Visibility.Collapsed || OperationPanel.Visibility != Visibility.Collapsed ||
+                        PlaylistHeader.Visibility != (collection ? Visibility.Visible : Visibility.Collapsed) ||
+                        (!collection && SelectionText.Text.Length != 0)) { resultsLayoutDetail = $"Flow: {size}, playlist={collection}"; return false; }
+                    if (previewFile != null && size == (1120, 900))
+                        SaveThemePreview(collection ? previewFile.Replace(".detected.png", ".playlist.png") : previewFile);
+                    if (collection)
+                    {
+                        var bottom = Position(DownloadsCard).Y + DownloadsCard.ActualHeight + DownloadsCard.Margin.Bottom;
+                        if (Math.Abs(bottom - Position(LeftColumn).Y - LeftColumn.ActualHeight) > 2 || ResultsList.ActualHeight < 30) { resultsLayoutDetail = $"Fill: {size}, bottom={bottom}, column={Position(LeftColumn).Y + LeftColumn.ActualHeight}, list={ResultsList.ActualHeight}"; return false; }
+                        if (items.Any(item => item.Selected)) return false;
+                        SelectAll_Click(this, new RoutedEventArgs());
+                        if (!items.All(item => item.Selected)) return false;
+                        SelectAll_Click(this, new RoutedEventArgs());
+                        if (items.Any(item => item.Selected)) return false;
+                        if (count > 1 && !PlaylistWheelMatches()) { resultsLayoutDetail = $"Wheel: {size}"; return false; }
+                    }
+                    else
+                    {
+                        if (!items.Single().Selected || ResultsList.ItemContainerGenerator.ContainerFromIndex(0) is not ListBoxItem row ||
+                            Math.Abs(ResultsList.ActualHeight - row.ActualHeight) > 2) { resultsLayoutDetail = $"Single: {size}, list={ResultsList.ActualHeight}, row={(ResultsList.ItemContainerGenerator.ContainerFromIndex(0) as ListBoxItem)?.ActualHeight}, card={DownloadsCard.ActualHeight}"; return false; }
+                    }
                 }
             }
+            resultsLayoutDetail = "PASS: compact single, full-height playlists, routed wheel down/up/boundary at four window sizes";
             return true;
         }
-        finally { ResetFound(); ClearStatus(); UpdateLayout(); }
+        finally { ResetFound(); ClearStatus(); Width = originalWidth; Height = originalHeight; UpdateLayout(); }
+    }
+
+    private bool PlaylistWheelMatches()
+    {
+        if (ResultsList.Template.FindName("PART_ScrollViewer", ResultsList) is not ScrollViewer scroller || scroller.ScrollableHeight <= 0) return false;
+        scroller.ScrollToTop(); UpdateLayout();
+        var pageOffset = PageScroller.VerticalOffset;
+        var wheel = new MouseWheelEventArgs(Mouse.PrimaryDevice, Environment.TickCount, -120) { RoutedEvent = Mouse.PreviewMouseWheelEvent };
+        ResultsList.RaiseEvent(wheel); UpdateLayout();
+        if (!wheel.Handled || scroller.VerticalOffset <= 0 || Math.Abs(PageScroller.VerticalOffset - pageOffset) > 1) return false;
+        scroller.ScrollToEnd(); UpdateLayout();
+        wheel = new MouseWheelEventArgs(Mouse.PrimaryDevice, Environment.TickCount, -120) { RoutedEvent = Mouse.PreviewMouseWheelEvent };
+        ResultsList.RaiseEvent(wheel); UpdateLayout();
+        if (!wheel.Handled || Math.Abs(PageScroller.VerticalOffset - pageOffset) > 1) return false;
+        wheel = new MouseWheelEventArgs(Mouse.PrimaryDevice, Environment.TickCount, 120) { RoutedEvent = Mouse.PreviewMouseWheelEvent };
+        var bottom = scroller.VerticalOffset;
+        ResultsList.RaiseEvent(wheel); UpdateLayout();
+        var correct = wheel.Handled && scroller.VerticalOffset < bottom && Math.Abs(PageScroller.VerticalOffset - pageOffset) <= 1;
+        scroller.ScrollToTop(); UpdateLayout();
+        return correct;
     }
 
     private static bool HasFolderOpenButton(DependencyObject parent)
@@ -155,6 +179,7 @@ public partial class MainWindow : Window
         WindowIconPresent = Icon != null, BrandLogoPresent = BrandLogo.Source != null,
         LayoutCorrect = LayoutMatchesRequest(), FolderOpenRemoved = !HasFolderOpenButton(this),
         IndependentColumns = ColumnsAreIndependent(), ResultsFlowCorrect = ResultsStayInFlow(detectedPreview),
+        ResultsLayoutDetail = resultsLayoutDetail,
         ResultsInDownloads = ResultsPanel.IsDescendantOf(DownloadsCard),
         IdleStatusHidden = OperationPanel.Visibility == Visibility.Collapsed && StatusText.Text.Length == 0,
         DownloadThemeCorrect = DownloadThemeMatches(downloadingPreview),
@@ -203,6 +228,7 @@ public partial class MainWindow : Window
         ResultsPanel.Visibility = PlaylistHeader.Visibility = Visibility.Collapsed;
         EmptyContentHint.Visibility = Visibility.Visible;
         CollectionTitle.Text = "";
+        UpdateResultsLayout();
         UpdateSelection();
     }
 
@@ -220,8 +246,41 @@ public partial class MainWindow : Window
         ResultsPanel.Visibility = Visibility.Visible;
         PlaylistHeader.Visibility = playlist ? Visibility.Visible : Visibility.Collapsed;
         EmptyContentHint.Visibility = Visibility.Collapsed;
+        UpdateResultsLayout();
         UpdateSelection();
         ClearStatus();
+    }
+
+    private void UpdateResultsLayout()
+    {
+        DownloadsCard.VerticalAlignment = playlist ? VerticalAlignment.Stretch : VerticalAlignment.Top;
+        DownloadsContentRow.Height = playlist ? new GridLength(1, GridUnitType.Star) : GridLength.Auto;
+        MediaRow.Height = playlist ? new GridLength(1, GridUnitType.Star) : GridLength.Auto;
+    }
+
+    private void MainLayout_LayoutUpdated(object? sender, EventArgs e)
+    {
+        if (!initialized) return;
+        // On short/narrow windows keep at least one complete row visible, with
+        // progress and history below it. Only then allow the outer page to scroll.
+        var cardMinimum = DownloadsCard.Padding.Top + DownloadsCard.Padding.Bottom +
+            DownloadsCard.BorderThickness.Top + DownloadsCard.BorderThickness.Bottom + DownloadsCard.Margin.Top + DownloadsCard.Margin.Bottom +
+            DownloadsHeading.DesiredSize.Height + PlaylistHeader.DesiredSize.Height + 80 +
+            OperationPanel.DesiredSize.Height + HistoryPanel.DesiredSize.Height;
+        var minimum = Math.Max(650, HeaderPanel.DesiredSize.Height + VersionText.DesiredSize.Height +
+            Math.Max(ControlsPanel.DesiredSize.Height + cardMinimum, RightColumn.DesiredSize.Height));
+        if (Math.Abs(MainLayout.MinHeight - minimum) > 1) MainLayout.MinHeight = minimum;
+    }
+
+    private void ResultsList_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        if (ResultsList.Template.FindName("PART_ScrollViewer", ResultsList) is not ScrollViewer scroller) return;
+        // Keep the wheel inside the results, including at the first/last item,
+        // rather than letting the page scroll away from the playlist.
+        e.Handled = true;
+        var lines = SystemParameters.WheelScrollLines;
+        var distance = lines < 0 ? scroller.ViewportHeight : lines * 16;
+        scroller.ScrollToVerticalOffset(scroller.VerticalOffset - e.Delta / 120.0 * distance);
     }
 
     private void UpdateSelection()

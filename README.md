@@ -16,11 +16,11 @@ Android 8.0 ve üzeri içindir. Debug imzalı test APK'sıdır; önceki sürüm 
 
 ## Windows masaüstü projesi
 
-**[Windows 0.2.11 Setup indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.11/IndirX-0.2.11-Windows-x64-Setup.exe)** · [Taşınabilir ZIP](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.11/IndirX-0.2.11-Windows-x64-Portable.zip) · [Windows sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/windows-v0.2.11)
+**[Windows 0.2.12 Setup indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.12/IndirX-0.2.12-Windows-x64-Setup.exe)** · [Taşınabilir ZIP](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.12/IndirX-0.2.12-Windows-x64-Portable.zip) · [Windows sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/windows-v0.2.12)
 
 Ayrı, yerel Windows uygulaması `windows/` klasöründedir: **[Windows projesi ve derleme talimatları](windows/README.md)**. Windows 10 22H2 / Windows 11 x64 için .NET 10 WPF, kullanıcı başına Setup ve portable paket üretir. Yalnızca YouTube ve Instagram desteklenir. Android APK'sı veya emülatör kullanmaz. Kurulum dijital imzalı değildir. Windows etiketleri `windows-v…` biçimindedir; Android ve Windows ayrı sürümlerle yayımlanır.
 
-Windows 0.2.11: İndirme sırasında İndirmeler listesinin beyazlaşması düzeltildi; liste devre dışıyken de koyu kalır ve kaydırma çubukları temaya uyar. Tespit edilen video/liste aynı İndirmeler kutusundadır; ayrı sonuç kartı veya İndirmeye hazır yazısı eklenmez. Android logosu, koyu pencere çubuğu ve önceki yerleşim korunur.
+Windows 0.2.12: Tek içerik yalnızca kendi satırı kadar yer kaplar; çalma listesi panelin altına kadar uzar ve pencere büyütülünce daha fazla içerik gösterir. Fare tekerleği listenin içinde kaydırır. İndirme/iptal/geçmiş aynı kutuda, koyu tema ve Android logosu korunur.
 
 ## 0.2.7 yalnızca YouTube ve Instagram
 
