@@ -21,6 +21,8 @@ try {
     $rejectedCode = $LASTEXITCODE
 } finally { $ErrorActionPreference = $previousPreference }
 if ($rejectedCode -eq 0 -or (Get-Content (Join-Path $OutputDir 'rejected-platform.txt') -Raw) -notmatch 'Unsupported URL|No suitable extractor') { throw 'TikTok was not rejected by packaged engine' }
+# Do not leak this intentional nonzero native status into GitHub's pwsh wrapper.
+$global:LASTEXITCODE = 0
 foreach ($run in @(1,2)) {
     $result = Join-Path $OutputDir "ui-$run.json"
     $app = Start-Process -FilePath (Join-Path $PublishDir 'IndirX.exe') -ArgumentList @('--smoke-test',('"' + $result + '"')) -PassThru
