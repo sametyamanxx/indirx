@@ -6,6 +6,12 @@ Tamamen Türkçe; koyu lacivert zemin, antrasit kartlar ve yumuşak mavi vurgula
 
 Android 8.0 ve üzeri içindir. Debug imzalı test APK'sıdır; önceki sürüm farklı imzalıysa kaldırıp kurmak gerekebilir. Dış klasördeki medya dosyaları korunur.
 
+## 0.2.6 TikTok kısa bağlantı düzeltmesi
+
+- Üç platform çözücü filtresinin yanlışlıkla dışarıda bıraktığı `vm.tiktok` çözücüsü eklendi. Bu çözücü `vm.tiktok.com`, `vt.tiktok.com` ve `www.tiktok.com/t/` paylaşım bağlantılarını açar.
+- YouTube, Instagram ve TikTok sınırı korunur; genel site çözücüsü etkinleştirilmez.
+- Çözücü adları için regresyon testi eklendi. Kullanıcının hata aldığı gerçek TikTok bağlantısı henüz paylaşılmadığından o bağlantının indirilebildiği doğrulanmamıştır.
+
 ## 0.2.5 geçmiş düzeltmesi ve üç platform desteği
 
 - İndirme servisi artık geçmişi cihazın kalıcı ayarlarına yazmaz veya oradan okumaz.

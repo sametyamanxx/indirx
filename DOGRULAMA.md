@@ -1,4 +1,14 @@
-# İndirX 0.2.5 — doğrulama durumu
+# İndirX 0.2.6 — doğrulama durumu
+
+## 0.2.6 TikTok kısa bağlantı düzeltmesi
+
+- Kök neden: yt-dlp kısa bağlantı çözücüsünün adı `vm.tiktok`. Önceki `tiktok.*` seçicisi bu adı kapsamıyordu. Seçiciye yalnızca `vm\\.tiktok` eklendi; genel çözücü ve diğer platformlar açılmadı.
+- `vm.tiktok.com`, `vt.tiktok.com`, `www.tiktok.com/t/` bağlantılarının alan adı kabulü ve gerçek çözücü adlarının filtreye uygunluğu için regresyon testleri mevcut.
+- `scripts/check_extractors.py`, Gradle'ın çözdüğü Android AAR içindeki gerçek yt-dlp sürümünü yükler; TikTokVM kaydını, üç kısa bağlantı biçiminin çözücüye uygunluğunu ve desteklenmeyen çözücülerin kapalı olduğunu ağ isteği yapmadan kontrol eder. Her iki GitHub iş akışına eklendi.
+- Bu sürümün otomatik test/derleme/yayın sonucu tamamlandığında eklenecektir. Aşağıdaki 0.2.5 sonuçları yeni sürüm için test sonucu sayılmaz.
+- Kullanıcı yalnızca “İçerik bulunamadı” başlığını bildirdi. Gerçek bağlantı ve hata ayrıntısı henüz verilmedi; bu nedenle bu kullanıcıya ait sorunun tamamen giderildiği veya gerçek TikTok indirmesinin başarılı olduğu iddia edilmez.
+
+## 0.2.5 doğrulama kaydı
 
 18 Ekim 2026.
 

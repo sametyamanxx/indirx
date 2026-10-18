@@ -22,13 +22,15 @@ jobs:
         with:
           gradle-version: '8.11.1'
       - run: gradle :app:testDebugUnitTest :app:lintDebug :app:assembleDebug
+      - name: Check bundled TikTok short-link extractor offline
+        run: python3 scripts/check_extractors.py
       - name: Verify and prepare installable APK
         run: |
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify app/build/outputs/apk/debug/app-debug.apk
           mkdir -p dist
-          cp app/build/outputs/apk/debug/app-debug.apk dist/IndirX-0.2.5.apk
+          cp app/build/outputs/apk/debug/app-debug.apk dist/IndirX-0.2.6.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: IndirX-0.2.5-APK
-          path: dist/IndirX-0.2.5.apk
+          name: IndirX-0.2.6-APK
+          path: dist/IndirX-0.2.6.apk
           if-no-files-found: error

@@ -16,8 +16,18 @@ class SupportedPlatformsTest {
             "https://www.tiktok.com/@name/video/123",
             "https://vm.tiktok.com/test/",
             "https://vt.tiktok.com/test/",
+            "https://www.tiktok.com/t/test/",
             "HTTPS://WWW.YOUTUBE.COM/watch?v=test"
         ).forEach { assertTrue(it, SupportedPlatforms.accepts(it)) }
+    }
+
+    @Test fun extractorFilterIncludesTikTokShortLinkResolver() {
+        val patterns = SupportedPlatforms.extractors.split(",").map { Regex(it, RegexOption.IGNORE_CASE) }
+        fun allowed(name: String) = patterns.any { it.matches(name) }
+        listOf("TikTok", "tiktok:user", "vm.tiktok", "youtube", "youtube:tab", "instagram")
+            .forEach { assertTrue(it, allowed(it)) }
+        listOf("generic", "facebook", "twitter", "vimeo", "dailymotion", "douyin", "vmXtiktok")
+            .forEach { assertFalse(it, allowed(it)) }
     }
 
     @Test fun rejectsOtherPlatformsAndMisleadingHosts() {
