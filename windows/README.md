@@ -1,6 +1,6 @@
-# İndirX 0.2.12 — Windows masaüstü projesi
+# İndirX 0.2.13 — Windows masaüstü projesi
 
-**[Setup.exe indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.12/IndirX-0.2.12-Windows-x64-Setup.exe)** · [Portable.zip](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.12/IndirX-0.2.12-Windows-x64-Portable.zip) · [Sürüm kaynak kodunu indir](https://github.com/sametyamanxx/indirx/archive/refs/tags/windows-v0.2.12.zip)
+**[Setup.exe indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.13/IndirX-0.2.13-Windows-x64-Setup.exe)** · [Portable.zip](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.13/IndirX-0.2.13-Windows-x64-Portable.zip) · [Sürüm kaynak kodunu indir](https://github.com/sametyamanxx/indirx/archive/refs/tags/windows-v0.2.13.zip)
 
 Windows 10 **22H2 (19045)** / Windows 11, **x64** için bağımsız WPF masaüstü uygulaması. Android APK'sını veya emülatör kullanmaz. .NET 10 çalışma ortamı, yt-dlp, FFmpeg/ffprobe ve YouTube için Deno kurulumun içinde gelir; ayrıca Python, Java veya .NET kurmak gerekmez.
 
@@ -12,6 +12,7 @@ Windows 10 **22H2 (19045)** / Windows 11, **x64** için bağımsız WPF masaüst
 
 - Ana ekranda yalnızca **YouTube · Instagram**. TikTok ve diğer siteler hem bağlantı kabulünde hem yt-dlp çözücü seçiminde kapalıdır.
 - Video veya çalma listesi bulma; tek içerik doğrudan, listeler tek tek veya topluca seçilerek indirilir. İlk sürümde liste başına en fazla 500 içerik aranır.
+- Bağlantının yanındaki tek düğme önce **İçerikleri bul**, sonuç bulunduğunda **İndir** olur. Çalma listesinde en az bir içerik seçilmelidir. Tercihler panelinde ayrı İndir düğmesi yoktur; ses/video, biçim ve klasör seçenekleri korunur. Bağlantı silinir veya değiştirilirse eski sonuçlar ve tamamlanmış durum yazısı temizlenir; düğme yeni bağlantıyı bulmak için yeniden İçerikleri bul olur. Bulma işlemi düğmeye basılarak başlatılır.
 - Video: MP4, MKV, WEBM, MOV, AVI, FLV. Ses: MP3, M4A, FLAC, OPUS, OGG, WAV, AAC, ALAC. Kalite kaynakla sınırlıdır; dönüşüm kaliteyi artırmaz.
 - Destekleyen ses biçimlerinde mevcut kapak görseli ve metadata ekleme isteği.
 - Gerçek ilerleme, iptal ve dönüştürme; bir içerik başarısız olsa da kalan kuyruk devam eder.
@@ -22,7 +23,7 @@ Windows 10 **22H2 (19045)** / Windows 11, **x64** için bağımsız WPF masaüst
 
 ## Kurulum ve kaldırma
 
-GitHub Releases içindeki **IndirX-0.2.12-Windows-x64-Setup.exe** dosyasını çalıştır. Kullanıcı başına `%LOCALAPPDATA%\Programs\IndirX` konumuna kurulur; yönetici izni gerektirmez. Önceki Windows sürümüyle aynı kurulum kimliği kullanılır; aynı konuma kurarak güncellenebilir. Başlat menüsü ve isteğe bağlı masaüstü kısayolu eklenir. Windows Ayarlar → Yüklü uygulamalar üzerinden kaldırılır. Kaldırma medya dosyalarını silmez. Tercihler de güncelleme için korunur. Windows, önceden sabitlenmiş eski kısayolun simgesini önbellekten gösterirse kısayolu kaldırıp tekrar sabitlemek gerekebilir.
+GitHub Releases içindeki **IndirX-0.2.13-Windows-x64-Setup.exe** dosyasını çalıştır. Kullanıcı başına `%LOCALAPPDATA%\Programs\IndirX` konumuna kurulur; yönetici izni gerektirmez. Önceki Windows sürümüyle aynı kurulum kimliği kullanılır; aynı konuma kurarak güncellenebilir. Başlat menüsü ve isteğe bağlı masaüstü kısayolu eklenir. Windows Ayarlar → Yüklü uygulamalar üzerinden kaldırılır. Kaldırma medya dosyalarını silmez. Tercihler de güncelleme için korunur. Windows, önceden sabitlenmiş eski kısayolun simgesini önbellekten gösterirse kısayolu kaldırıp tekrar sabitlemek gerekebilir.
 
 Setup ve uygulama **Authenticode imzalı değildir**. Windows SmartScreen bilinmeyen yayıncı uyarısı gösterebilir. Yalnızca kendi güvenilir GitHub yayınının dosyasını kullan; sağlanan `.sha256` ile hash karşılaştır. Antivirüsü kapatmak gerekmez. 32 bit Windows ve yerel ARM64 paketi sunulmaz.
 

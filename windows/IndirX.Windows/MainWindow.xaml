@@ -14,8 +14,8 @@
           <Border x:Name="LinkCard" Style="{StaticResource Card}"><StackPanel>
             <TextBlock Text="Bağlantı ekle" Style="{StaticResource Heading}" />
             <TextBlock Text="Yalnızca YouTube ve Instagram bağlantıları" Foreground="{StaticResource Muted}" Margin="0,0,0,12" />
-            <TextBox x:Name="LinkBox" MinHeight="66" TextWrapping="Wrap" VerticalContentAlignment="Center" AutomationProperties.Name="Video veya çalma listesi bağlantısı" />
-            <WrapPanel Margin="0,16,0,0"><Button Content="Panodan yapıştır" Click="Paste_Click" /><Button Content="İçerikleri bul →" Background="#7B9CF5" Foreground="#0E182B" Click="Find_Click" /></WrapPanel>
+            <TextBox x:Name="LinkBox" MinHeight="66" TextWrapping="Wrap" VerticalContentAlignment="Center" TextChanged="LinkBox_TextChanged" AutomationProperties.Name="Video veya çalma listesi bağlantısı" />
+            <WrapPanel Margin="0,16,0,0"><Button Content="Panodan yapıştır" Click="Paste_Click" /><Button x:Name="ContentActionButton" Content="İçerikleri bul" Background="#7B9CF5" Foreground="#0E182B" Click="ContentAction_Click" IsEnabled="False" /></WrapPanel>
           </StackPanel></Border>
         </StackPanel>
           <Border x:Name="DownloadsCard" Grid.Row="1" Style="{StaticResource Card}" VerticalAlignment="Top"><Grid>
@@ -61,7 +61,6 @@
             <TextBlock Text="Seçtiğin biçimde mevcut en yüksek kaynak kalitesi. Dönüştürme kaynak kalitesini artırmaz." FontSize="12" Foreground="{StaticResource Muted}" Margin="0,12,0,16" />
             <TextBlock x:Name="FolderText" FontSize="12" Foreground="{StaticResource Muted}" Margin="0,0,0,12" />
             <Button Content="Kayıt klasörünü seç" Click="ChooseFolder_Click" />
-            <Button x:Name="DownloadButton" Content="İndir ↓" Click="Download_Click" Background="#7B9CF5" Foreground="#0E182B" IsEnabled="False" />
           </StackPanel></Border>
       <Border x:Name="UpdateCard" Style="{StaticResource Card}">
         <Button x:Name="UpdateButton" Content="İndirme altyapısını güncelle" Click="Update_Click" Margin="0" />

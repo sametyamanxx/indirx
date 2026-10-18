@@ -33,6 +33,8 @@ public partial class MainWindow : Window
     private CancellationTokenSource? cancellation;
     private Task? operation;
     private bool initialized, playlist, closing;
+    private string? resolvedLink;
+    private long linkRevision;
     private string resultsLayoutDetail = "";
 
     public MainWindow()
@@ -48,6 +50,7 @@ public partial class MainWindow : Window
         RefreshFormat();
         FolderText.Text = "Kayıt yeri: " + settings.Folder;
         initialized = true;
+        UpdateSelection();
     }
 
     protected override void OnSourceInitialized(EventArgs e)
@@ -175,7 +178,8 @@ public partial class MainWindow : Window
         Title, Platforms = PlatformLabel.Text, ItemCount = items.Count, HistoryCount = history.Count,
         ToolsPresent = new[] { "yt-dlp.exe", "ffmpeg.exe", "ffprobe.exe", "deno.exe" }.All(file => File.Exists(Path.Combine(tools, file))),
         Background = Background.ToString(), Format = (FormatBox.SelectedItem as MediaFormat)?.Name,
-        DownloadEnabled = DownloadButton.IsEnabled,
+        DownloadEnabled = HasCurrentResults && ContentActionButton.IsEnabled,
+        ContentActionFlowCorrect = ContentActionFlowMatches(),
         WindowIconPresent = Icon != null, BrandLogoPresent = BrandLogo.Source != null,
         LayoutCorrect = LayoutMatchesRequest(), FolderOpenRemoved = !HasFolderOpenButton(this),
         IndependentColumns = ColumnsAreIndependent(), ResultsFlowCorrect = ResultsStayInFlow(detectedPreview),
@@ -192,11 +196,28 @@ public partial class MainWindow : Window
 
     private void Paste_Click(object sender, RoutedEventArgs e)
     {
-        try { LinkBox.Text = PlatformPolicy.FromText(Clipboard.GetText()); }
+        try { LinkBox.Text = Clipboard.GetText(); }
         catch (Exception error) { ShowError(error); }
     }
 
-    private async void Find_Click(object sender, RoutedEventArgs e)
+    private bool HasCurrentResults => items.Count > 0 && resolvedLink == LinkBox.Text;
+
+    private void LinkBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (!initialized) return;
+        linkRevision++;
+        ResetFound();
+        if (cancellation == null) ClearStatus();
+    }
+
+    private async void ContentAction_Click(object sender, RoutedEventArgs e)
+    {
+        if (cancellation != null) return;
+        if (HasCurrentResults) await DownloadAsync();
+        else await FindAsync();
+    }
+
+    private async Task FindAsync()
     {
         if (cancellation != null) return;
         string url;
@@ -204,15 +225,23 @@ public partial class MainWindow : Window
         catch (Exception error) { ShowError(error); return; }
         LinkBox.Text = url;
         ResetFound();
+        var revision = linkRevision;
         operation = BusyAsync(async token =>
         {
             EnsureTools();
             SetStatus("İçerikler aranıyor…", "Bağlantı çözümleniyor. Çalma listelerinde en fazla 500 içerik gösterilir.");
             var json = await ProcessRunner.RunAsync(Path.Combine(tools, "yt-dlp.exe"), Commands.Inspect(url, tools), tools, token);
             var found = MediaParser.Parse(json, url);
-            RenderFound(found);
+            // Never restore results for a link that was replaced while resolving.
+            CompleteFind(found, revision);
         });
         await operation;
+    }
+
+    private void CompleteFind(MediaResult found, long revision)
+    {
+        if (revision == linkRevision) RenderFound(found);
+        else ClearStatus();
     }
 
     private void SelectAll_Click(object sender, RoutedEventArgs e)
@@ -224,6 +253,7 @@ public partial class MainWindow : Window
 
     private void ResetFound()
     {
+        resolvedLink = null;
         items.Clear(); playlist = false;
         ResultsPanel.Visibility = PlaylistHeader.Visibility = Visibility.Collapsed;
         EmptyContentHint.Visibility = Visibility.Visible;
@@ -235,6 +265,7 @@ public partial class MainWindow : Window
     private void RenderFound(MediaResult found)
     {
         items.Clear();
+        resolvedLink = LinkBox.Text;
         playlist = found.IsPlaylist;
         CollectionTitle.Text = playlist ? found.Title : "";
         foreach (var item in found.Items)
@@ -287,8 +318,9 @@ public partial class MainWindow : Window
     {
         SelectionText.Text = playlist ? $"{items.Count} içerik • {items.Count(item => item.Selected)} seçili" : "";
         SelectAllButton.Content = items.Count > 0 && items.All(item => item.Selected) ? "Tümünü Kaldır" : "Tümünü Seç";
-        DownloadButton.Content = playlist ? "Seçilenleri indir ↓" : "İndir ↓";
-        DownloadButton.IsEnabled = cancellation == null && items.Any(item => item.Selected);
+        ContentActionButton.Content = HasCurrentResults ? "İndir" : "İçerikleri bul";
+        ContentActionButton.IsEnabled = cancellation == null && (HasCurrentResults
+            ? items.Any(item => item.Selected) : !string.IsNullOrWhiteSpace(LinkBox.Text));
     }
 
     private void Mode_Changed(object sender, RoutedEventArgs e)
@@ -330,9 +362,9 @@ public partial class MainWindow : Window
         { MessageBox.Show(this, "Tercihler kaydedilemedi: " + error.Message, "İndirX", MessageBoxButton.OK, MessageBoxImage.Warning); }
     }
 
-    private async void Download_Click(object sender, RoutedEventArgs e)
+    private async Task DownloadAsync()
     {
-        if (cancellation != null || FormatBox.SelectedItem is not MediaFormat format) return;
+        if (cancellation != null || !HasCurrentResults || FormatBox.SelectedItem is not MediaFormat format) return;
         var selected = items.Where(item => item.Selected).Select(item => item.Item).ToArray();
         if (selected.Length == 0) return;
         var folder = settings.Folder;

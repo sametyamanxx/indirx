@@ -1,4 +1,11 @@
-# İndirX — doğrulama durumu (Android 0.2.8 / Windows 0.2.12)
+# İndirX — doğrulama durumu (Android 0.2.8 / Windows 0.2.13)
+
+## Windows 0.2.13 — Tek bul/indir düğmesi ve bağlantı değişimi
+
+- Bağlantı kartındaki düğme sonuç yokken İçerikleri bul, geçerli sonuç varken İndir olur. Tercihler panelindeki ayrı indirme düğmesi kaldırıldı; biçim ve klasör tercihleri korunur. Liste seçimi yapılmadan İndir etkinleşmez.
+- Gerçek TextChanged işleyicisi bağlantı silindiğinde veya doğrudan değiştirildiğinde eski sonuçları ve tamamlanmış durum alanını temizler. Geç gelen bulma sonucu bağlantının sürüm işaretiyle reddedilir; aynı bağlantıyı silip yeniden yapıştırmak da eski isteği geçersiz kılar.
+- Yerel .NET 10 derlemesi, 57 çevrimdışı assertion ve iki temiz paketli WPF açılışı başarılı. Yeni `ContentActionFlowCorrect=true`; tekli/liste seçimi, düğme adı/etkinliği, silme, doğrudan değiştirme, boşluklu giriş, eski cevabın reddi ve tercihlerin korunması kontrol edildi. Önceki dört boyutlu liste/tekerlek, koyu tema, simge ve araç testleri de geçti. Arayüz görüntüsü incelendi.
+- Yeni Setup/GitHub yayını henüz doğrulanmadı; sonuçlar yayın tamamlanınca eklenecek. Bu çevrimdışı testler gerçek YouTube/Instagram indirmesi veya fiziksel fare kullanımını doğrulamaz. Android değiştirilmedi.
 
 ## Windows 0.2.12 — Pencereye yayılan çalma listesi
 
