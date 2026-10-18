@@ -4,7 +4,10 @@
 
 - Sol ve sağ sütun bağımsız dikey akışa taşındı. İndirmeler sol sütunda bağlantı/sonuç bölümünün hemen altındadır; sağdaki tercih paneli sol sütunda boşluk oluşturmaz.
 - Açılış kontrolleri gerçek öğe koordinatlarını ve aralığı denetler. Sağ panelin yüksekliği 120 px artırıldığında İndirmeler yerinde kalmalıdır. Bulunan içerikler gösterilince sol sütundaki akış ve çakışmasız yerleşim de kontrol edilir.
-- Yerel WPF derlemesi 0 hata / 0 uyarıyla başarılı. Gerçek açılış tanılarında yerleşim, bağımsız sütun ve bulunan içeriklerin akış kontrolü başarılı; arayüz görüntüsü incelendi. Paketli Setup/kurulum sonuçları henüz alınmadı. Önceki sürüm testleri bu sürümün doğrulaması sayılmaz. Gerçek YouTube/Instagram indirmeleri bu görsel güncellemede ayrıca denenmedi.
+- Yerel WPF derlemesi 0 hata / 0 uyarıyla başarılı. Gerçek açılış tanılarında yerleşim, bağımsız sütun ve bulunan içeriklerin akış kontrolü başarılı; arayüz görüntüsü incelendi. Paketli kurulumun sonuçları aşağıdadır. Önceki sürüm testleri bu sürümün doğrulaması sayılmaz. Gerçek YouTube/Instagram indirmeleri bu görsel güncellemede ayrıca denenmedi.
+- [Windows Setup derlemesi](https://github.com/sametyamanxx/indirx/actions/runs/39138194166), commit `843aad607ee9eb0fe2f7cf2cb4b7e91398d94f5a`: başarılı. 57 çevrimdışı assertion, sütun bağımsızlığı/sonuçların akışta kalması, logo ve koyu başlık çubuğu, paketli araçlar, Setup üretimi, sessiz kurulum/açılış/kaldırma denetimleri geçti.
+- [Windows 0.2.9 yayın iş akışı](https://github.com/sametyamanxx/indirx/actions/runs/39138413084) başarılı. Setup, portable ZIP ve SHA-256 dosyaları `windows-v0.2.9` yayınına eklendi; Setup bağlantısı anonim HTTP HEAD isteğine 200 döndü.
+- Setup: 176.991.087 bayt; SHA-256 `ce5fb760e077459212f8462f8f82710b3c0339687aa5c10be3696e097922f2b4`. Portable ZIP: 205.503.631 bayt; SHA-256 `8e6aa5f1375bb3ddc0cb7190178f4c7b49925f56c296b64462494bba8b22f92b`.
 
 ## Windows 0.2.8 — Android logosu ve yeni yerleşim
 
