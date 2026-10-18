@@ -5,7 +5,9 @@
 - Bağlantı kartındaki düğme sonuç yokken İçerikleri bul, geçerli sonuç varken İndir olur. Tercihler panelindeki ayrı indirme düğmesi kaldırıldı; biçim ve klasör tercihleri korunur. Liste seçimi yapılmadan İndir etkinleşmez.
 - Gerçek TextChanged işleyicisi bağlantı silindiğinde veya doğrudan değiştirildiğinde eski sonuçları ve tamamlanmış durum alanını temizler. Geç gelen bulma sonucu bağlantının sürüm işaretiyle reddedilir; aynı bağlantıyı silip yeniden yapıştırmak da eski isteği geçersiz kılar.
 - Yerel .NET 10 derlemesi, 57 çevrimdışı assertion ve iki temiz paketli WPF açılışı başarılı. Yeni `ContentActionFlowCorrect=true`; tekli/liste seçimi, düğme adı/etkinliği, silme, doğrudan değiştirme, boşluklu giriş, eski cevabın reddi ve tercihlerin korunması kontrol edildi. Önceki dört boyutlu liste/tekerlek, koyu tema, simge ve araç testleri de geçti. Arayüz görüntüsü incelendi.
-- Yeni Setup/GitHub yayını henüz doğrulanmadı; sonuçlar yayın tamamlanınca eklenecek. Bu çevrimdışı testler gerçek YouTube/Instagram indirmesi veya fiziksel fare kullanımını doğrulamaz. Android değiştirilmedi.
+- [Windows 0.2.13 yayın iş akışı](https://github.com/sametyamanxx/indirx/actions/runs/39151472222), commit `9bd5abb9474ca5920190ef4172e8a048fc8e73cb`: başarılı. 57 çevrimdışı assertion, yeni düğme/bağlantı akışı, önceki arayüz ve paketli araç denetimleri, Setup üretimi ve sessiz kurulum/açılış/kaldırma geçti. Setup, portable ZIP ve checksum dosyaları [windows-v0.2.13](https://github.com/sametyamanxx/indirx/releases/tag/windows-v0.2.13) yayınına eklendi.
+- Setup: 177.000.617 bayt; SHA-256 `7855c6b5a5502e6d43c6f9abad9371de3acee0a4c4c990429ad64f0417ee7a38`. Portable ZIP: 205.515.324 bayt; SHA-256 `b27e29997c6a636cad227df1a30adf589c627326a533c9a5ed5ad24c2068ece7`. İki dosyanın anonim HTTP HEAD denetimi 200 döndü; GitHub digest değerleri checksum dosyalarıyla eşleşti.
+- Bu çevrimdışı testler gerçek YouTube/Instagram indirmesi veya fiziksel fare kullanımını doğrulamaz. Setup/EXE dijital imzasızdır. Android değiştirilmedi.
 
 ## Windows 0.2.12 — Pencereye yayılan çalma listesi
 
