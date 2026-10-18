@@ -1,5 +1,7 @@
 param([switch]$Installer)
 $ErrorActionPreference = 'Stop'
+[xml]$properties = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Directory.Build.props'))
+$version = [string]$properties.Project.PropertyGroup.Version
 $root = Split-Path $PSScriptRoot -Parent
 $artifacts = Join-Path $root 'artifacts/windows'
 $publish = Join-Path $artifacts 'publish'
@@ -29,12 +31,14 @@ if ($Installer) {
     # Inno Setup needs an explicit UTF-8 BOM for Turkish strings on all host locales.
     $installerSource = Join-Path $artifacts 'IndirX.iss'
     [IO.File]::WriteAllText($installerSource, [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'installer/IndirX.iss')), [Text.UTF8Encoding]::new($true))
-    & $compiler "/DPublishDir=$publish" "/DOutputDir=$dist" $installerSource
+    & $compiler "/DAppVersion=$version" "/DPublishDir=$publish" "/DOutputDir=$dist" $installerSource
     if ($LASTEXITCODE -ne 0) { throw 'Installer compilation failed' }
-    & (Join-Path $PSScriptRoot 'test-installer.ps1') -Setup (Join-Path $dist 'IndirX-0.2.7-Windows-x64-Setup.exe') -OutputDir (Join-Path $artifacts 'installer-smoke')
+    $setup = Join-Path $dist "IndirX-$version-Windows-x64-Setup.exe"
+    & (Join-Path $PSScriptRoot 'check-branding.ps1') -PublishDir $publish -Setup $setup
+    & (Join-Path $PSScriptRoot 'test-installer.ps1') -Setup $setup -OutputDir (Join-Path $artifacts 'installer-smoke')
 }
-Compress-Archive -Path (Join-Path $publish '*') -DestinationPath (Join-Path $dist 'IndirX-0.2.7-Windows-x64-Portable.zip') -Force
-Get-ChildItem $dist -File | Where-Object { $_.Extension -in '.exe','.zip' } | ForEach-Object {
+Compress-Archive -Path (Join-Path $publish '*') -DestinationPath (Join-Path $dist "IndirX-$version-Windows-x64-Portable.zip") -Force
+Get-ChildItem $dist -File | Where-Object { $_.Extension -in '.exe','.zip' -and $_.Name -like "IndirX-$version-*" } | ForEach-Object {
     $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
     "$hash  $($_.Name)" | Out-File (Join-Path $dist ($_.Name + '.sha256')) -Encoding ascii
 }

@@ -5,6 +5,15 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>IndirX</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets/IndirX.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup><ProjectReference Include="../IndirX.Core/IndirX.Core.csproj" /></ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets/Logo.png" />
+    <Resource Include="Assets/IndirX.ico" />
+    <Content Include="Assets/IndirX.ico;Assets/WizardSmall.bmp;Assets/WizardLarge.bmp;Assets/Branding.sha256" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+  <Target Name="GenerateAndroidBranding" BeforeTargets="PrepareForBuild" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -STA -File &quot;$(MSBuildProjectDirectory)/../generate-branding.ps1&quot;" />
+  </Target>
 </Project>

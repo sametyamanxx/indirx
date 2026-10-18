@@ -1,12 +1,12 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using IndirX.Core;
 using Microsoft.Win32;
 
@@ -48,12 +48,44 @@ public partial class MainWindow : Window
         initialized = true;
     }
 
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        NativeChrome.Apply(this);
+    }
+
+    private Point Position(FrameworkElement element) => element.TransformToAncestor(MainLayout).Transform(new Point());
+
+    private bool LayoutMatchesRequest()
+    {
+        var logo = Position(BrandLogo); var title = Position(BrandTitle);
+        var link = Position(LinkCard); var preferences = Position(PreferencesCard);
+        var downloads = Position(DownloadsCard); var update = Position(UpdateCard);
+        return Math.Abs(logo.X + BrandLogo.ActualWidth / 2 - MainLayout.ActualWidth / 2) < 2 &&
+            Math.Abs(title.X + BrandTitle.ActualWidth / 2 - MainLayout.ActualWidth / 2) < 2 &&
+            logo.Y + BrandLogo.ActualHeight <= title.Y && title.Y + BrandTitle.ActualHeight < link.Y &&
+            link.X < preferences.X && Math.Abs(link.Y - preferences.Y) < 2 &&
+            downloads.Y > link.Y && downloads.X < update.X && Math.Abs(downloads.Y - update.Y) < 2;
+    }
+
+    private static bool HasFolderOpenButton(DependencyObject parent)
+    {
+        if (parent is Button button && string.Equals(button.Content?.ToString(), "Kayıt klasörünü aç", StringComparison.Ordinal)) return true;
+        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            if (HasFolderOpenButton(VisualTreeHelper.GetChild(parent, i))) return true;
+        return false;
+    }
+
     public object Diagnostics() => new
     {
         Title, Platforms = PlatformLabel.Text, ItemCount = items.Count, HistoryCount = history.Count,
         ToolsPresent = new[] { "yt-dlp.exe", "ffmpeg.exe", "ffprobe.exe", "deno.exe" }.All(file => File.Exists(Path.Combine(tools, file))),
         Background = Background.ToString(), Format = (FormatBox.SelectedItem as MediaFormat)?.Name,
         DownloadEnabled = DownloadButton.IsEnabled,
+        WindowIconPresent = Icon != null, BrandLogoPresent = BrandLogo.Source != null,
+        LayoutCorrect = LayoutMatchesRequest(), FolderOpenRemoved = !HasFolderOpenButton(this),
+        DarkTitleBar = NativeChrome.IsDark(this), CaptionMatchesTheme = NativeChrome.HasMatchingCaption(this),
+        AndroidLogoHash = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Assets", "Branding.sha256")).Trim(),
         Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)
     };
 
@@ -254,16 +286,6 @@ public partial class MainWindow : Window
         StatusText.Text = status; DetailText.Text = detail ?? "";
         DownloadProgress.IsIndeterminate = progress < 0;
         if (progress >= 0) DownloadProgress.Value = progress;
-    }
-
-    private void OpenFolder_Click(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            Directory.CreateDirectory(settings.Folder);
-            Process.Start(new ProcessStartInfo("explorer.exe") { ArgumentList = { settings.Folder }, UseShellExecute = false });
-        }
-        catch (Exception error) { ShowError(error); }
     }
 
     private static string Explain(Exception error)

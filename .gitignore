@@ -14,3 +14,4 @@ local.properties
 artifacts/
 windows/.cache/
 windows/.tools/
+windows/IndirX.Windows/Assets/

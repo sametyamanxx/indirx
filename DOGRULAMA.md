@@ -1,4 +1,12 @@
-# İndirX 0.2.7 — doğrulama durumu
+# İndirX — doğrulama durumu (Android 0.2.7 / Windows 0.2.8)
+
+## Windows 0.2.8 — Android logosu ve yeni yerleşim
+
+- Android `logo.xml` kaynağından PNG, çok boyutlu ICO ve Setup görselleri üretilir; kaynak logo değiştirilmez. EXE ve Setup'ın gömülü simgeleri yerel Windows API'siyle çıkarılarak karşılaştırılır.
+- Üst ortada logo ve altında ortalı İNDİRX; ilk satırda bağlantı/tercihler; alt satırda indirmeler/güncelleme. Kayıt klasörünü aç düğmesi ve işlevi kaldırıldı.
+- Koyu yerel başlık çubuğu, pencere simgesi, kaynak logo hash'i ve öğelerin gerçek yerleşim koordinatları açılış tanılarında kontrol edilir. Başlık çubuğunu içeren pencere görüntüsü de alınır.
+- Yerel WPF derlemesi 0 hata / 0 uyarıyla başarılı; gerçek açılışta yerleşim, logo ve koyu başlık çubuğu tanıları başarılı. EXE'nin gömülü simgesi Android kaynağından üretilen ICO ile eşleşti.
+- Paketli uygulama ve Setup sonuçları tamamlandığında eklenecek; önceki sürüm sonuçları bu sürümün testi sayılmaz. Gerçek platform indirmeleri bu görsel güncellemede henüz test edilmedi.
 
 ## Windows 0.2.7 — yeni masaüstü projesi
 

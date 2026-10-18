@@ -1,5 +1,5 @@
 #ifndef AppVersion
-  #define AppVersion "0.2.7"
+  #define AppVersion "0.2.8"
 #endif
 #ifndef PublishDir
   #define PublishDir "..\..\artifacts\windows\publish"
@@ -27,6 +27,9 @@ OutputBaseFilename=IndirX-{#AppVersion}-Windows-x64-Setup
 Compression=lzma2/fast
 SolidCompression=yes
 WizardStyle=modern
+SetupIconFile={#PublishDir}\Assets\IndirX.ico
+WizardImageFile={#PublishDir}\Assets\WizardLarge.bmp
+WizardSmallImageFile={#PublishDir}\Assets\WizardSmall.bmp
 UninstallDisplayIcon={app}\IndirX.exe
 LicenseFile={#PublishDir}\LICENSE.txt
 AppMutex=Local\IndirX.Windows
@@ -45,8 +48,8 @@ Name: "desktopicon"; Description: "Masaüstü kısayolu oluştur"; Flags: unchec
 Source: "{#PublishDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\İndirX"; Filename: "{app}\IndirX.exe"
-Name: "{autodesktop}\İndirX"; Filename: "{app}\IndirX.exe"; Tasks: desktopicon
+Name: "{group}\İndirX"; Filename: "{app}\IndirX.exe"; IconFilename: "{app}\IndirX.exe"
+Name: "{autodesktop}\İndirX"; Filename: "{app}\IndirX.exe"; IconFilename: "{app}\IndirX.exe"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\IndirX.exe"; Description: "İndirX'i başlat"; Flags: nowait postinstall skipifsilent

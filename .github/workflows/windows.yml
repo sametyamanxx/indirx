@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['windows/**', '.github/workflows/windows.yml', 'LICENSE']
+    paths: ['windows/**', 'app/src/main/res/drawable/logo.xml', '.github/workflows/windows.yml', 'LICENSE']
   release:
     types: [published]
 permissions: {}
@@ -43,8 +43,8 @@ jobs:
           if-no-files-found: warn
       - uses: actions/upload-artifact@v4
         with:
-          name: IndirX-0.2.7-Windows-x64
-          path: artifacts/windows/dist/*
+          name: IndirX-0.2.8-Windows-x64
+          path: artifacts/windows/dist/IndirX-0.2.8-*
           if-no-files-found: error
   publish:
     needs: build
@@ -55,7 +55,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: IndirX-0.2.7-Windows-x64
+          name: IndirX-0.2.8-Windows-x64
           path: dist
       - name: Upload Windows installer, portable package and checksums
         env:

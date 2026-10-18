@@ -1,10 +1,13 @@
-# İndirX 0.2.7 — Windows masaüstü projesi
+# İndirX 0.2.8 — Windows masaüstü projesi
 
-**[Setup.exe indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.7/IndirX-0.2.7-Windows-x64-Setup.exe)** · [Portable.zip](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.7/IndirX-0.2.7-Windows-x64-Portable.zip) · [Sürüm kaynak kodunu indir](https://github.com/sametyamanxx/indirx/archive/refs/tags/windows-v0.2.7.zip)
+**[Setup.exe indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.8/IndirX-0.2.8-Windows-x64-Setup.exe)** · [Portable.zip](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.8/IndirX-0.2.8-Windows-x64-Portable.zip) · [Sürüm kaynak kodunu indir](https://github.com/sametyamanxx/indirx/archive/refs/tags/windows-v0.2.8.zip)
 
 Windows 10 **22H2 (19045)** / Windows 11, **x64** için bağımsız WPF masaüstü uygulaması. Android APK'sını veya emülatör kullanmaz. .NET 10 çalışma ortamı, yt-dlp, FFmpeg/ffprobe ve YouTube için Deno kurulumun içinde gelir; ayrıca Python, Java veya .NET kurmak gerekmez.
 
 ## Özellikler
+
+- Android ile aynı logo; üst ortada logo, hemen altında ortalı İNDİRX. Bağlantı ekle sol üstte, tercihler yanında sağda; indirmeler alt satır solda, altyapı güncelleme yanında sağda. Kayıt klasörünü aç düğmesi ve işlevi yoktur; kayıt klasörünü seç özelliği korunur.
+- EXE/Setup, Başlat menüsü/masaüstü kısayolları ve pencere/görev çubuğu simgesi aynı Android logosunu kullanır. Yerel Windows başlık çubuğu koyudur; Windows 11'de başlık/yazı/kenarlık renkleri uygulama temasıyla eşleştirilir.
 
 - Ana ekranda yalnızca **YouTube · Instagram**. TikTok ve diğer siteler hem bağlantı kabulünde hem yt-dlp çözücü seçiminde kapalıdır.
 - Video veya çalma listesi bulma; tek içerik doğrudan, listeler tek tek veya topluca seçilerek indirilir. İlk sürümde liste başına en fazla 500 içerik aranır.
@@ -18,7 +21,7 @@ Windows 10 **22H2 (19045)** / Windows 11, **x64** için bağımsız WPF masaüst
 
 ## Kurulum ve kaldırma
 
-GitHub Releases içindeki **IndirX-0.2.7-Windows-x64-Setup.exe** dosyasını çalıştır. Kullanıcı başına `%LOCALAPPDATA%\Programs\IndirX` konumuna kurulur; yönetici izni gerektirmez. Başlat menüsü ve isteğe bağlı masaüstü kısayolu eklenir. Windows Ayarlar → Yüklü uygulamalar üzerinden kaldırılır. Kaldırma medya dosyalarını silmez. Tercihler de güncelleme için korunur.
+GitHub Releases içindeki **IndirX-0.2.8-Windows-x64-Setup.exe** dosyasını çalıştır. Kullanıcı başına `%LOCALAPPDATA%\Programs\IndirX` konumuna kurulur; yönetici izni gerektirmez. Önceki Windows sürümüyle aynı kurulum kimliği kullanılır; aynı konuma kurarak güncellenebilir. Başlat menüsü ve isteğe bağlı masaüstü kısayolu eklenir. Windows Ayarlar → Yüklü uygulamalar üzerinden kaldırılır. Kaldırma medya dosyalarını silmez. Tercihler de güncelleme için korunur. Windows, önceden sabitlenmiş eski kısayolun simgesini önbellekten gösterirse kısayolu kaldırıp tekrar sabitlemek gerekebilir.
 
 Setup ve uygulama **Authenticode imzalı değildir**. Windows SmartScreen bilinmeyen yayıncı uyarısı gösterebilir. Yalnızca kendi güvenilir GitHub yayınının dosyasını kullan; sağlanan `.sha256` ile hash karşılaştır. Antivirüsü kapatmak gerekmez. 32 bit Windows ve yerel ARM64 paketi sunulmaz.
 
@@ -39,6 +42,8 @@ powershell -ExecutionPolicy Bypass -File windows/build.ps1 -Installer
 Çıktılar: `artifacts/windows/dist/`. İndirilen üçüncü taraf araçlar `tools.lock.json` SHA-256 değerleriyle doğrulanır; EXE dosyaları Git'e eklenmez. Eski upstream dağıtımı kaldırılmışsa kilit dosyasını güvenilir yeni sürüm ve gerçek hashlerle güncellemek gerekir. `IndirX.Core` URL denetimi, komut oluşturma, çözümleme, güvenli dosya kopyalama ve işlem yönetimini arayüzden ayırır. `IndirX.Tests` haricî test paketi gerektirmeyen, başarısızlıkta sıfırdan farklı kod döndüren çevrimdışı test programıdır.
 
 `.github/workflows/windows.yml` Windows üzerinde test/derleme yapar, araçları ve gerçek WPF açılışını sınar, Setup oluşturur, sessiz kurulum ve kaldırmayı dener. `windows-v0.2.7` gibi Windows sürüm etiketinin yayınında dosyalar otomatik eklenir. Android sürümü/etiketi değiştirilmez.
+
+`generate-branding.ps1`, Android'in mevcut `app/src/main/res/drawable/logo.xml` dosyasını okuyup PNG, 16–256 px çok boyutlu ICO ve kurulum görsellerini üretir. Görseller elle yeniden çizilmez; oluşturulan `Assets/` dosyaları Git'e eklenmez. WPF derlemesi bu betiği otomatik çalıştırır. `check-branding.ps1`, EXE ve Setup'ın gerçek yerel simge kaynaklarını çıkarıp üretilen Android simgesiyle karşılaştırır; arayüz testleri merkezleme/iki satırlı yerleşimi ve yerel koyu başlık çubuğu özniteliklerini denetler. `.window.png` görüntüleri pencere başlık çubuğunu da içerir.
 
 ## Test sınırları ve lisans
 

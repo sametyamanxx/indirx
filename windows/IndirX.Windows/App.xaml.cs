@@ -32,6 +32,7 @@ public partial class App : Application
                     var encoder = new PngBitmapEncoder();
                     encoder.Frames.Add(BitmapFrame.Create(bitmap));
                     using (var stream = File.Create(Path.ChangeExtension(result, ".png"))) encoder.Save(stream);
+                    NativeChrome.SaveWindowImage(window, Path.ChangeExtension(result, ".window.png"));
                     File.WriteAllText(result, JsonSerializer.Serialize(window.Diagnostics()));
                     Shutdown(0);
                 }

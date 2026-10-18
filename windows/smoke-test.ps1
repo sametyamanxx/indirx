@@ -1,5 +1,7 @@
 param([Parameter(Mandatory)][string]$PublishDir,[Parameter(Mandatory)][string]$OutputDir)
 $ErrorActionPreference = 'Stop'
+[xml]$properties = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'Directory.Build.props'))
+$version = [string]$properties.Project.PropertyGroup.Version
 New-Item -ItemType Directory -Force -Path $OutputDir | Out-Null
 $tools = Join-Path $PublishDir 'tools'
 foreach ($tool in @('yt-dlp','ffmpeg','ffprobe','deno')) {
@@ -30,6 +32,10 @@ foreach ($run in @(1,2)) {
     if ($app.ExitCode -ne 0 -or !(Test-Path $result)) { throw "UI startup failed: $result" }
     $state = Get-Content $result -Raw | ConvertFrom-Json
     $expectedPlatforms = 'YouTube ' + [char]0x00B7 + ' Instagram'
-    if ($state.Platforms -ne $expectedPlatforms -or $state.HistoryCount -ne 0 -or $state.ItemCount -ne 0 -or !$state.ToolsPresent -or $state.Version -ne '0.2.7' -or $state.Background -ne '#FF0F1520' -or !$state.Format -or $state.DownloadEnabled) { throw 'UI startup diagnostics failed' }
+    if ($state.Platforms -ne $expectedPlatforms -or $state.HistoryCount -ne 0 -or $state.ItemCount -ne 0 -or !$state.ToolsPresent -or $state.Version -ne $version -or $state.Background -ne '#FF0F1520' -or !$state.Format -or $state.DownloadEnabled) { throw 'UI startup diagnostics failed' }
+    if (!$state.WindowIconPresent -or !$state.BrandLogoPresent -or !$state.LayoutCorrect -or !$state.FolderOpenRemoved -or !$state.DarkTitleBar -or !$state.CaptionMatchesTheme) { throw 'Branding, layout or native dark title bar check failed' }
+    $androidHash = (Get-FileHash (Join-Path (Split-Path $PSScriptRoot -Parent) 'app/src/main/res/drawable/logo.xml') -Algorithm SHA256).Hash.ToLowerInvariant()
+    if ($state.AndroidLogoHash -ne $androidHash) { throw 'App logo provenance mismatch' }
 }
+& (Join-Path $PSScriptRoot 'check-branding.ps1') -PublishDir $PublishDir
 Write-Host 'PASS: tools start, MP3 conversion, TikTok rejection and two clean WPF launches.'
