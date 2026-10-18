@@ -146,7 +146,7 @@ public partial class MainWindow : Window
         return false;
     }
 
-    public object Diagnostics(string? detectedPreview = null) => new
+    public object Diagnostics(string? detectedPreview = null, string? downloadingPreview = null) => new
     {
         Title, Platforms = PlatformLabel.Text, ItemCount = items.Count, HistoryCount = history.Count,
         ToolsPresent = new[] { "yt-dlp.exe", "ffmpeg.exe", "ffprobe.exe", "deno.exe" }.All(file => File.Exists(Path.Combine(tools, file))),
@@ -157,6 +157,8 @@ public partial class MainWindow : Window
         IndependentColumns = ColumnsAreIndependent(), ResultsFlowCorrect = ResultsStayInFlow(detectedPreview),
         ResultsInDownloads = ResultsPanel.IsDescendantOf(DownloadsCard),
         IdleStatusHidden = OperationPanel.Visibility == Visibility.Collapsed && StatusText.Text.Length == 0,
+        DownloadThemeCorrect = DownloadThemeMatches(downloadingPreview),
+        DownloadSurfaceLightRatio = downloadSurfaceLightRatio,
         DarkTitleBar = NativeChrome.IsDark(this), CaptionMatchesTheme = NativeChrome.HasMatchingCaption(this),
         NativeCaption = NativeChrome.Diagnostics(this),
         AndroidLogoHash = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Assets", "Branding.sha256")).Trim(),
@@ -350,19 +352,23 @@ public partial class MainWindow : Window
     {
         using var source = new CancellationTokenSource();
         cancellation = source;
-        ControlsPanel.IsEnabled = ResultsPanel.IsEnabled = PreferencesPanel.IsEnabled = UpdateButton.IsEnabled = false;
-        CancelButton.IsEnabled = true;
+        SetBusyControls(true);
         try { await work(source.Token); }
         catch (OperationCanceledException) { SetStatus("İptal edildi", "İşlem durduruldu. Tamamlanan dosyalar korunur.", 0); }
         catch (Exception error) { SetStatus("İşlem tamamlanamadı", Explain(error), 0); ShowError(error); }
         finally
         {
             cancellation = null;
-            ControlsPanel.IsEnabled = ResultsPanel.IsEnabled = PreferencesPanel.IsEnabled = UpdateButton.IsEnabled = true;
-            CancelButton.IsEnabled = false;
+            SetBusyControls(false);
             DownloadProgress.IsIndeterminate = false;
             UpdateSelection();
         }
+    }
+
+    private void SetBusyControls(bool busy)
+    {
+        ControlsPanel.IsEnabled = ResultsPanel.IsEnabled = PreferencesPanel.IsEnabled = UpdateButton.IsEnabled = !busy;
+        CancelButton.IsEnabled = busy;
     }
 
     private void EnsureTools()

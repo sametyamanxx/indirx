@@ -1,4 +1,11 @@
-# İndirX — doğrulama durumu (Android 0.2.7 / Windows 0.2.10)
+# İndirX — doğrulama durumu (Android 0.2.7 / Windows 0.2.11)
+
+## Windows 0.2.11 — İndirme sırasında koyu tema
+
+- Beyaz yüzey yerel olarak yeniden üretildi: gerçek bekleme durumunda liste devre dışı kalınca WPF'nin varsayılan ListBox şablonu beyaz arka plan gösteriyordu. Sorunu gösteren örnek ekran görüntüsü alındı.
+- Listeye devre dışı durumda da koyu kalan özel şablon; kaydırma çubuklarına koyu stil eklendi. Gerçek indirme bekleme durumunu açan ortak yöntem korunup tema testinde de kullanılır.
+- Yerel derleme 0 hata / 0 uyarıyla başarılı. Örnek tek video / 12 öğeli liste, %37 indirme / belirsiz dönüştürme durumlarında piksel denetimi başarılı (`DownloadThemeCorrect=true`, liste açık yüzey oranı 0). İndirme ve dönüştürme örnek görüntüleri incelendi; aynı kutuda tespit ve ilk yerleşim kontrolleri de başarılı.
+- Bu test ağ isteği yapmaz ve dosya indirme başarısı iddia etmez; örnek içerik kullanır ve sonunda başlangıç durumunu geri yükler. Paketli Setup/kurulum/yayın sonuçları tamamlanınca eklenecektir.
 
 ## Windows 0.2.10 — Tespit edilen içeriği mevcut İndirmeler kutusunda gösterme
 

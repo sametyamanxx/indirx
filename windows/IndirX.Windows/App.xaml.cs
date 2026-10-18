@@ -33,7 +33,8 @@ public partial class App : Application
                     encoder.Frames.Add(BitmapFrame.Create(bitmap));
                     using (var stream = File.Create(Path.ChangeExtension(result, ".png"))) encoder.Save(stream);
                     NativeChrome.SaveWindowImage(window, Path.ChangeExtension(result, ".window.png"));
-                    File.WriteAllText(result, JsonSerializer.Serialize(window.Diagnostics(Path.ChangeExtension(result, ".detected.png"))));
+                    File.WriteAllText(result, JsonSerializer.Serialize(window.Diagnostics(
+                        Path.ChangeExtension(result, ".detected.png"), Path.ChangeExtension(result, ".downloading.png"))));
                     Shutdown(0);
                 }
                 catch (Exception error)

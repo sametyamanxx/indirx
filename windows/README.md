@@ -1,6 +1,6 @@
-# İndirX 0.2.10 — Windows masaüstü projesi
+# İndirX 0.2.11 — Windows masaüstü projesi
 
-**[Setup.exe indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.10/IndirX-0.2.10-Windows-x64-Setup.exe)** · [Portable.zip](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.10/IndirX-0.2.10-Windows-x64-Portable.zip) · [Sürüm kaynak kodunu indir](https://github.com/sametyamanxx/indirx/archive/refs/tags/windows-v0.2.10.zip)
+**[Setup.exe indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.11/IndirX-0.2.11-Windows-x64-Setup.exe)** · [Portable.zip](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.11/IndirX-0.2.11-Windows-x64-Portable.zip) · [Sürüm kaynak kodunu indir](https://github.com/sametyamanxx/indirx/archive/refs/tags/windows-v0.2.11.zip)
 
 Windows 10 **22H2 (19045)** / Windows 11, **x64** için bağımsız WPF masaüstü uygulaması. Android APK'sını veya emülatör kullanmaz. .NET 10 çalışma ortamı, yt-dlp, FFmpeg/ffprobe ve YouTube için Deno kurulumun içinde gelir; ayrıca Python, Java veya .NET kurmak gerekmez.
 
@@ -8,6 +8,7 @@ Windows 10 **22H2 (19045)** / Windows 11, **x64** için bağımsız WPF masaüst
 
 - Android ile aynı logo; üst ortada logo, hemen altında ortalı İNDİRX. Solda Bağlantı ekle ve hemen altında İndirmeler; sağda tercihler ve altında altyapı güncelleme. Sütunlar bağımsızdır: sağ panelin yüksekliği İndirmeler bölümünü aşağı itmez. Tespit edilen içerik doğrudan mevcut İndirmeler kutusunda gösterilir; bağlantının altına ayrı sonuç kartı eklenmez. Sabit boyutlu içerik alanı ve kaydırılabilir liste, video bulununca ilk yerleşimin değişmesini önler. Gereksiz İndirmeye hazır yazıları kaldırılmıştır. Kayıt klasörünü aç düğmesi ve işlevi yoktur; kayıt klasörünü seç özelliği korunur.
 - EXE/Setup, Başlat menüsü/masaüstü kısayolları ve pencere/görev çubuğu simgesi aynı Android logosunu kullanır. Yerel Windows başlık çubuğu koyudur; destekleyen Windows 11 sürümlerinde başlık/yazı/kenarlık renkleri de uygulama temasıyla eşleştirilir. Özel renk desteklenmiyorsa yerel koyu başlık çubuğu korunur.
+- İndirme ve dönüştürme sırasında devre dışı kalan içerik listesi de koyu temada kalır; Windows'un beyaz devre dışı kontrol arka planı kullanılmaz. Liste ve kaydırma çubukları koyu stiller kullanır. İşlem ilerlemesi, iptal ve ilk yerleşim korunur.
 
 - Ana ekranda yalnızca **YouTube · Instagram**. TikTok ve diğer siteler hem bağlantı kabulünde hem yt-dlp çözücü seçiminde kapalıdır.
 - Video veya çalma listesi bulma; tek içerik doğrudan, listeler tek tek veya topluca seçilerek indirilir. İlk sürümde liste başına en fazla 500 içerik aranır.
@@ -21,7 +22,7 @@ Windows 10 **22H2 (19045)** / Windows 11, **x64** için bağımsız WPF masaüst
 
 ## Kurulum ve kaldırma
 
-GitHub Releases içindeki **IndirX-0.2.10-Windows-x64-Setup.exe** dosyasını çalıştır. Kullanıcı başına `%LOCALAPPDATA%\Programs\IndirX` konumuna kurulur; yönetici izni gerektirmez. Önceki Windows sürümüyle aynı kurulum kimliği kullanılır; aynı konuma kurarak güncellenebilir. Başlat menüsü ve isteğe bağlı masaüstü kısayolu eklenir. Windows Ayarlar → Yüklü uygulamalar üzerinden kaldırılır. Kaldırma medya dosyalarını silmez. Tercihler de güncelleme için korunur. Windows, önceden sabitlenmiş eski kısayolun simgesini önbellekten gösterirse kısayolu kaldırıp tekrar sabitlemek gerekebilir.
+GitHub Releases içindeki **IndirX-0.2.11-Windows-x64-Setup.exe** dosyasını çalıştır. Kullanıcı başına `%LOCALAPPDATA%\Programs\IndirX` konumuna kurulur; yönetici izni gerektirmez. Önceki Windows sürümüyle aynı kurulum kimliği kullanılır; aynı konuma kurarak güncellenebilir. Başlat menüsü ve isteğe bağlı masaüstü kısayolu eklenir. Windows Ayarlar → Yüklü uygulamalar üzerinden kaldırılır. Kaldırma medya dosyalarını silmez. Tercihler de güncelleme için korunur. Windows, önceden sabitlenmiş eski kısayolun simgesini önbellekten gösterirse kısayolu kaldırıp tekrar sabitlemek gerekebilir.
 
 Setup ve uygulama **Authenticode imzalı değildir**. Windows SmartScreen bilinmeyen yayıncı uyarısı gösterebilir. Yalnızca kendi güvenilir GitHub yayınının dosyasını kullan; sağlanan `.sha256` ile hash karşılaştır. Antivirüsü kapatmak gerekmez. 32 bit Windows ve yerel ARM64 paketi sunulmaz.
 

@@ -43,8 +43,8 @@ jobs:
           if-no-files-found: warn
       - uses: actions/upload-artifact@v4
         with:
-          name: IndirX-0.2.10-Windows-x64
-          path: artifacts/windows/dist/IndirX-0.2.10-*
+          name: IndirX-0.2.11-Windows-x64
+          path: artifacts/windows/dist/IndirX-0.2.11-*
           if-no-files-found: error
   publish:
     needs: build
@@ -55,7 +55,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: IndirX-0.2.10-Windows-x64
+          name: IndirX-0.2.11-Windows-x64
           path: dist
       - name: Upload Windows installer, portable package and checksums
         env:
