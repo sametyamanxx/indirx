@@ -8,7 +8,9 @@
 - `onStart` her görünür oturumda geçmişi temizler; aktif indirme korunur, bitmiş durum bilgisi sıfırlanır.
 - Bağlantı alan adı denetimi ve yt-dlp çözücü seçimi YouTube, Instagram ve TikTok ile sınırlandı.
 - Birim testleri: desteklenen normal/kısa bağlantılar, diğer siteler ve yanıltıcı alan adları; yeniden açılışta geçmiş/durum temizliği; yeni indirmede eski kaydın geri gelmemesi; aktif indirme korunması.
-- Bu sürümün derleme, test ve imza sonuçları işlem tamamlandığında aşağıya eklenecektir. Önceki sürüm sonuçları 0.2.5 için doğrulama sayılmaz.
+- GitHub Actions [Android APK #12](https://github.com/sametyamanxx/indirx/actions/runs/39128609865), commit `2f43b1691ec444edb172f6f820d1787bc94ca27a`: `:app:testDebugUnitTest :app:lintDebug :app:assembleDebug` başarılı. APK imza doğrulama ve `IndirX-0.2.5-APK` yükleme adımları başarılı.
+- [Publish Android APK](https://github.com/sametyamanxx/indirx/actions/runs/39128777994) başarılı. `v0.2.5` yayınına `IndirX-0.2.5.apk` eklendi (153.712.735 bayt). SHA-256: `7b670cd34d539eeb2d7a812f7659cb9682aeedee1982769247ef492294bef945`.
+- Testler GitHub'ın Linux derleme ortamında çalıştı. Yerel Windows ortamındaki ilk deneme Türkçe proje yolu nedeniyle başarısız oldu; bu sonuç GitHub derlemesinin başarısını etkilemez.
 - Önceki imzalama anahtarı depoda bulunmuyor; eski APK üzerine kurulum doğrulanmadı.
 
 ### Telefon üzerinde ek kabul kontrolleri
