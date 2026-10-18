@@ -5,7 +5,10 @@
 - 220 px sabit içerik alanı kaldırıldı. Tek içerik kendi satırı kadar, çalma listesi sol panelin kalan yüksekliği kadar gösterilir. Dış sayfa yalnızca küçük pencerelerde gerektiğinde kayar; liste tekerleği kendi kaydırıcısında tutulur.
 - Gerçek `RenderFound` ve yönlendirilmiş fare tekerleği olaylarıyla tekli/liste/tekliye dönüş, 1 ve 500 içerik, tekli otomatik seçim ve tümünü seç/kaldır testleri eklendi. Pencere boyutları: 1120×900, 1120×800, 840×640 ve 1440×1000. Liste sonundayken tekerlek dış sayfayı kaydırmamalıdır.
 - Yerel .NET 10 derlemesi ve 57 çevrimdışı assertion başarılı. Paketli araçların SHA-256 kontrolü, çalıştırılması, FFmpeg MP3 dönüşümü, TikTok reddi, iki temiz WPF açılışı, Android logosu/EXE simgesi, koyu başlık çubuğu ve indirme/dönüştürme teması denetimleri başarılı. Dört boyutlu arayüz kontrolü `ResultsFlowCorrect=true` ve `DownloadThemeCorrect=true` döndürdü; tekli/liste ekran görüntüleri incelendi.
-- Yeni Setup ve GitHub yayını bu kaydın hazırlandığı sırada henüz doğrulanmadı; sonuçlar tamamlanınca eklenecektir. Gerçek YouTube/Instagram indirmesi veya fiziksel fare etkileşimi bu testlerde denenmedi. Android değiştirilmedi.
+- [Windows Setup derlemesi](https://github.com/sametyamanxx/indirx/actions/runs/39150077521), commit `6397984e0ed07da836dd436db501508ab563e460`: başarılı. Paketli araçlar, arayüz kontrolleri, Setup üretimi ve sessiz kurulum/açılış/kaldırma geçti.
+- [Windows 0.2.12 yayın iş akışı](https://github.com/sametyamanxx/indirx/actions/runs/39150507499) başarılı. Setup, portable ZIP ve SHA-256 dosyaları [windows-v0.2.12](https://github.com/sametyamanxx/indirx/releases/tag/windows-v0.2.12) yayınına eklendi; iki indirme bağlantısı anonim HTTP HEAD isteğine 200 döndü. Yüklenen dosyaların GitHub SHA-256 metadata değerleri yayımlanan checksum dosyalarıyla eşleşti.
+- Setup: 176.998.229 bayt; SHA-256 `a071349912def955910a2d82ab5099241a40f1883fe0bdeed559bf2b07c883ef`. Portable ZIP: 205.512.370 bayt; SHA-256 `cbf9b770ebf65eb4c0f822d1045f24b60542d3f8ab2982c9c8ac5f55561fc6da`.
+- Gerçek YouTube/Instagram indirmesi veya fiziksel fare etkileşimi bu testlerde denenmedi. Setup/EXE dijital imzasızdır. Android değiştirilmedi.
 
 ## Android 0.2.8 — İndirme kontrollerini Bulunan içerikler bölümüne taşıma
 
