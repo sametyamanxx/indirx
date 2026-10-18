@@ -3,7 +3,10 @@
 ## Android 0.2.13 / Windows 0.2.18 — Sabit olmayan sayfa sonu
 
 - Alt bölüm ana sayfanın kaydırma ağacına alındı. İndir tüm içeriklerin ardından gelir; altındaki son yazı İNDİRX ve gerçek derleme sürümüdür. Buton ekrana sabitlenmez, sayfayla hareket eder; seçim yokken gizlenmeden devre dışı kalır.
-- Windows'ta 77 çekirdek assertion, iki paketli WPF açılışı, beş pencere boyutunda yerleşim/sayfa sonu/kaydırmayla footer hareketi, bul/indir akışı, liste tekerleği, tema ve araç denetimleri geçti. Sonuç görüntüsü incelendi. Android'de 27 test, lint ve kalıcı imzalı APK derlemesi başarılı; ebeveyn sırası, alt yazı ve gerçek kaydırmayla ekran koordinatının değişmesi test edildi. CI/yayın sonuçları eklenecek.
+- Windows'ta 77 çekirdek assertion, iki paketli WPF açılışı, beş pencere boyutunda yerleşim/sayfa sonu/kaydırmayla footer hareketi, bul/indir akışı, liste tekerleği, tema ve araç denetimleri geçti. Sonuç görüntüsü incelendi. Android'de 27 test, lint ve kalıcı imzalı APK derlemesi başarılı; ebeveyn sırası, alt yazı ve gerçek kaydırmayla ekran koordinatının değişmesi test edildi.
+- Commit `76b9e9ecdbfd8bf64861ce4cf9f3b6573ac9da1d`: [Android yayın iş akışı](https://github.com/sametyamanxx/indirx/actions/runs/39162119940) ve [Windows yayın iş akışı](https://github.com/sametyamanxx/indirx/actions/runs/39162119931) başarılı. Test/lint/derleme/çözücü/imza ve Windows kurulum/açılış/kaldırma kontrolleri geçti; paketler yayımlandı.
+- APK: 154.675.922 bayt; SHA-256 `5466786f381b09a6191090cc06e8c0fdf7933f1e529c0e5972f3c7af578d9700`. İndirilen gerçek APK'nın hash'i ve imzası doğrulandı; paket `com.indirx.app`, sürüm 0.2.13 / kod 15. Sertifika SHA-256 `6a385b34fd043e1afca952548258d76b06e431e463160f542fadffbc5e9ad41f`, önceki kalıcı imzayla aynı.
+- Setup: 177.012.548 bayt; SHA-256 `60334aab5cc1f70ee2580eca20e120542e1bc0960ba16233584548e3aabe3c0f`. Portable: 205.528.836 bayt; SHA-256 `588a0d85f8b8da8fcec57bce4b67eca1f7c2b8340c56835534317bd81bab70df`. GitHub digest/checksum eşleşti; üç anonim indirme bağlantısı HTTP HEAD isteğine 200 döndü.
 - Önceki otomatik güncellemeler ve Android kalıcı imzası değiştirilmedi. Kontroller gerçek medya indirmesi veya fiziksel cihazda/sistemde yükseltme testi değildir.
 
 ## Android 0.2.12 / Windows 0.2.17 — Sabit İndir ve yalnızca sürüm alt yazısı
