@@ -6,7 +6,10 @@
 - Üst ortada logo ve altında ortalı İNDİRX; ilk satırda bağlantı/tercihler; alt satırda indirmeler/güncelleme. Kayıt klasörünü aç düğmesi ve işlevi kaldırıldı.
 - Koyu yerel başlık çubuğu, pencere simgesi, kaynak logo hash'i ve öğelerin gerçek yerleşim koordinatları açılış tanılarında kontrol edilir. Başlık çubuğunu içeren pencere görüntüsü de alınır.
 - Yerel WPF derlemesi 0 hata / 0 uyarıyla başarılı; gerçek açılışta yerleşim, logo ve koyu başlık çubuğu tanıları başarılı. EXE'nin gömülü simgesi Android kaynağından üretilen ICO ile eşleşti.
-- Paketli uygulama ve Setup sonuçları tamamlandığında eklenecek; önceki sürüm sonuçları bu sürümün testi sayılmaz. Gerçek platform indirmeleri bu görsel güncellemede henüz test edilmedi.
+- [Windows Setup derlemesi](https://github.com/sametyamanxx/indirx/actions/runs/39136795904), commit `de373af7cace1e6a828fb54addd7655d719c86d4`: başarılı. 57 çevrimdışı assertion, paketli araçlar, WPF yerleşimi/Android logosu/koyu başlık çubuğu denetimleri, EXE ve Setup'ın gerçek yerel simgelerinin karşılaştırılması, Setup üretimi ve sessiz kurulum/açılış/kaldırma geçti. Windows sürümlerinde desteklenmeyen DWM renk sorgusu yerine renk uygulama sonucu ve yerel koyu başlık çubuğu kontrol edilir.
+- [Windows 0.2.8 yayın iş akışı](https://github.com/sametyamanxx/indirx/actions/runs/39137046448) başarılı; aynı testler yayın etiketinde de geçti. Setup, portable ZIP ve SHA-256 dosyaları `windows-v0.2.8` yayınına eklendi; Setup bağlantısı anonim HTTP HEAD isteğine 200 döndü.
+- Setup: 176.990.311 bayt; SHA-256 `dde17b2bffa1d54a33eb022474e98484ed5565ce1097e80efca3a9ba1a153d60`. Portable ZIP: 205.502.695 bayt; SHA-256 `4db13b868c97dace742fc66ff3f81009f70eba0d47781d454183fc0e75f75bd0`.
+- Gerçek platform indirmeleri bu görsel güncellemede henüz test edilmedi. Setup/EXE Authenticode imzasızdır.
 
 ## Windows 0.2.7 — yeni masaüstü projesi
 

@@ -10,9 +10,11 @@ Android 8.0 ve üzeri içindir. Debug imzalı test APK'sıdır; önceki sürüm 
 
 ## Windows masaüstü projesi
 
-**[Windows 0.2.7 Setup indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.7/IndirX-0.2.7-Windows-x64-Setup.exe)** · [Taşınabilir ZIP](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.7/IndirX-0.2.7-Windows-x64-Portable.zip) · [Windows sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/windows-v0.2.7)
+**[Windows 0.2.8 Setup indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.8/IndirX-0.2.8-Windows-x64-Setup.exe)** · [Taşınabilir ZIP](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.8/IndirX-0.2.8-Windows-x64-Portable.zip) · [Windows sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/windows-v0.2.8)
 
 Ayrı, yerel Windows uygulaması `windows/` klasöründedir: **[Windows projesi ve derleme talimatları](windows/README.md)**. Windows 10 22H2 / Windows 11 x64 için .NET 10 WPF, kullanıcı başına Setup ve portable paket üretir. Yalnızca YouTube ve Instagram desteklenir. Android APK'sı veya emülatör kullanmaz. Kurulum dijital imzalı değildir. Windows etiketleri `windows-v…` biçimindedir; Android 0.2.7 sürümü değiştirilmez.
+
+Windows 0.2.8: Android ile aynı logo, üst ortada logo ve altında İNDİRX; ilk satırda bağlantı/tercihler, alt satırda indirmeler/altyapı güncelleme. Kayıt klasörünü aç işlevi kaldırıldı. EXE, Setup ve pencere çubuğu logoludur; başlık çubuğu koyu temaya uyar.
 
 ## 0.2.7 yalnızca YouTube ve Instagram
 
