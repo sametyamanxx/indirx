@@ -1,5 +1,7 @@
 # İndirX 0.2.7 — Windows masaüstü projesi
 
+**[Setup.exe indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.7/IndirX-0.2.7-Windows-x64-Setup.exe)** · [Portable.zip](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.7/IndirX-0.2.7-Windows-x64-Portable.zip) · [Sürüm kaynak kodunu indir](https://github.com/sametyamanxx/indirx/archive/refs/tags/windows-v0.2.7.zip)
+
 Windows 10 **22H2 (19045)** / Windows 11, **x64** için bağımsız WPF masaüstü uygulaması. Android APK'sını veya emülatör kullanmaz. .NET 10 çalışma ortamı, yt-dlp, FFmpeg/ffprobe ve YouTube için Deno kurulumun içinde gelir; ayrıca Python, Java veya .NET kurmak gerekmez.
 
 ## Özellikler
