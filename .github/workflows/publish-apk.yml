@@ -1,40 +1,40 @@
-name: Publish IndirX 0.2.3 APK
+name: Publish Android APK
 on:
-  workflow_dispatch:
-  push:
-    branches: [main]
-    paths: ['.github/workflows/publish-apk.yml']
+  release:
+    types: [published]
 permissions: {}
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      actions: read
       contents: write
     steps:
-      - name: Download verified APK from successful build
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
+          log-accepted-android-sdk-licenses: false
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+      - run: gradle :app:assembleDebug
+      - name: Verify and prepare installable APK
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: |
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify app/build/outputs/apk/debug/app-debug.apk
+          VERSION="${TAG_NAME#v}"
+          mkdir -p dist
+          cp app/build/outputs/apk/debug/app-debug.apk "dist/IndirX-${VERSION}.apk"
+      - name: Upload APK to this release
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-        run: |
-          test "$(gh run view 38357803258 --json conclusion --jq .conclusion)" = "success"
-          gh run download 38357803258 --name IndirX-0.2.3-APK --dir dist
-          test -s dist/IndirX-0.2.3.apk
-      - name: Publish requested downloadable release
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          cat > notes.md <<'EOF'
-          ## İndirX 0.2.3
-          Android 8.0 ve üzeri için kurulabilir test APK.
-
-          **İndirme:** Assets bölümündeki **IndirX-0.2.3.apk** dosyasını indirin ve telefonda açın.
-
-          Eski bağlantı ve bulunan içeriklerin yeniden açılışta geri gelmesi düzeltildi.
-
-          **Kurulum:** GitHub derlemesi farklı test imzası kullanır. Önceki sürüm üzerine yüklenmezse eski uygulamayı kaldırmanız gerekir; uygulama ayarları ve geçmişi silinir, dış klasördeki indirmeler korunur.
-
-          Derleme ve APK imza doğrulaması başarılıdır. Fiziksel telefonda test edilmemiştir.
-          EOF
-          gh release create v0.2.3 dist/IndirX-0.2.3.apk --target 1e10767e98401bf519d946cc6685ea4610713837 --title "İndirX 0.2.3" --notes-file notes.md --latest
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: gh release upload "$TAG_NAME" dist/IndirX-*.apk --clobber
