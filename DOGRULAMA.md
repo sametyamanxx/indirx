@@ -41,3 +41,8 @@ Biçim ve platform kısıtları README.md dosyasında açıklanmıştır.
 Bağlantı ve bulunan içeriklerin SharedPreferences / Bundle üzerinden geri yüklenmesi ve kalıcı kaydı kaldırıldı. Eski link, items, collection, playlist kayıtları açılışta temizlenir. Biçim, klasör ve indirme geçmişine dokunulmaz.
 
 Cihazda kabul kontrolü: 0.2.2 üzerinde bir liste bulup uygulamayı kapat; 0.2.3 APK'sını güncelleme olarak kur. Yeniden açıldığında bağlantı boş ve bulunan içerikler bölümü gizli olmalı. Bir bağlantı bul, geri tuşuyla çıkıp yeniden aç ve aynı kontrolü tekrarla. Klasör seçicisinden dönüşte açık sonuçlar korunmalı. Bu senaryolar henüz cihazda çalıştırılmadı.
+
+
+## 0.2.4 indirme geçmişi açılış davranışı
+
+Önceki sürümlerde cihazda saklanan indirme geçmişi artık uygulama açılışında temizlenir. İndirme geçmişi yalnızca açık uygulama oturumunda görünür; indirilmiş dosyalar seçilen kayıt klasöründe kalır. Cihaz üzerinde doğrulama: bir dosya indir, uygulamayı tamamen kapatıp yeniden aç; alt bölümde eski indirme kaydı görünmemeli ve dosya kayıt klasöründe bulunmaya devam etmelidir. Bu senaryo cihazda henüz çalıştırılmadı.
