@@ -1,4 +1,11 @@
-# İndirX — doğrulama durumu (Android 0.2.11 / Windows 0.2.16)
+# İndirX — doğrulama durumu (Android 0.2.12 / Windows 0.2.17)
+
+## Android 0.2.12 / Windows 0.2.17 — Sabit İndir ve yalnızca sürüm alt yazısı
+
+- İki platformda İndir, kaydırma alanından ayrılmış sabit alt bölümde daima görünür; sürüm yazısı düğmenin altındadır ve yalnızca sürüm numarası içerir.
+- İlk açılış, boş/geçersiz bağlantı, seçim olmaması, aktif indirme/dönüştürme ve bağlantı temizleme durumlarında gizleme yerine devre dışı bırakma kullanılır. Tercih sırası ve otomatik güncelleme/imza yapısı korunur.
+- Windows'ta 77 çekirdek assertion, beş boyutta düğmenin ekran içinde ve sürümün üstünde ortalı kalması, iki WPF açılışı, indirme/dönüştürme teması, seçim ve paketli araç testleri geçti. İlk açılış ve sonuç görüntüleri incelendi. Android'de 27 test, lint ve kalıcı imzalı APK derlemesi geçti; sabit footer, ilk açılış görünürlüğü, kaydırınca sabit kalması, durum geçişleri ve yalnızca sürüm metni doğrulandı. CI/yayın sonuçları eklenecek.
+- Bu testler gerçek medya indirmesi veya fiziksel cihazda/sistemde önceki kurulumun üzerine yükleme testi değildir.
 
 ## Android 0.2.11 / Windows 0.2.16 — Tercihler üstte, İndir en sonda
 

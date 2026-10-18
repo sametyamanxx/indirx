@@ -98,6 +98,12 @@ class MainActivityTest {
         assertEquals(View.GONE, activity.findViewById<View>(R.id.found_contents).visibility)
         assertEquals(View.GONE, activity.findViewById<View>(R.id.download_status).visibility)
         assertEquals(View.GONE, activity.findViewById<View>(R.id.cancel_download).visibility)
+        val download = activity.findViewById<Button>(R.id.start_download)
+        assertEquals(View.VISIBLE, download.visibility)
+        assertFalse(download.isEnabled)
+        assertEquals(BuildConfig.VERSION_NAME, activity.findViewById<TextView>(R.id.version_text).text.toString())
+        download.performClick()
+        assertNull(shadowOf(activity.application).nextStartedService)
         assertFalse(prefs.contains("history"))
         assertEquals("content://test/folder", prefs.getString("tree", null))
     }
@@ -131,6 +137,7 @@ class MainActivityTest {
         assertTrue(activity.findViewById<Button>(R.id.cancel_download).isEnabled)
         assertFalse(activity.findViewById<Button>(R.id.content_action).isEnabled)
         assertFalse(activity.findViewById<Button>(R.id.start_download).isEnabled)
+        assertEquals(View.VISIBLE, activity.findViewById<View>(R.id.start_download).visibility)
 
         DownloadState.status = "Dönüştürülüyor / kapak ekleniyor"
         DownloadState.progress = -1
@@ -146,6 +153,7 @@ class MainActivityTest {
         assertEquals("Tamamlandı", activity.findViewById<TextView>(R.id.download_status_text).text.toString())
         assertEquals(View.GONE, activity.findViewById<View>(R.id.cancel_download).visibility)
         assertTrue(activity.findViewById<TextView>(R.id.download_history).text.contains("test.mp4"))
+        assertEquals(View.VISIBLE, activity.findViewById<View>(R.id.start_download).visibility)
         assertSinglePanel(activity)
     }
 
@@ -161,6 +169,8 @@ class MainActivityTest {
         assertTrue(activity.findViewById<ProgressBar>(R.id.download_progress).isIndeterminate)
         val cancel = activity.findViewById<Button>(R.id.cancel_download)
         assertTrue(cancel.isEnabled)
+        assertEquals(View.VISIBLE, activity.findViewById<View>(R.id.start_download).visibility)
+        assertFalse(activity.findViewById<Button>(R.id.start_download).isEnabled)
         cancel.performClick()
         assertTrue(DownloadState.cancelled)
         assertFalse(cancel.isEnabled)
@@ -197,7 +207,8 @@ class MainActivityTest {
         link.setText("https://youtu.be/BaW_jenozKc")
         assertEquals("İçerikleri bul", find.text.toString())
         assertTrue(find.isEnabled)
-        assertEquals(View.GONE, action.visibility)
+        assertEquals(View.VISIBLE, action.visibility)
+        assertFalse(action.isEnabled)
         showMedia(activity)
         assertEquals("İçerikleri bul", find.text.toString())
         assertEquals(View.VISIBLE, action.visibility)
@@ -260,7 +271,8 @@ class MainActivityTest {
         assertEquals(0, activity.findViewById<ViewGroup>(R.id.found_results).childCount)
         assertEquals(View.GONE, activity.findViewById<View>(R.id.found_contents).visibility)
         assertEquals(View.GONE, activity.findViewById<View>(R.id.download_status).visibility)
-        assertEquals(View.GONE, activity.findViewById<View>(R.id.start_download).visibility)
+        assertEquals(View.VISIBLE, activity.findViewById<View>(R.id.start_download).visibility)
+        assertFalse(activity.findViewById<Button>(R.id.start_download).isEnabled)
         assertFalse(DownloadState.hasOperation)
         assertTrue(DownloadState.history.contains("previous.mp3"))
         link.setText("https://www.instagram.com/reel/example/")
@@ -328,26 +340,40 @@ class MainActivityTest {
         decor.viewTreeObserver.dispatchOnGlobalLayout()
     }
 
-    @Test fun preferencesStayBelowLinkAndDownloadIsTheLastCenteredControl() {
+    @Test fun preferencesStayBelowLinkAndDownloadIsCenteredAboveVersion() {
         val activity = launch()
         val root = activity.findViewById<LinearLayout>(R.id.main_content)
         val preferences = activity.findViewById<View>(R.id.download_preferences)
         val link = activity.findViewById<View>(R.id.link_section)
         val found = activity.findViewById<View>(R.id.found_contents)
         val download = activity.findViewById<Button>(R.id.start_download)
+        val version = activity.findViewById<TextView>(R.id.version_text)
+        val footer = activity.findViewById<LinearLayout>(R.id.footer_panel)
+        val page = activity.findViewById<View>(R.id.page_scroll)
+        assertSame(version, footer.getChildAt(footer.childCount - 1))
+        assertSame(download, footer.getChildAt(footer.childCount - 2))
+        assertEquals(BuildConfig.VERSION_NAME, version.text.toString())
+        assertEquals(View.VISIBLE, download.visibility)
+        assertFalse(download.isEnabled)
         for (playlist in listOf(false, true)) {
             showMedia(activity, playlist)
             layoutPhone(activity)
             shadowOf(Looper.getMainLooper()).idle()
             assertEquals(root.indexOfChild(link) + 1, root.indexOfChild(preferences))
             assertEquals(root.indexOfChild(preferences) + 1, root.indexOfChild(found))
-            assertSame(download, root.getChildAt(root.childCount - 1))
+            assertSame(download, footer.getChildAt(footer.childCount - 2))
+            assertSame(version, footer.getChildAt(footer.childCount - 1))
             assertEquals(android.view.Gravity.CENTER_HORIZONTAL, (download.layoutParams as LinearLayout.LayoutParams).gravity)
-            assertTrue(kotlin.math.abs(root.width / 2 - download.left - download.width / 2) <= 1)
+            assertTrue(kotlin.math.abs(footer.width / 2 - download.left - download.width / 2) <= 1)
             assertTrue(preferences.top >= link.bottom)
             assertTrue(found.top >= preferences.bottom)
-            assertTrue(download.top >= found.bottom)
+            assertTrue(footer.top >= page.bottom)
+            assertTrue(version.top >= download.bottom)
+            assertEquals(View.VISIBLE, download.visibility)
             assertEquals("İçerikleri bul", activity.findViewById<Button>(R.id.content_action).text.toString())
+            val fixedTop = footer.top
+            activity.findViewById<ScrollView>(R.id.page_scroll).scrollTo(0, Int.MAX_VALUE)
+            assertEquals(fixedTop, footer.top)
         }
     }
 
@@ -370,6 +396,7 @@ class MainActivityTest {
         layoutPhone(activity)
         shadowOf(Looper.getMainLooper()).idle()
         assertEquals(0, scroll.scrollY)
-        assertEquals(View.GONE, activity.findViewById<View>(R.id.start_download).visibility)
+        assertEquals(View.VISIBLE, activity.findViewById<View>(R.id.start_download).visibility)
+        assertFalse(activity.findViewById<Button>(R.id.start_download).isEnabled)
     }
 }

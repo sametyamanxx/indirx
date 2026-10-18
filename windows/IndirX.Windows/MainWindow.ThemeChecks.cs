@@ -29,7 +29,7 @@ public partial class MainWindow
                 {
                     SetStatus(progress < 0 ? "Dönüştürülüyor / kapak ekleniyor" : "İndiriliyor", media[0].Title, progress);
                     UpdateLayout();
-                    if (ResultsList.IsEnabled || OperationPanel.Visibility != Visibility.Visible) return false;
+                    if (ResultsList.IsEnabled || OperationPanel.Visibility != Visibility.Visible || DownloadButton.Visibility != Visibility.Visible || DownloadButton.IsEnabled) return false;
                     downloadSurfaceLightRatio = Math.Max(downloadSurfaceLightRatio, LightPixelRatio(ResultsList));
                     dark &= DownloadProgress.Background is SolidColorBrush track && track.Color.R < 100 && track.Color.G < 100 && track.Color.B < 120;
                     // Text may be light, but an empty or disabled list background

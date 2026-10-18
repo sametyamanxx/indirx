@@ -15,4 +15,6 @@
     <item name="main_content" type="id" />
     <item name="link_section" type="id" />
     <item name="start_download" type="id" />
+    <item name="version_text" type="id" />
+    <item name="footer_panel" type="id" />
 </resources>

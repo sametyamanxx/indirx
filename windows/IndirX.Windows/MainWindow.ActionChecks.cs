@@ -28,9 +28,10 @@ public partial class MainWindow
         try
         {
             if (!ContentActionButton.IsDescendantOf(LinkCard) || ContentActionButton.IsDescendantOf(PreferencesCard) ||
-                DownloadButton.Parent != MainLayout || System.Windows.Controls.Grid.GetRow(DownloadButton) <= System.Windows.Controls.Grid.GetRow(VersionText)) return false;
+                DownloadButton.Parent != FooterPanel || VersionText.Parent != FooterPanel ||
+                FooterPanel.Children.IndexOf(DownloadButton) >= FooterPanel.Children.IndexOf(VersionText)) return false;
             LinkBox.Text = "";
-            if (!ButtonMatches("İçerikleri bul", false) || !DownloadMatches(false, false)) return false;
+            if (!ButtonMatches("İçerikleri bul", false) || !DownloadMatches(true, false)) return false;
             LinkBox.Text = firstLink;
             if (!ButtonMatches("İçerikleri bul", true) || !Cleared()) return false;
             CompleteFind(single, linkRevision);
@@ -39,10 +40,10 @@ public partial class MainWindow
             SetStatus("Tamamlandı", "Örnek işlem", 100);
             var staleRevision = linkRevision;
             LinkBox.Clear();
-            if (!Cleared() || !ButtonMatches("İçerikleri bul", false) || !DownloadMatches(false, false)) return false;
+            if (!Cleared() || !ButtonMatches("İçerikleri bul", false) || !DownloadMatches(true, false)) return false;
             LinkBox.Text = firstLink;
             CompleteFind(single, staleRevision);
-            if (!Cleared() || !ButtonMatches("İçerikleri bul", true)) return false;
+            if (!Cleared() || !ButtonMatches("İçerikleri bul", true) || !DownloadMatches(true, false)) return false;
 
             LinkBox.Text = nextLink;
             if (!Cleared() || !ButtonMatches("İçerikleri bul", true)) return false;

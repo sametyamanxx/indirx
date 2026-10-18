@@ -45,7 +45,7 @@ public partial class MainWindow : Window
         ResultsList.ItemsSource = items;
         PageScroller.SizeChanged += (_, _) => UpdateResultsLayout();
         PlatformLabel.Text = PlatformPolicy.DisplayName;
-        VersionText.Text = $"İndirX • {Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)} • Windows x64\nYalnızca indirme hakkın olan içerikleri kaydet.";
+        VersionText.Text = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "";
         AudioMode.IsChecked = settings.AudioMode;
         VideoMode.IsChecked = !settings.AudioMode;
         RefreshFormat();
@@ -81,9 +81,12 @@ public partial class MainWindow : Window
             (DownloadsCard.Visibility != Visibility.Visible || (Math.Abs(downloads.X - link.X) < 2 &&
                 Math.Abs(DownloadsCard.ActualWidth - LinkCard.ActualWidth) < 2 && downloads.Y >= preferences.Y + PreferencesCard.ActualHeight)) &&
             Math.Abs(preferences.Y - link.Y - LinkCard.ActualHeight - LinkCard.Margin.Bottom) < 2 &&
-            (DownloadButton.Visibility != Visibility.Visible ||
-                (Position(DownloadButton).Y >= Position(VersionText).Y + VersionText.ActualHeight &&
-                 Math.Abs(Position(DownloadButton).X + DownloadButton.ActualWidth / 2 - MainLayout.ActualWidth / 2) < 2));
+            DownloadButton.Visibility == Visibility.Visible &&
+            VersionText.TranslatePoint(new Point(), FooterPanel).Y >= DownloadButton.TranslatePoint(new Point(), FooterPanel).Y + DownloadButton.ActualHeight &&
+            Math.Abs(DownloadButton.TranslatePoint(new Point(DownloadButton.ActualWidth / 2, 0), WindowLayout).X - WindowLayout.ActualWidth / 2) < 2 &&
+            DownloadButton.TranslatePoint(new Point(), WindowLayout).Y >= PageScroller.TranslatePoint(new Point(), WindowLayout).Y + PageScroller.ActualHeight &&
+            VersionText.TranslatePoint(new Point(0, VersionText.ActualHeight), WindowLayout).Y <= WindowLayout.ActualHeight &&
+            VersionText.Text == Assembly.GetExecutingAssembly().GetName().Version?.ToString(3);
     }
 
     private bool CenteredCardsResize()
@@ -339,7 +342,7 @@ public partial class MainWindow : Window
         var idle = cancellation == null && ControlsPanel.IsEnabled;
         ContentActionButton.Content = "İçerikleri bul";
         ContentActionButton.IsEnabled = idle && !string.IsNullOrWhiteSpace(LinkBox.Text);
-        DownloadButton.Visibility = HasCurrentResults ? Visibility.Visible : Visibility.Collapsed;
+        DownloadButton.Visibility = Visibility.Visible;
         DownloadButton.IsEnabled = idle && HasCurrentResults && items.Any(item => item.Selected);
     }
 
