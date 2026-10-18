@@ -72,5 +72,9 @@ foreach ($name in @('WizardSmall','WizardLarge')) {
     $file = [IO.File]::Create((Join-Path $Destination ($name + '.bmp')))
     try { $encoder.Save($file) } finally { $file.Dispose() }
 }
-(Get-FileHash $source -Algorithm SHA256).Hash.ToLowerInvariant() | Out-File (Join-Path $Destination 'Branding.sha256') -Encoding ascii
+$algorithm = [Security.Cryptography.SHA256]::Create()
+$sourceStream = [IO.File]::OpenRead($source)
+try { $hash = [BitConverter]::ToString($algorithm.ComputeHash($sourceStream)).Replace('-', '').ToLowerInvariant() }
+finally { $sourceStream.Dispose(); $algorithm.Dispose() }
+[IO.File]::WriteAllText((Join-Path $Destination 'Branding.sha256'), $hash, [Text.Encoding]::ASCII)
 Write-Host 'Android vector rendered unchanged into PNG, multi-size Windows ICO and Setup artwork.'
