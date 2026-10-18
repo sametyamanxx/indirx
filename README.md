@@ -2,7 +2,7 @@
 
 Tamamen Türkçe; koyu lacivert zemin, antrasit kartlar ve yumuşak mavi vurgularla tasarlanmış video/ses indirme uygulaması.
 
-## 0.2.3 temiz açılış
+## 0.2.4 indirme geçmişini açılışta temizleme
 
 - Eski bağlantı ve bulunan içerikler yeniden açılışta geri yüklenmez.
 - Önceki sürümlerin sakladığı arama sonuçları otomatik temizlenir.
