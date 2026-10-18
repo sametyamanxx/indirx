@@ -24,12 +24,14 @@ class DownloadStateTest {
         assertEquals("Seçtiğin içerikler burada görünecek.", DownloadState.detail)
         assertEquals(0, DownloadState.progress)
         assertFalse(DownloadState.cancelled)
+        assertFalse(DownloadState.hasOperation)
     }
 
     @Test fun newDownloadDoesNotRestorePreviousSession() {
         DownloadState.record("old.mp4")
         DownloadState.beginVisibleSession()
         DownloadState.record("new.mp4")
+        assertTrue(DownloadState.hasOperation)
         assertTrue(DownloadState.history.contains("new.mp4"))
         assertFalse(DownloadState.history.contains("old.mp4"))
     }
@@ -43,6 +45,7 @@ class DownloadStateTest {
         DownloadState.beginVisibleSession()
         assertEquals("", DownloadState.history)
         assertTrue(DownloadState.running.get())
+        assertTrue(DownloadState.hasOperation)
         assertEquals("İndiriliyor", DownloadState.status)
         assertEquals("active.mp4", DownloadState.detail)
         assertEquals(42, DownloadState.progress)

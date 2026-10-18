@@ -1,0 +1,11 @@
+<resources>
+    <item name="found_contents" type="id" />
+    <item name="found_results" type="id" />
+    <item name="download_status" type="id" />
+    <item name="download_status_text" type="id" />
+    <item name="download_detail" type="id" />
+    <item name="download_progress" type="id" />
+    <item name="cancel_download" type="id" />
+    <item name="download_history" type="id" />
+    <item name="start_download" type="id" />
+</resources>

@@ -1,4 +1,12 @@
-# İndirX — doğrulama durumu (Android 0.2.7 / Windows 0.2.11)
+# İndirX — doğrulama durumu (Android 0.2.8 / Windows 0.2.11)
+
+## Android 0.2.8 — İndirme kontrollerini Bulunan içerikler bölümüne taşıma
+
+- Ayrı alt İndirmeler kartı kaldırıldı; durum, detay, ilerleme, iptal ve oturum kayıtları Bulunan içerikler bölümünün içinde aynı alana yerleştirildi.
+- İşlem alanı yalnızca aktif/tamamlanmış oturum işlemi için görünür; aktif indirmede yeniden açılışta liste yoksa bile bölüm ve iptal erişilebilir kalır. Yeni oturumda boş durum ve eski geçmiş gösterilmez.
+- Robolectric/SDK 28 arayüz testleri eklendi: başlangıçta alt bölümün yokluğu, tek içerik/liste gösterimi, ilerleme ve dönüştürme, tamamlanma, arka plandaki indirmeye dönüş ve gerçek iptal servis niyetinin gönderilmesi. İnternet ya da yerel yt-dlp işlemi başlatılmaz; gerçek Android cihaz testi değildir.
+- İndirme durumuna ait oturum işareti ve temizlenmesi birim testlerine eklendi. Test/derleme/yayın sonuçları tamamlandığında kaydedilecektir.
+- Önceki Android APK'nın özel imzalama anahtarı depoda yoktur. Güncelleme olarak üzerine kurulum doğrulanmadı; fiziksel telefon/emülatör veya uçtan uca platform indirmesi bu değişiklik için denenmedi. Windows 0.2.11 değişmedi.
 
 ## Windows 0.2.11 — İndirme sırasında koyu tema
 

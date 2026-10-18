@@ -8,10 +8,12 @@ object DownloadState {
     @Volatile var progress = 0
     @Volatile var status = "İndirmeye hazır"
     @Volatile var detail = "Seçtiğin içerikler burada görünecek."
+    @Volatile var hasOperation = false
     @Volatile var history = ""
         private set
 
     @Synchronized fun record(value: String) {
+        hasOperation = true
         history = (value + "\n\n" + history).take(24000)
     }
 
@@ -19,6 +21,7 @@ object DownloadState {
     @Synchronized fun beginVisibleSession() {
         history = ""
         if (!running.get()) {
+            hasOperation = false
             cancelled = false
             progress = 0
             status = "İndirmeye hazır"

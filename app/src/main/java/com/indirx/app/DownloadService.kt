@@ -41,6 +41,7 @@ class DownloadService : Service() {
             return START_NOT_STICKY
         }
         if (!DownloadState.running.compareAndSet(false, true)) return START_NOT_STICKY
+        DownloadState.hasOperation = true
         DownloadState.cancelled = false
         DownloadState.status = "Hazırlanıyor"; DownloadState.detail = "İndirme altyapısı başlatılıyor"; DownloadState.progress = -1
         startForeground(1, notification())

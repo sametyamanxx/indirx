@@ -32,6 +32,8 @@ class MainActivity : Activity() {
     private lateinit var detail: TextView
     private lateinit var progress: ProgressBar
     private lateinit var history: TextView
+    private lateinit var downloadStatus: LinearLayout
+    private lateinit var cancel: Button
     private lateinit var folderLabel: TextView
     private lateinit var find: Button
     private lateinit var download: Button
@@ -54,13 +56,7 @@ class MainActivity : Activity() {
     private val formatValues = arrayOf("audio:mp3", "audio:m4a", "audio:flac", "audio:opus", "audio:vorbis", "audio:wav", "audio:aac", "audio:alac", "video:mp4", "video:mkv", "video:webm", "video:mov", "video:avi", "video:flv")
     private val refresh = object : Runnable {
         override fun run() {
-            status.text = DownloadState.status
-            detail.text = DownloadState.detail
-            progress.isIndeterminate = DownloadState.running.get() && DownloadState.progress < 0
-            if (!progress.isIndeterminate) progress.setProgress(DownloadState.progress.coerceAtLeast(0), true)
-            history.text = DownloadState.history.ifEmpty { "Henüz indirme yok." }
-            download.isEnabled = !loading && !DownloadState.running.get() && boxes.any { it.second?.isChecked != false }
-            download.alpha = if (download.isEnabled) 1f else .45f
+            refreshDownloadUi()
             handler.postDelayed(this, 400)
         }
     }
@@ -115,6 +111,7 @@ class MainActivity : Activity() {
             find = button("İçerikleri bul  →", true) { inspect() }; add(find)
         }
         contentSection = section("Bulunan içerikler").apply {
+            id = R.id.found_contents
             visibility = View.GONE
             collectionName = text("İçerik seçimi", 18f).apply { maxLines = 2; ellipsize = android.text.TextUtils.TruncateAt.END }; add(collectionName)
             count = text("Bağlantı bekleniyor", 13f, muted); add(count)
@@ -126,8 +123,25 @@ class MainActivity : Activity() {
                 updateCount()
             }.apply { visibility = View.GONE }
             add(selectAll)
-            results = LinearLayout(this@MainActivity).apply { orientation = LinearLayout.VERTICAL }; add(results)
-            results.add(text("Tek video, tek müzik veya çalma listesi burada görünür.", 13f, muted))
+            results = LinearLayout(this@MainActivity).apply { id = R.id.found_results; orientation = LinearLayout.VERTICAL }; add(results)
+            downloadStatus = LinearLayout(this@MainActivity).apply {
+                id = R.id.download_status; orientation = LinearLayout.VERTICAL; visibility = View.GONE
+                status = text("", 19f).apply { id = R.id.download_status_text }; add(status)
+                detail = text("", 13f, muted).apply { id = R.id.download_detail }; add(detail)
+                progress = ProgressBar(this@MainActivity, null, android.R.attr.progressBarStyleHorizontal).apply {
+                    id = R.id.download_progress; max = 100
+                    progressTintList = ColorStateList.valueOf(accent); progressBackgroundTintList = ColorStateList.valueOf(border); indeterminateTintList = ColorStateList.valueOf(accent)
+                }; add(progress, 10)
+                cancel = button("İndirmeyi iptal et") {
+                    if (DownloadState.running.get() && !DownloadState.cancelled) {
+                        DownloadState.cancelled = true
+                        cancel.isEnabled = false
+                        cancel.text = "İptal ediliyor…"
+                        startService(Intent(this@MainActivity, DownloadService::class.java).setAction("cancel"))
+                    }
+                }.apply { id = R.id.cancel_download }; add(cancel)
+                history = text("", 13f).apply { id = R.id.download_history }; add(history)
+            }; add(downloadStatus)
         }
         section("İndirme tercihleri").apply {
             add(text("Biçim", 13f, muted))
@@ -148,14 +162,7 @@ class MainActivity : Activity() {
             add(button("Kayıt klasörünü seç") {
                 startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION or Intent.FLAG_GRANT_PREFIX_URI_PERMISSION), 41)
             })
-            download = button("Seçilenleri indir  ↓", true) { startDownload() }; add(download)
-        }
-        section("İndirmeler").apply {
-            status = text("", 19f); add(status)
-            detail = text("", 13f, muted); add(detail)
-            progress = ProgressBar(this@MainActivity, null, android.R.attr.progressBarStyleHorizontal).apply { max = 100; progressTintList = ColorStateList.valueOf(accent); progressBackgroundTintList = ColorStateList.valueOf(border); indeterminateTintList = ColorStateList.valueOf(accent) }; add(progress, 10)
-            add(button("İndirmeyi iptal et") { if (DownloadState.running.get()) startService(Intent(this@MainActivity, DownloadService::class.java).setAction("cancel")) })
-            history = text("", 13f); add(history)
+            download = button("Seçilenleri indir  ↓", true) { startDownload() }.apply { id = R.id.start_download }; add(download)
         }
         root.add(button("İndirme altyapısını güncelle") { updateEngine() })
         root.add(text("İndirX • ${BuildConfig.VERSION_NAME}\nYalnızca indirme hakkın olan içerikleri kaydet.", 11f, muted).apply { gravity = Gravity.CENTER })
@@ -178,6 +185,7 @@ class MainActivity : Activity() {
     override fun onStart() {
         super.onStart()
         DownloadState.beginVisibleSession()
+        refreshDownloadUi()
     }
     override fun onResume() { super.onResume(); handler.post(refresh) }
     override fun onPause() { handler.removeCallbacks(refresh); prefs.edit().putBoolean("format_schema2", true).putInt("format", selectedFormat).putInt("video_format", videoFormat).putInt("audio_format", audioFormat).apply(); super.onPause() }
@@ -185,6 +193,7 @@ class MainActivity : Activity() {
         if (bulkSelecting) return
         val checked = boxes.count { it.second?.isChecked != false }
         count.text = if (isPlaylist) "${boxes.size} içerik • $checked seçili" else "İndirmeye hazır"
+        count.visibility = View.VISIBLE
         download.text = if (isPlaylist) "Seçilenleri indir  ↓" else "İndir  ↓"
         selectAll.visibility = if (isPlaylist && boxes.isNotEmpty()) View.VISIBLE else View.GONE
         selectAll.text = if (checked == boxes.size && checked > 0) "Tümünü Kaldır" else "Tümünü Seç"
@@ -227,7 +236,8 @@ class MainActivity : Activity() {
     }
     private fun render(items: List<MediaItem>) {
         boxes.clear(); results.removeAllViews()
-        contentSection.visibility = if (items.isEmpty()) View.GONE else View.VISIBLE
+        contentSection.visibility = if (items.isEmpty() && !DownloadState.running.get() && !DownloadState.hasOperation) View.GONE else View.VISIBLE
+        results.visibility = if (items.isEmpty()) View.GONE else View.VISIBLE
         items.forEach { item ->
             val box = if (isPlaylist) CheckBox(this).apply { text = "${item.title}\n${item.duration}"; setTextColor(ink); textSize = 14f; isChecked = !isPlaylist; buttonTintList = ColorStateList.valueOf(accent); setPadding(0, dp(8), 0, dp(8)); setOnCheckedChangeListener { _, _ -> updateCount() } } else null
             boxes.add(item to box); val card = LinearLayout(this).apply {
@@ -238,16 +248,48 @@ class MainActivity : Activity() {
         }; updateCount()
     }
     private fun inspect() {
-        if (loading) return
+        if (loading || DownloadState.running.get()) return
         val url = link.text.toString().trim()
         if (!Engine.validUrl(url)) { toast(SupportedPlatforms.message); return }
         loading = true; find.isEnabled = false; find.text = "İçerikler aranıyor…"
-        boxes.clear(); results.removeAllViews(); isPlaylist = false; selectAll.visibility = View.GONE; contentSection.visibility = View.VISIBLE; count.text = "Bağlantı çözümleniyor…"; collectionName.text = "İçerik seçimi"
+        boxes.clear(); results.removeAllViews(); isPlaylist = false; selectAll.visibility = View.GONE; contentSection.visibility = View.VISIBLE; count.visibility = View.VISIBLE; count.text = "Bağlantı çözümleniyor…"; collectionName.text = "İçerik seçimi"
         Thread {
-            try { val found = Engine.inspect(this, url); runOnUiThread { if (!isDestroyed) { isPlaylist = found.isPlaylist; render(found.items); collectionName.text = found.title } } }
+            try { val found = Engine.inspect(this, url); runOnUiThread { if (!isDestroyed) displayFound(found) } }
             catch (e: Exception) { runOnUiThread { if (!isDestroyed) { count.text = "İçerik bulunamadı"; AlertDialog.Builder(this).setTitle("İçerik bulunamadı").setMessage(Errors.message(e)).setPositiveButton("Tamam", null).show() } } }
             finally { runOnUiThread { loading = false; if (!isDestroyed) { find.isEnabled = true; find.text = "İçerikleri bul  →" } } }
         }.start()
+    }
+    internal fun displayFound(found: MediaResult) {
+        isPlaylist = found.isPlaylist
+        render(found.items)
+        collectionName.text = found.title
+        refreshDownloadUi()
+    }
+
+    private fun refreshDownloadUi() {
+        val running = DownloadState.running.get()
+        val showOperation = running || DownloadState.hasOperation
+        downloadStatus.visibility = if (showOperation) View.VISIBLE else View.GONE
+        if (showOperation) {
+            contentSection.visibility = View.VISIBLE
+            if (boxes.isEmpty() && !loading) {
+                collectionName.text = if (running) "Devam eden indirme" else "İndirme sonucu"
+                count.visibility = View.GONE; results.visibility = View.GONE; selectAll.visibility = View.GONE
+            }
+        }
+        status.text = DownloadState.status
+        detail.text = DownloadState.detail
+        progress.isIndeterminate = running && DownloadState.progress < 0
+        if (!progress.isIndeterminate) progress.setProgress(DownloadState.progress.coerceIn(0, 100), true)
+        cancel.visibility = if (running) View.VISIBLE else View.GONE
+        cancel.isEnabled = running && !DownloadState.cancelled
+        cancel.text = if (DownloadState.cancelled && running) "İptal ediliyor…" else "İndirmeyi iptal et"
+        cancel.alpha = if (cancel.isEnabled) 1f else .45f
+        history.text = DownloadState.history
+        history.visibility = if (DownloadState.history.isBlank()) View.GONE else View.VISIBLE
+        find.isEnabled = !loading && !running
+        download.isEnabled = !loading && !running && boxes.any { it.second?.isChecked != false }
+        download.alpha = if (download.isEnabled) 1f else .45f
     }
     private fun startDownload() {
         if (DownloadState.running.get()) return
