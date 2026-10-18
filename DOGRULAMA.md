@@ -5,7 +5,10 @@
 - Ayrı sonuç kartı kaldırıldı; gerçek `RenderFound` yöntemi video/listeyi mevcut İndirmeler kutusuna yerleştirir. Sabit yükseklikteki içerik alanı, tespitten sonra kutuların konum ve boyutunu korur.
 - Boş durum ve tek video seçimi için İndirmeye hazır metni gösterilmez. Arama/indirme/iptal/dönüştürme bilgileri yalnızca gerçek işlem sırasında aynı kutuda gösterilir; liste seçimleri korunur.
 - Yerel WPF derlemesi 0 hata / 0 uyarıyla başarılı. Gerçek gösterim yöntemiyle örnek tek video ve 12 öğeli liste test edildi: kart konumları ve boyutu değişmedi; sonuçlar mevcut kutunun içinde kaldı; tek içerik doğrudan seçildi, listede Tümünü Seç/Kaldır çalıştı. Örnek veri test sonunda temizlenir, hiçbir ağ isteği yapılmaz veya geçmiş kaydedilmez. Önce/sonra görüntüleri incelendi; `.detected.png` yalnızca örnek test içeriği gösterir.
-- Paketli kurulum/yayın sonuçları henüz alınmadı; önceki sürüm sonuçları bu sürümün testi sayılmaz. Gerçek YouTube/Instagram indirmeleri bu görsel değişiklikte ayrıca denenmedi.
+- [Windows Setup derlemesi](https://github.com/sametyamanxx/indirx/actions/runs/39140551266), commit `8b1e1a5244ef101624169b945b9c30222e1a95fd`: başarılı. 57 çevrimdışı assertion, aynı kutuda tespit/yerleşim/boyut/seçim kontrolleri, paketli araçlar, logo ve koyu başlık çubuğu, Setup üretimi ve sessiz kurulum/açılış/kaldırma geçti.
+- [Windows 0.2.10 yayın iş akışı](https://github.com/sametyamanxx/indirx/actions/runs/39140785823) başarılı. Setup, portable ZIP ve SHA-256 dosyaları `windows-v0.2.10` yayınına eklendi; Setup bağlantısı anonim HTTP HEAD isteğine 200 döndü.
+- Setup: 176.993.202 bayt; SHA-256 `bc9bfd5b081e88a58e4ea6a29c919862890cd5f67846fcd4236983601cc5f7ff`. Portable ZIP: 205.506.299 bayt; SHA-256 `a6577056ac4e5b238fa32f5c19ff54caca96dbebffa31a3f77683a0c0fa52967`.
+- Gerçek YouTube/Instagram indirmeleri bu görsel değişiklikte ayrıca denenmedi; Setup/EXE dijital imzasızdır.
 
 ## Windows 0.2.9 — İndirmeler bölümünü bağlantının altına hizalama
 
