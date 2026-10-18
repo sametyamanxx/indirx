@@ -106,16 +106,8 @@ class MainActivity : Activity() {
         window.statusBarColor = bg; window.navigationBarColor = bg
         pageScroll = ScrollView(this).apply { id = R.id.page_scroll; setBackgroundColor(bg); isFillViewport = true; clipToPadding = false }
         root = LinearLayout(this).apply { id = R.id.main_content; orientation = LinearLayout.VERTICAL; isFocusableInTouchMode = true; setPadding(dp(20), dp(18), dp(20), dp(28)) }
-        pageScroll.addView(root)
-        val screen = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setBackgroundColor(bg) }
-        screen.addView(pageScroll, LinearLayout.LayoutParams(-1, 0, 1f))
-        val footer = LinearLayout(this).apply {
-            id = R.id.footer_panel; orientation = LinearLayout.VERTICAL; gravity = Gravity.CENTER_HORIZONTAL
-            setPadding(dp(20), 0, dp(20), dp(12))
-        }
-        screen.addView(footer, LinearLayout.LayoutParams(-1, -2))
-        setContentView(screen)
-        screen.setOnApplyWindowInsetsListener { v, insets ->
+        pageScroll.addView(root); setContentView(pageScroll)
+        pageScroll.setOnApplyWindowInsetsListener { v, insets ->
             v.setPadding(0, insets.systemWindowInsetTop, 0, insets.systemWindowInsetBottom); insets
         }
         root.add(ImageView(this).apply { setImageResource(R.drawable.logo); contentDescription = "X ve altında indirme oku"; scaleType = ImageView.ScaleType.FIT_CENTER }, 76)
@@ -194,13 +186,18 @@ class MainActivity : Activity() {
         // results become visible. All actions below are outside that card.
         root.removeView(preferencesSection)
         root.addView(preferencesSection, root.indexOfChild(contentSection))
+        val footer = LinearLayout(this).apply {
+            id = R.id.footer_panel; orientation = LinearLayout.VERTICAL; gravity = Gravity.CENTER_HORIZONTAL
+            setPadding(0, 0, 0, dp(12))
+        }
+        root.add(footer)
         download = button("İndir", true) { startDownload() }.apply {
             id = R.id.start_download; isEnabled = false; minWidth = dp(180)
         }
         footer.addView(download, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
             gravity = Gravity.CENTER_HORIZONTAL; topMargin = dp(8)
         })
-        footer.add(text(BuildConfig.VERSION_NAME, 11f, muted).apply { id = R.id.version_text; gravity = Gravity.CENTER })
+        footer.add(text("İNDİRX ${BuildConfig.VERSION_NAME}", 11f, muted).apply { id = R.id.version_text; gravity = Gravity.CENTER })
         // Önceki indirme kayıtları uygulama yeniden açıldığında gösterilmez.
         prefs.edit().remove("history").apply()
         // Search results are session-only. Remove data persisted by older versions.

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>0.2.17</Version>
+    <Version>0.2.18</Version>
     <Authors>İndirX contributors</Authors>
     <RepositoryUrl>https://github.com/sametyamanxx/indirx</RepositoryUrl>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>

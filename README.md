@@ -4,9 +4,15 @@ Tamamen Türkçe; koyu lacivert zemin, antrasit kartlar ve yumuşak mavi vurgula
 
 **Desteklenen platformlar: yalnızca YouTube ve Instagram.** TikTok desteği kaldırılmıştır.
 
-**[İndirX 0.2.12 APK indir](https://github.com/sametyamanxx/indirx/releases/download/v0.2.12/IndirX-0.2.12.apk)** · [Sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/v0.2.12)
+**[İndirX 0.2.13 APK indir](https://github.com/sametyamanxx/indirx/releases/download/v0.2.13/IndirX-0.2.13.apk)** · [Sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/v0.2.13)
 
 Android 8.0 ve üzeri içindir. Debug imzalı test APK'sıdır; önceki sürüm farklı imzalıysa kaldırıp kurmak gerekebilir. Dış klasördeki medya dosyaları korunur.
+
+## Android 0.2.13 / Windows 0.2.18 — sayfanın sonunda kaydırılabilir İndir
+
+- Sabit alt alan kaldırıldı. Ortalı **İndir** düğmesi normal sayfa akışında en sondadır; aşağı kaydırılarak ulaşılır ve ekranın altına yapışmaz.
+- Düğmenin altında Android'de **İNDİRX 0.2.13**, Windows'ta **İNDİRX 0.2.18** yazar. Bu, sayfanın son yazısıdır.
+- İçerik/seçim yokken düğme sayfadan kaldırılmaz; devre dışı kalır. Diğer bölüm sıralaması, içeriklere kaydırma, otomatik güncelleme ve kalıcı Android imzası korunur.
 
 ## Android 0.2.12 / Windows 0.2.17 — her zaman görünen İndir ve sade sürüm yazısı
 
@@ -44,11 +50,11 @@ Android 8.0 ve üzeri içindir. Debug imzalı test APK'sıdır; önceki sürüm 
 
 ## Windows masaüstü projesi
 
-**[Windows 0.2.17 Setup indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.17/IndirX-0.2.17-Windows-x64-Setup.exe)** · [Taşınabilir ZIP](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.17/IndirX-0.2.17-Windows-x64-Portable.zip) · [Windows sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/windows-v0.2.17)
+**[Windows 0.2.18 Setup indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.18/IndirX-0.2.18-Windows-x64-Setup.exe)** · [Taşınabilir ZIP](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.18/IndirX-0.2.18-Windows-x64-Portable.zip) · [Windows sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/windows-v0.2.18)
 
 Ayrı, yerel Windows uygulaması `windows/` klasöründedir: **[Windows projesi ve derleme talimatları](windows/README.md)**. Windows 10 22H2 / Windows 11 x64 için .NET 10 WPF, kullanıcı başına Setup ve portable paket üretir. Yalnızca YouTube ve Instagram desteklenir. Android APK'sı veya emülatör kullanmaz. Kurulum dijital imzalı değildir. Windows etiketleri `windows-v…` biçimindedir; Android ve Windows ayrı sürümlerle yayımlanır.
 
-Windows 0.2.17: İndir düğmesi sabit alt alanda, ilk açılışta ve her durumda görünür. Kullanılamadığında devre dışıdır. Düğmenin altında yalnızca sürüm numarası yazar. Ortalı kartlar, sabit tercih sırası ve otomatik güncellemeler korunur.
+Windows 0.2.18: İndir düğmesi sabit değildir; sayfanın en sonuna kaydırılarak ulaşılır. Altında İNDİRX 0.2.18 yazar. Ortalı kartlar, tercih sırası ve otomatik güncellemeler korunur.
 
 ## 0.2.7 yalnızca YouTube ve Instagram
 
@@ -115,7 +121,7 @@ Windows 0.2.17: İndir düğmesi sabit alt alanda, ilk açılışta ve her durum
 1. Bir video veya çalma listesi bağlantısını yapıştırıp **İçerikleri bul** düğmesine dokun.
 2. Listeden tek tek seçim yap veya duruma göre değişen **Tümünü Seç / Tümünü Kaldır** düğmesini kullan.
 3. Ses/video biçimini ve Android dosya seçicisiyle kayıt klasörünü seç.
-4. **Sabit alt alandaki ortalı İndir** düğmesine dokun; düğmenin altında yalnızca sürüm numarası bulunur. Üstteki İçerikleri bul yalnızca yeniden arama yapar. İndirme, dönüştürme ve klasöre kaydetme aşamaları ayrı gösterilir.
+4. Sayfanın **en sonuna kaydırıp ortalı İndir** düğmesine dokun; düğmenin altında İNDİRX ve sürüm numarası bulunur. Üstteki İçerikleri bul yalnızca yeniden arama yapar. İndirme, dönüştürme ve klasöre kaydetme aşamaları ayrı gösterilir.
 5. Kaydı tamamlanan dosyanın adı, **İndirildi** durumuyla geçmişte görünür.
 
 YouTube uygulamasındaki Paylaş menüsünden de bağlantı gönderebilirsin. Liste içeren bağlantılar çalma listesi olarak çözülür; yalnızca istediğin içerikleri işaretleyebilirsin.

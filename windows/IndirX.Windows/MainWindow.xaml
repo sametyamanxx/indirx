@@ -1,9 +1,8 @@
 <Window x:Class="IndirX.Windows.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Style="{StaticResource {x:Type Window}}" Title="İNDİRX" Icon="Assets/IndirX.ico" Width="900" Height="900" MinWidth="480" MinHeight="640" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
   <Grid x:Name="WindowLayout">
-    <Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-  <ScrollViewer x:Name="PageScroller" Grid.Row="0" Margin="24,24,24,12" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+  <ScrollViewer x:Name="PageScroller" Margin="24" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
     <Grid x:Name="MainLayout" MaxWidth="620" HorizontalAlignment="Center">
-      <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+      <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
       <StackPanel x:Name="HeaderPanel" Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,24">
         <Image x:Name="BrandLogo" Source="Assets/Logo.png" Width="72" Height="72" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality" AutomationProperties.Name="Android ile aynı İndirX logosu" />
         <TextBlock x:Name="BrandTitle" Text="İNDİRX" TextAlignment="Center" FontSize="32" FontWeight="Bold" Margin="0,8,0,6" />
@@ -58,11 +57,11 @@
               <TextBlock x:Name="HistoryText" FontSize="12" />
             </ScrollViewer>
           </Grid></Border>
-    </Grid>
-  </ScrollViewer>
-    <StackPanel x:Name="FooterPanel" Grid.Row="1" HorizontalAlignment="Center" Margin="24,0,24,16">
+    <StackPanel x:Name="FooterPanel" Grid.Row="4" HorizontalAlignment="Center" Margin="0,8,0,16">
       <Button x:Name="DownloadButton" Content="İndir" Click="Download_Click" HorizontalAlignment="Center" MinWidth="180" Margin="0,8,0,12" Background="#7B9CF5" Foreground="#0E182B" IsEnabled="False" />
       <TextBlock x:Name="VersionText" TextAlignment="Center" Foreground="{StaticResource Muted}" FontSize="12" />
     </StackPanel>
+    </Grid>
+  </ScrollViewer>
   </Grid>
 </Window>

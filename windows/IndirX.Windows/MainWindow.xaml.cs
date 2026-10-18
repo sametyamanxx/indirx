@@ -45,7 +45,7 @@ public partial class MainWindow : Window
         ResultsList.ItemsSource = items;
         PageScroller.SizeChanged += (_, _) => UpdateResultsLayout();
         PlatformLabel.Text = PlatformPolicy.DisplayName;
-        VersionText.Text = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "";
+        VersionText.Text = $"İNDİRX {Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)}";
         AudioMode.IsChecked = settings.AudioMode;
         VideoMode.IsChecked = !settings.AudioMode;
         RefreshFormat();
@@ -83,10 +83,11 @@ public partial class MainWindow : Window
             Math.Abs(preferences.Y - link.Y - LinkCard.ActualHeight - LinkCard.Margin.Bottom) < 2 &&
             DownloadButton.Visibility == Visibility.Visible &&
             VersionText.TranslatePoint(new Point(), FooterPanel).Y >= DownloadButton.TranslatePoint(new Point(), FooterPanel).Y + DownloadButton.ActualHeight &&
-            Math.Abs(DownloadButton.TranslatePoint(new Point(DownloadButton.ActualWidth / 2, 0), WindowLayout).X - WindowLayout.ActualWidth / 2) < 2 &&
-            DownloadButton.TranslatePoint(new Point(), WindowLayout).Y >= PageScroller.TranslatePoint(new Point(), WindowLayout).Y + PageScroller.ActualHeight &&
-            VersionText.TranslatePoint(new Point(0, VersionText.ActualHeight), WindowLayout).Y <= WindowLayout.ActualHeight &&
-            VersionText.Text == Assembly.GetExecutingAssembly().GetName().Version?.ToString(3);
+            Math.Abs(DownloadButton.TranslatePoint(new Point(DownloadButton.ActualWidth / 2, 0), MainLayout).X - MainLayout.ActualWidth / 2) < 2 &&
+            FooterPanel.Parent == MainLayout && FooterPanel.IsDescendantOf(PageScroller) &&
+            Position(FooterPanel).Y >= (DownloadsCard.Visibility == Visibility.Visible
+                ? downloads.Y + DownloadsCard.ActualHeight : preferences.Y + PreferencesCard.ActualHeight) &&
+            VersionText.Text == $"İNDİRX {Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)}";
     }
 
     private bool CenteredCardsResize()
@@ -126,6 +127,7 @@ public partial class MainWindow : Window
                     UpdateLayout();
                     var expectedOffset = Math.Min(Math.Max(0, Position(DownloadsCard).Y - 8), PageScroller.ScrollableHeight);
                     if (Math.Abs(PageScroller.VerticalOffset - expectedOffset) > 2) { resultsLayoutDetail = $"Found-content scroll: {size}"; return false; }
+                    if (!FooterMovesWithPage()) { resultsLayoutDetail = $"Footer must scroll: {size}"; return false; }
                     if (!LayoutMatchesRequest() ||
                         !ResultsPanel.IsDescendantOf(DownloadsCard) || ResultsList.Items.Count != media.Length ||
                         EmptyContentHint.Visibility != Visibility.Collapsed || OperationPanel.Visibility != Visibility.Collapsed ||
@@ -174,6 +176,20 @@ public partial class MainWindow : Window
         var correct = wheel.Handled && scroller.VerticalOffset < bottom && Math.Abs(PageScroller.VerticalOffset - pageOffset) <= 1;
         scroller.ScrollToTop(); UpdateLayout();
         return correct;
+    }
+
+    private bool FooterMovesWithPage()
+    {
+        var offset = PageScroller.VerticalOffset;
+        try
+        {
+            PageScroller.ScrollToTop(); UpdateLayout();
+            var top = FooterPanel.TranslatePoint(new Point(), PageScroller).Y;
+            PageScroller.ScrollToBottom(); UpdateLayout();
+            var bottom = FooterPanel.TranslatePoint(new Point(), PageScroller).Y;
+            return Math.Abs(top - bottom - PageScroller.ScrollableHeight) < 2;
+        }
+        finally { PageScroller.ScrollToVerticalOffset(offset); UpdateLayout(); }
     }
 
     private static bool HasFolderOpenButton(DependencyObject parent)
