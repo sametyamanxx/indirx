@@ -2,7 +2,7 @@
 
 Tamamen Türkçe; koyu lacivert zemin, antrasit kartlar ve yumuşak mavi vurgularla tasarlanmış video/ses indirme uygulaması.
 
-**[İndirX 0.2.5 APK indir](https://github.com/sametyamanxx/indirx/releases/download/v0.2.5/IndirX-0.2.5.apk)** · [Sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/v0.2.5)
+**[İndirX 0.2.6 APK indir](https://github.com/sametyamanxx/indirx/releases/download/v0.2.6/IndirX-0.2.6.apk)** · [Sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/v0.2.6)
 
 Android 8.0 ve üzeri içindir. Debug imzalı test APK'sıdır; önceki sürüm farklı imzalıysa kaldırıp kurmak gerekebilir. Dış klasördeki medya dosyaları korunur.
 

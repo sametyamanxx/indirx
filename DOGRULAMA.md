@@ -5,7 +5,7 @@
 - Kök neden: yt-dlp kısa bağlantı çözücüsünün adı `vm.tiktok`. Önceki `tiktok.*` seçicisi bu adı kapsamıyordu. Seçiciye yalnızca `vm\\.tiktok` eklendi; genel çözücü ve diğer platformlar açılmadı.
 - `vm.tiktok.com`, `vt.tiktok.com`, `www.tiktok.com/t/` bağlantılarının alan adı kabulü ve gerçek çözücü adlarının filtreye uygunluğu için regresyon testleri mevcut.
 - `scripts/check_extractors.py`, Gradle'ın çözdüğü Android AAR içindeki gerçek yt-dlp sürümünü yükler; TikTokVM kaydını, üç kısa bağlantı biçiminin çözücüye uygunluğunu ve desteklenmeyen çözücülerin kapalı olduğunu ağ isteği yapmadan kontrol eder. Her iki GitHub iş akışına eklendi.
-- Bu sürümün otomatik test/derleme/yayın sonucu tamamlandığında eklenecektir. Aşağıdaki 0.2.5 sonuçları yeni sürüm için test sonucu sayılmaz.
+- [Android APK #14](https://github.com/sametyamanxx/indirx/actions/runs/39129742932), commit `62891125e253ff2e815cad9311d1e1c6664cdad7`: birim testleri, lint, APK derlemesi, paketlenmiş gerçek yt-dlp kısa bağlantı çözücü kontrolü, imza doğrulama ve APK artifact yüklemesi başarılı.
 - Kullanıcı yalnızca “İçerik bulunamadı” başlığını bildirdi. Gerçek bağlantı ve hata ayrıntısı henüz verilmedi; bu nedenle bu kullanıcıya ait sorunun tamamen giderildiği veya gerçek TikTok indirmesinin başarılı olduğu iddia edilmez.
 
 ## 0.2.5 doğrulama kaydı
