@@ -3,7 +3,7 @@ $ErrorActionPreference = 'Stop'
 New-Item -ItemType Directory -Force -Path $OutputDir | Out-Null
 $tools = Join-Path $PublishDir 'tools'
 foreach ($tool in @('yt-dlp','ffmpeg','ffprobe','deno')) {
-    $arguments = if ($tool -in 'ffmpeg','ffprobe') { @('-version') } else { @('--version') }
+    [string[]]$arguments = if ($tool -in 'ffmpeg','ffprobe') { @('-version') } else { @('--version') }
     & (Join-Path $tools "$tool.exe") @arguments 2>&1 | Out-File (Join-Path $OutputDir "$tool-version.txt")
     if ($LASTEXITCODE -ne 0) { throw "$tool failed to start" }
 }
@@ -27,6 +27,7 @@ foreach ($run in @(1,2)) {
     if (!$app.WaitForExit(45000)) { Stop-Process -Id $app.Id -Force; throw 'UI startup timed out' }
     if ($app.ExitCode -ne 0 -or !(Test-Path $result)) { throw "UI startup failed: $result" }
     $state = Get-Content $result -Raw | ConvertFrom-Json
-    if ($state.Platforms -ne 'YouTube · Instagram' -or $state.HistoryCount -ne 0 -or $state.ItemCount -ne 0 -or !$state.ToolsPresent -or $state.Version -ne '0.2.7' -or $state.Background -ne '#FF0F1520' -or !$state.Format -or $state.DownloadEnabled) { throw 'UI startup diagnostics failed' }
+    $expectedPlatforms = 'YouTube ' + [char]0x00B7 + ' Instagram'
+    if ($state.Platforms -ne $expectedPlatforms -or $state.HistoryCount -ne 0 -or $state.ItemCount -ne 0 -or !$state.ToolsPresent -or $state.Version -ne '0.2.7' -or $state.Background -ne '#FF0F1520' -or !$state.Format -or $state.DownloadEnabled) { throw 'UI startup diagnostics failed' }
 }
 Write-Host 'PASS: tools start, MP3 conversion, TikTok rejection and two clean WPF launches.'

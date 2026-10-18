@@ -26,7 +26,10 @@ foreach ($entry in @(@('runtime','LICENSE.TXT'),@('runtime','THIRD-PARTY-NOTICES
 if ($Installer) {
     $compiler = Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6/ISCC.exe'
     if (!(Test-Path $compiler)) { throw 'Install Inno Setup 6 before building the installer' }
-    & $compiler "/DPublishDir=$publish" "/DOutputDir=$dist" (Join-Path $PSScriptRoot 'installer/IndirX.iss')
+    # Inno Setup needs an explicit UTF-8 BOM for Turkish strings on all host locales.
+    $installerSource = Join-Path $artifacts 'IndirX.iss'
+    [IO.File]::WriteAllText($installerSource, [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'installer/IndirX.iss')), [Text.UTF8Encoding]::new($true))
+    & $compiler "/DPublishDir=$publish" "/DOutputDir=$dist" $installerSource
     if ($LASTEXITCODE -ne 0) { throw 'Installer compilation failed' }
     & (Join-Path $PSScriptRoot 'test-installer.ps1') -Setup (Join-Path $dist 'IndirX-0.2.7-Windows-x64-Setup.exe') -OutputDir (Join-Path $artifacts 'installer-smoke')
 }

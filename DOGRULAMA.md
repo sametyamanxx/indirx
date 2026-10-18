@@ -6,6 +6,7 @@
 - URL/çözücü sınırı, paylaşım metni, JSON çözümleme, dosya biçimleri, aynı adlı dosyayı koruma, ayarların yalnızca tercih içermesi, işlem argüman güvenliği ve iptalde alt işlemin sonlanması için çevrimdışı test programı mevcut.
 - İş akışı gerçek paketlenmiş yt-dlp / Deno / FFmpeg başlangıcını, kısa ses dosyasının MP3'e dönüşümünü, TikTok'un reddini, iki temiz WPF açılışını, sessiz kurulum ve kaldırmayı denetler; WPF ekran görüntüsü ve kurulum günlüklerini artifact olarak saklar.
 - Yerel Windows'ta .NET 10 SDK ile 57 çevrimdışı assertion başarılı. WPF projesi 0 hata / 0 uyarıyla derlendi; gerçek WPF açılışı ve koyu tema ekran görüntüsü kontrol edildi. İlk yerel açılışta araçlar henüz paketlenmediği için `ToolsPresent=false` beklenen sonuçtur. Paketli Setup/kurulum testleri ayrıca çalıştırılacaktır; Android sonuçları Windows için doğrulama sayılmaz.
+- Araçlar SHA-256 ile doğrulanıp paketlendikten sonra yerel kontrol de başarılı: gerçek yt-dlp/Deno/FFmpeg/ffprobe başlangıcı, üretilen kısa sesin MP3 dönüşümü, TikTok'un reddi ve `ToolsPresent=true` ile iki temiz WPF açılışı. PowerShell'in tek metin argümanını karakterlere ayırması ve Windows PowerShell 5.1 metin kodlaması için test betiği düzeltildi. Setup metni derleyiciye UTF-8 BOM ile verilir.
 - Setup/EXE Authenticode imzalı değildir. Fiziksel bilgisayarda etkileşimli kullanım veya gerçek YouTube/Instagram indirmesi henüz doğrulanmadı.
 
 ## 0.2.7 yalnızca YouTube ve Instagram
