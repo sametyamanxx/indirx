@@ -99,9 +99,9 @@ class MainActivity : Activity() {
         }
         root.add(ImageView(this).apply { setImageResource(R.drawable.logo); contentDescription = "X ve altında indirme oku"; scaleType = ImageView.ScaleType.FIT_CENTER }, 76)
         root.add(text("İNDİRX", 28f).apply { gravity = Gravity.CENTER; letterSpacing = .10f; typeface = Typeface.DEFAULT_BOLD })
-        root.add(text("YouTube · Instagram · TikTok", 13f, muted).apply { gravity = Gravity.CENTER })
+        root.add(text("YouTube · Instagram", 13f, muted).apply { gravity = Gravity.CENTER })
         section("Bağlantı ekle").apply {
-            add(text("Yalnızca YouTube, Instagram ve TikTok bağlantıları", 12f, muted))
+            add(text("Yalnızca YouTube ve Instagram bağlantıları", 12f, muted))
             link = EditText(this@MainActivity).apply {
                 hint = "Video veya çalma listesi bağlantısı"; setTextColor(ink); setHintTextColor(muted)
                 textSize = 14f; maxLines = 3; inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_URI

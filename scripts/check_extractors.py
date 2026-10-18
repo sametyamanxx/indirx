@@ -30,16 +30,20 @@ with tempfile.TemporaryDirectory() as temporary:
     # No extract_info/download calls: this checks real extractor registration offline.
     with YoutubeDL({"allowed_extractors": patterns, "quiet": True}) as downloader:
         loaded = set(downloader._ies)
-        required = {"Youtube", "YoutubeTab", "Instagram", "TikTok", "TikTokVM"}
+        required = {"Youtube", "YoutubeTab", "Instagram"}
         if missing := required - loaded:
             raise AssertionError(f"Required extractors missing: {sorted(missing)}")
-        if loaded.intersection({"Generic", "Facebook", "Twitter", "Vimeo", "Dailymotion", "Douyin"}):
+        if loaded.intersection({"TikTok", "TikTokVM", "Generic", "Facebook", "Twitter", "Vimeo", "Dailymotion", "Douyin"}):
             raise AssertionError("An unsupported platform extractor was enabled")
+        extractors = list(downloader._ies.values())
+        if any(not ie.IE_NAME.lower().startswith(("youtube", "instagram")) for ie in extractors):
+            raise AssertionError("An extractor outside YouTube/Instagram was enabled")
         for url in (
+            "https://www.tiktok.com/@name/video/1234567890123456789",
             "https://vm.tiktok.com/ZM123abc/",
             "https://vt.tiktok.com/ZM123abc/",
             "https://www.tiktok.com/t/ZM123abc/",
         ):
-            if not downloader.get_info_extractor("TikTokVM").suitable(url):
-                raise AssertionError(f"Short-link extractor does not accept {url}")
-        print("Bundled yt-dlp: required extractors and all three TikTok short-link forms verified offline.")
+            if any(ie.suitable(url) for ie in extractors):
+                raise AssertionError(f"A loaded extractor still accepts TikTok: {url}")
+        print("Bundled yt-dlp: only YouTube/Instagram loaded; TikTok normal and short links rejected offline.")

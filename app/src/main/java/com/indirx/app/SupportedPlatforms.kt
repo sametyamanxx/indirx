@@ -4,10 +4,9 @@ import java.net.URI
 import java.util.Locale
 
 object SupportedPlatforms {
-    const val message = "Yalnızca YouTube, Instagram veya TikTok bağlantısı yapıştır."
-    // yt-dlp names TikTok's short-link extractor "vm.tiktok", not "tiktok:*".
-    const val extractors = "youtube.*,instagram.*,tiktok.*,vm\\.tiktok"
-    private val domains = listOf("youtube.com", "youtu.be", "instagram.com", "tiktok.com")
+    const val message = "Yalnızca YouTube veya Instagram bağlantısı yapıştır."
+    const val extractors = "youtube.*,instagram.*"
+    private val domains = listOf("youtube.com", "youtu.be", "instagram.com")
 
     fun accepts(value: String): Boolean = runCatching {
         val uri = URI(value)

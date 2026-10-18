@@ -1,4 +1,15 @@
-# İndirX 0.2.6 — doğrulama durumu
+# İndirX 0.2.7 — doğrulama durumu
+
+## 0.2.7 yalnızca YouTube ve Instagram
+
+- Ana ekran başlığı, açıklama ve desteklenmeyen bağlantı uyarısı yalnızca YouTube ve Instagram der.
+- TikTok alan adı kabul listesinden çıkarıldı; normal, mobil, kısa bağlantı, profil ve canlı yayın biçimleri reddedilir.
+- yt-dlp seçicisinde yalnızca `youtube.*` ve `instagram.*` vardır. TikTok ve genel site çözücüleri kapalıdır.
+- Birim testleri iki platformun kabulünü, TikTok biçimlerinin reddini ve çözücü filtresini kontrol eder. Paketlenmiş gerçek yt-dlp üzerindeki çevrimdışı test de yalnızca iki platformun yüklendiğini ve TikTok bağlantılarının hiçbir yüklü çözücüyle eşleşmediğini denetler.
+- Bu sürümün otomatik test/derleme/yayın sonuçları tamamlanınca eklenecektir. Önceki sürümlerin sonuçları bu sürümün doğrulaması sayılmaz.
+- Fiziksel telefonda uçtan uca YouTube/Instagram indirme testi yapılmadı.
+
+## Önceki sürümlerin doğrulama kayıtları
 
 ## 0.2.6 TikTok kısa bağlantı düzeltmesi
 

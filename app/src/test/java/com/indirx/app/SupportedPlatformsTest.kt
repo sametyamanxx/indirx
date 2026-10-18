@@ -13,21 +13,31 @@ class SupportedPlatformsTest {
             "https://youtu.be/test",
             "https://www.instagram.com/reel/test/",
             "https://instagram.com/p/test/",
-            "https://www.tiktok.com/@name/video/123",
-            "https://vm.tiktok.com/test/",
-            "https://vt.tiktok.com/test/",
-            "https://www.tiktok.com/t/test/",
             "HTTPS://WWW.YOUTUBE.COM/watch?v=test"
         ).forEach { assertTrue(it, SupportedPlatforms.accepts(it)) }
     }
 
-    @Test fun extractorFilterIncludesTikTokShortLinkResolver() {
+    @Test fun extractorFilterAllowsOnlyYouTubeAndInstagram() {
         val patterns = SupportedPlatforms.extractors.split(",").map { Regex(it, RegexOption.IGNORE_CASE) }
         fun allowed(name: String) = patterns.any { it.matches(name) }
-        listOf("TikTok", "tiktok:user", "vm.tiktok", "youtube", "youtube:tab", "instagram")
+        listOf("youtube", "youtube:tab", "instagram", "instagram:story")
             .forEach { assertTrue(it, allowed(it)) }
-        listOf("generic", "facebook", "twitter", "vimeo", "dailymotion", "douyin", "vmXtiktok")
+        listOf("TikTok", "tiktok:user", "tiktok:live", "vm.tiktok", "generic", "facebook", "twitter", "vimeo", "dailymotion", "douyin")
             .forEach { assertFalse(it, allowed(it)) }
+    }
+
+    @Test fun rejectsAllTikTokLinkForms() {
+        listOf(
+            "https://tiktok.com/@name/video/123",
+            "https://www.tiktok.com/@name/video/123",
+            "https://m.tiktok.com/@name/video/123",
+            "https://vm.tiktok.com/test/",
+            "https://vt.tiktok.com/test/",
+            "https://www.tiktok.com/t/test/",
+            "https://www.tiktok.com/@name",
+            "https://www.tiktok.com/@name/live",
+            "HTTPS://VM.TIKTOK.COM/test/"
+        ).forEach { assertFalse(it, SupportedPlatforms.accepts(it)) }
     }
 
     @Test fun rejectsOtherPlatformsAndMisleadingHosts() {
