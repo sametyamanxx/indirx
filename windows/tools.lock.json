@@ -1,0 +1,21 @@
+{
+  "ytDlp": {
+    "version": "2026.08.19",
+    "url": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.08.19/yt-dlp.exe",
+    "sha256": "66674953fe251b89f4d08c5f0e35e0728679bd67ab3d7d05c0562af101dd3e7a",
+    "source": "https://github.com/yt-dlp/yt-dlp/tree/2026.08.19"
+  },
+  "deno": {
+    "version": "2.9.7",
+    "url": "https://github.com/denoland/deno/releases/download/v2.9.7/deno-x86_64-pc-windows-msvc.zip",
+    "sha256": "a0c3101b4158d1dfb7d6a78a7bf0f3de80c96bb423c152beec8beb22786f2238",
+    "source": "https://github.com/denoland/deno/tree/v2.9.7"
+  },
+  "ffmpeg": {
+    "version": "N-127650-geceaa54a38 GPL shared",
+    "url": "https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-10-18-13-01/ffmpeg-N-127650-geceaa54a38-win64-gpl-shared.zip",
+    "sha256": "8ebf4def186017a1cf3ac1e0065ad19c405628ec52b50f144b727e8def64928d",
+    "source": "https://github.com/FFmpeg/FFmpeg/tree/eceaa54a38",
+    "buildSources": "https://github.com/BtbN/FFmpeg-Builds/tree/autobuild-2026-10-18-13-01"
+  }
+}

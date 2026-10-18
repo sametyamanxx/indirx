@@ -1,5 +1,13 @@
 # İndirX 0.2.7 — doğrulama durumu
 
+## Windows 0.2.7 — yeni masaüstü projesi
+
+- `windows/` altında Android'den bağımsız .NET 10 WPF kaynak projesi, kullanıcı başına Inno Setup kurulumu ve Windows GitHub iş akışı eklendi.
+- URL/çözücü sınırı, paylaşım metni, JSON çözümleme, dosya biçimleri, aynı adlı dosyayı koruma, ayarların yalnızca tercih içermesi, işlem argüman güvenliği ve iptalde alt işlemin sonlanması için çevrimdışı test programı mevcut.
+- İş akışı gerçek paketlenmiş yt-dlp / Deno / FFmpeg başlangıcını, kısa ses dosyasının MP3'e dönüşümünü, TikTok'un reddini, iki temiz WPF açılışını, sessiz kurulum ve kaldırmayı denetler; WPF ekran görüntüsü ve kurulum günlüklerini artifact olarak saklar.
+- Yerel Windows'ta .NET 10 SDK ile 57 çevrimdışı assertion başarılı. WPF projesi 0 hata / 0 uyarıyla derlendi; gerçek WPF açılışı ve koyu tema ekran görüntüsü kontrol edildi. İlk yerel açılışta araçlar henüz paketlenmediği için `ToolsPresent=false` beklenen sonuçtur. Paketli Setup/kurulum testleri ayrıca çalıştırılacaktır; Android sonuçları Windows için doğrulama sayılmaz.
+- Setup/EXE Authenticode imzalı değildir. Fiziksel bilgisayarda etkileşimli kullanım veya gerçek YouTube/Instagram indirmesi henüz doğrulanmadı.
+
 ## 0.2.7 yalnızca YouTube ve Instagram
 
 - Ana ekran başlığı, açıklama ve desteklenmeyen bağlantı uyarısı yalnızca YouTube ve Instagram der.

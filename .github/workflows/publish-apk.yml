@@ -5,6 +5,7 @@ on:
 permissions: {}
 jobs:
   publish:
+    if: startsWith(github.event.release.tag_name, 'v')
     runs-on: ubuntu-latest
     permissions:
       contents: write

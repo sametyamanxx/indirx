@@ -8,3 +8,9 @@ local.properties
 
 
 *.apk
+**/bin/
+**/obj/
+.vs/
+artifacts/
+windows/.cache/
+windows/.tools/

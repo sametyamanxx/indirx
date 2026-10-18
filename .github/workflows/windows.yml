@@ -1,0 +1,65 @@
+name: Windows Setup
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['windows/**', '.github/workflows/windows.yml', 'LICENSE']
+  release:
+    types: [published]
+permissions: {}
+jobs:
+  build:
+    if: github.event_name != 'release' || startsWith(github.event.release.tag_name, 'windows-v')
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Ensure Inno Setup 6
+        shell: pwsh
+        run: |
+          if (!(Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) {
+            choco install innosetup --yes --no-progress
+            if ($LASTEXITCODE -ne 0) { throw 'Inno Setup installation failed' }
+          }
+      - uses: actions/cache@v4
+        with:
+          path: windows/.cache
+          key: windows-tools-${{ hashFiles('windows/tools.lock.json') }}
+      - name: Test, publish, build Setup, install and uninstall
+        shell: pwsh
+        run: ./windows/build.ps1 -Installer
+      - name: Save test diagnostics and WPF screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-diagnostics
+          path: |
+            artifacts/windows/smoke/
+            artifacts/windows/installer-smoke/
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        with:
+          name: IndirX-0.2.7-Windows-x64
+          path: artifacts/windows/dist/*
+          if-no-files-found: error
+  publish:
+    needs: build
+    if: github.event_name == 'release' && startsWith(github.event.release.tag_name, 'windows-v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: IndirX-0.2.7-Windows-x64
+          path: dist
+      - name: Upload Windows installer, portable package and checksums
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG_NAME: ${{ github.event.release.tag_name }}
+        run: gh release upload "$TAG_NAME" dist/* --clobber

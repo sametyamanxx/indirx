@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="IndirX.Core/IndirX.Core.csproj" />
+  <Project Path="IndirX.Tests/IndirX.Tests.csproj" />
+  <Project Path="IndirX.Windows/IndirX.Windows.csproj" />
+</Solution>

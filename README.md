@@ -8,6 +8,10 @@ Tamamen Türkçe; koyu lacivert zemin, antrasit kartlar ve yumuşak mavi vurgula
 
 Android 8.0 ve üzeri içindir. Debug imzalı test APK'sıdır; önceki sürüm farklı imzalıysa kaldırıp kurmak gerekebilir. Dış klasördeki medya dosyaları korunur.
 
+## Windows masaüstü projesi
+
+Ayrı, yerel Windows uygulaması `windows/` klasöründedir: **[Windows projesi ve derleme talimatları](windows/README.md)**. Windows 10 22H2 / Windows 11 x64 için .NET 10 WPF, kullanıcı başına Setup ve portable paket üretir. Yalnızca YouTube ve Instagram desteklenir. Android APK'sı veya emülatör kullanmaz. Kurulum dijital imzalı değildir. Windows etiketleri `windows-v…` biçimindedir; Android 0.2.7 sürümü değiştirilmez.
+
 ## 0.2.7 yalnızca YouTube ve Instagram
 
 - Ana ekrandaki platform başlığı ve açıklamalar yalnızca YouTube ve Instagram olarak güncellendi.
