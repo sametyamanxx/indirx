@@ -6,8 +6,8 @@ android {
         applicationId = "com.indirx.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 10
-        versionName = "0.2.8"
+        versionCode = 11
+        versionName = "0.2.9"
         ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64") }
     }
     val localTestKey = rootProject.file("test-signing/indirx-debug.keystore")

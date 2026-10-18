@@ -50,4 +50,26 @@ class DownloadStateTest {
         assertEquals("active.mp4", DownloadState.detail)
         assertEquals(42, DownloadState.progress)
     }
+
+    @Test fun changingLinkClearsCompletedStatusButKeepsSessionHistory() {
+        DownloadState.record("saved.mp3")
+        DownloadState.status = "Tamamlandı"
+        DownloadState.progress = 100
+        DownloadState.clearCompletedOperation()
+        assertFalse(DownloadState.hasOperation)
+        assertEquals(0, DownloadState.progress)
+        assertEquals("saved.mp3\n\n", DownloadState.history)
+    }
+
+    @Test fun changingLinkDoesNotResetRunningOperation() {
+        DownloadState.running.set(true)
+        DownloadState.hasOperation = true
+        DownloadState.status = "İndiriliyor"
+        DownloadState.progress = 42
+        DownloadState.clearCompletedOperation()
+        assertTrue(DownloadState.running.get())
+        assertTrue(DownloadState.hasOperation)
+        assertEquals("İndiriliyor", DownloadState.status)
+        assertEquals(42, DownloadState.progress)
+    }
 }

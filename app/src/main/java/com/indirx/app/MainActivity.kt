@@ -9,6 +9,8 @@ import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.*
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.*
 import android.widget.*
 import com.yausername.youtubedl_android.YoutubeDL
@@ -36,7 +38,6 @@ class MainActivity : Activity() {
     private lateinit var cancel: Button
     private lateinit var folderLabel: TextView
     private lateinit var find: Button
-    private lateinit var download: Button
     private lateinit var selectAll: Button
     private lateinit var contentSection: LinearLayout
     private lateinit var videoTab: Button
@@ -50,6 +51,11 @@ class MainActivity : Activity() {
     private var selectedFormat = 0
     private val boxes = mutableListOf<Pair<MediaItem, CheckBox?>>()
     private var loading = false
+    private var inspecting = false
+    private var downloadStarting = false
+    private var resolvedLink: String? = null
+    internal var linkRevision = 0L
+        private set
     private val prefs by lazy { getSharedPreferences("indirx", MODE_PRIVATE) }
     private val handler = Handler(Looper.getMainLooper())
     private val formatNames = arrayOf("Ses · MP3", "Ses · M4A", "Ses · FLAC", "Ses · OPUS", "Ses · OGG", "Ses · WAV", "Ses · AAC", "Ses · ALAC", "Video · MP4", "Video · MKV", "Video · WEBM", "Video · MOV", "Video · AVI", "Video · FLV")
@@ -99,6 +105,7 @@ class MainActivity : Activity() {
         section("Bağlantı ekle").apply {
             add(text("Yalnızca YouTube ve Instagram bağlantıları", 12f, muted))
             link = EditText(this@MainActivity).apply {
+                id = R.id.link_input
                 hint = "Video veya çalma listesi bağlantısı"; setTextColor(ink); setHintTextColor(muted)
                 textSize = 14f; maxLines = 3; inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_URI
                 background = panel(bg); setPadding(dp(12), dp(12), dp(12), dp(12))
@@ -108,7 +115,9 @@ class MainActivity : Activity() {
                 if (clip != null && clip.itemCount > 0) link.setText(clip.getItemAt(0).coerceToText(this@MainActivity))
                 else toast("Panoda bağlantı bulunamadı.")
             })
-            find = button("İçerikleri bul  →", true) { inspect() }; add(find)
+            find = button("İçerikleri bul", true) {
+                if (hasCurrentResults()) startDownload() else inspect()
+            }.apply { id = R.id.content_action }; add(find)
         }
         contentSection = section("Bulunan içerikler").apply {
             id = R.id.found_contents
@@ -121,7 +130,7 @@ class MainActivity : Activity() {
                 boxes.forEach { it.second?.isChecked = select }
                 bulkSelecting = false
                 updateCount()
-            }.apply { visibility = View.GONE }
+            }.apply { id = R.id.select_all; visibility = View.GONE }
             add(selectAll)
             results = LinearLayout(this@MainActivity).apply { id = R.id.found_results; orientation = LinearLayout.VERTICAL }; add(results)
             downloadStatus = LinearLayout(this@MainActivity).apply {
@@ -144,6 +153,7 @@ class MainActivity : Activity() {
             }; add(downloadStatus)
         }
         section("İndirme tercihleri").apply {
+            id = R.id.download_preferences
             add(text("Biçim", 13f, muted))
             val previous = readFormat("format", 8)
             videoFormat = readFormat("video_format", if (previous >= 8) previous else 8).coerceIn(8, 13)
@@ -162,7 +172,6 @@ class MainActivity : Activity() {
             add(button("Kayıt klasörünü seç") {
                 startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION or Intent.FLAG_GRANT_PREFIX_URI_PERMISSION), 41)
             })
-            download = button("Seçilenleri indir  ↓", true) { startDownload() }.apply { id = R.id.start_download }; add(download)
         }
         root.add(button("İndirme altyapısını güncelle") { updateEngine() })
         root.add(text("İndirX • ${BuildConfig.VERSION_NAME}\nYalnızca indirme hakkın olan içerikleri kaydet.", 11f, muted).apply { gravity = Gravity.CENTER })
@@ -170,6 +179,20 @@ class MainActivity : Activity() {
         prefs.edit().remove("history").apply()
         // Search results are session-only. Remove data persisted by older versions.
         prefs.edit().remove("link").remove("items").remove("collection").remove("playlist").apply()
+        link.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                linkRevision++
+                resolvedLink = null
+                isPlaylist = false
+                if (DownloadState.running.get() || DownloadState.hasOperation) downloadStarting = false
+                DownloadState.clearCompletedOperation()
+                render(emptyList())
+                collectionName.text = "İçerik seçimi"
+                refreshDownloadUi()
+            }
+            override fun afterTextChanged(s: Editable?) = Unit
+        })
         receive(intent)
         if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 42)
     }
@@ -192,11 +215,24 @@ class MainActivity : Activity() {
     private fun updateCount() {
         if (bulkSelecting) return
         val checked = boxes.count { it.second?.isChecked != false }
-        count.text = if (isPlaylist) "${boxes.size} içerik • $checked seçili" else "İndirmeye hazır"
-        count.visibility = View.VISIBLE
-        download.text = if (isPlaylist) "Seçilenleri indir  ↓" else "İndir  ↓"
+        count.text = if (isPlaylist) "${boxes.size} içerik • $checked seçili" else ""
+        count.visibility = if (isPlaylist && boxes.isNotEmpty()) View.VISIBLE else View.GONE
         selectAll.visibility = if (isPlaylist && boxes.isNotEmpty()) View.VISIBLE else View.GONE
         selectAll.text = if (checked == boxes.size && checked > 0) "Tümünü Kaldır" else "Tümünü Seç"
+        updateAction()
+    }
+    private fun hasCurrentResults() = boxes.isNotEmpty() && resolvedLink == link.text.toString()
+    private fun updateAction() {
+        val ready = hasCurrentResults()
+        find.text = when {
+            loading && inspecting -> "İçerikler aranıyor…"
+            loading -> "Güncelleniyor…"
+            ready -> "İndir"
+            else -> "İçerikleri bul"
+        }
+        find.isEnabled = !loading && !downloadStarting && !DownloadState.running.get() &&
+            (if (ready) boxes.any { it.second?.isChecked != false } else link.text.isNotBlank())
+        find.alpha = if (find.isEnabled) 1f else .45f
     }
     private fun readFormat(key: String, fallback: Int): Int {
         if (!prefs.contains(key)) return fallback
@@ -248,18 +284,23 @@ class MainActivity : Activity() {
         }; updateCount()
     }
     private fun inspect() {
-        if (loading || DownloadState.running.get()) return
+        if (loading || downloadStarting || DownloadState.running.get()) return
         val url = link.text.toString().trim()
         if (!Engine.validUrl(url)) { toast(SupportedPlatforms.message); return }
-        loading = true; find.isEnabled = false; find.text = "İçerikler aranıyor…"
+        val revision = linkRevision
+        loading = true; inspecting = true; resolvedLink = null; updateAction()
         boxes.clear(); results.removeAllViews(); isPlaylist = false; selectAll.visibility = View.GONE; contentSection.visibility = View.VISIBLE; count.visibility = View.VISIBLE; count.text = "Bağlantı çözümleniyor…"; collectionName.text = "İçerik seçimi"
         Thread {
-            try { val found = Engine.inspect(this, url); runOnUiThread { if (!isDestroyed) displayFound(found) } }
-            catch (e: Exception) { runOnUiThread { if (!isDestroyed) { count.text = "İçerik bulunamadı"; AlertDialog.Builder(this).setTitle("İçerik bulunamadı").setMessage(Errors.message(e)).setPositiveButton("Tamam", null).show() } } }
-            finally { runOnUiThread { loading = false; if (!isDestroyed) { find.isEnabled = true; find.text = "İçerikleri bul  →" } } }
+            try { val found = Engine.inspect(this, url); runOnUiThread { completeInspection(found, revision) } }
+            catch (e: Exception) { runOnUiThread { if (!isDestroyed && revision == linkRevision) { count.text = "İçerik bulunamadı"; AlertDialog.Builder(this).setTitle("İçerik bulunamadı").setMessage(Errors.message(e)).setPositiveButton("Tamam", null).show() } } }
+            finally { runOnUiThread { loading = false; inspecting = false; if (!isDestroyed) refreshDownloadUi() } }
         }.start()
     }
+    internal fun completeInspection(found: MediaResult, revision: Long) {
+        if (!isDestroyed && revision == linkRevision) displayFound(found)
+    }
     internal fun displayFound(found: MediaResult) {
+        resolvedLink = link.text.toString()
         isPlaylist = found.isPlaylist
         render(found.items)
         collectionName.text = found.title
@@ -268,6 +309,7 @@ class MainActivity : Activity() {
 
     private fun refreshDownloadUi() {
         val running = DownloadState.running.get()
+        if (running || DownloadState.hasOperation) downloadStarting = false
         val showOperation = running || DownloadState.hasOperation
         downloadStatus.visibility = if (showOperation) View.VISIBLE else View.GONE
         if (showOperation) {
@@ -287,28 +329,32 @@ class MainActivity : Activity() {
         cancel.alpha = if (cancel.isEnabled) 1f else .45f
         history.text = DownloadState.history
         history.visibility = if (DownloadState.history.isBlank()) View.GONE else View.VISIBLE
-        find.isEnabled = !loading && !running
-        download.isEnabled = !loading && !running && boxes.any { it.second?.isChecked != false }
-        download.alpha = if (download.isEnabled) 1f else .45f
+        updateAction()
     }
     private fun startDownload() {
-        if (DownloadState.running.get()) return
+        if (loading || downloadStarting || DownloadState.running.get() || !hasCurrentResults()) return
         val tree = prefs.getString("tree", null) ?: run { toast("Önce kayıt klasörünü seç."); return }
         val selected = boxes.filter { it.second?.isChecked != false }
         if (selected.isEmpty()) { toast("En az bir içerik seç."); return }
         val queue = JSONArray().apply { selected.forEach { put(JSONObject().put("title", it.first.title).put("url", it.first.url)) } }
         // Avoid Binder size limits for large playlists.
         val file = java.io.File(filesDir, "pending-${System.nanoTime()}.json"); file.writeText(queue.toString())
-        startForegroundService(Intent(this, DownloadService::class.java).putExtra("queuePath", file.absolutePath).putExtra("tree", tree).putExtra("format", formatValues[selectedFormat]))
-        download.isEnabled = false
+        DownloadState.clearCompletedOperation()
+        downloadStarting = true
+        refreshDownloadUi()
+        try {
+            startForegroundService(Intent(this, DownloadService::class.java).putExtra("queuePath", file.absolutePath).putExtra("tree", tree).putExtra("format", formatValues[selectedFormat]))
+        } catch (e: Exception) {
+            file.delete(); downloadStarting = false; refreshDownloadUi(); toast(Errors.message(e))
+        }
     }
     private fun updateEngine() {
-        if (DownloadState.running.get() || loading) { toast("Önce devam eden işlemin bitmesini bekle."); return }
-        loading = true; find.isEnabled = false; toast("İndirme altyapısı güncelleniyor…")
+        if (DownloadState.running.get() || downloadStarting || loading) { toast("Önce devam eden işlemin bitmesini bekle."); return }
+        loading = true; updateAction(); toast("İndirme altyapısı güncelleniyor…")
         Thread {
             try { Engine.init(this); YoutubeDL.updateYoutubeDL(this); runOnUiThread { toast("İndirme altyapısı güncel.") } }
             catch (e: Exception) { runOnUiThread { toast("Güncelleme başarısız: ${Errors.message(e)}") } }
-            finally { runOnUiThread { loading = false; find.isEnabled = true } }
+            finally { runOnUiThread { loading = false; if (!isDestroyed) refreshDownloadUi() } }
         }.start()
     }
     private fun showFolder() { folderLabel.text = prefs.getString("tree", null)?.let { "Kayıt yeri: ${Uri.decode(Uri.parse(it).lastPathSegment ?: it)}" } ?: "Kayıt klasörü seçilmedi" }

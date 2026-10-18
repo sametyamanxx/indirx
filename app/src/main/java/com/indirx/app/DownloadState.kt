@@ -20,6 +20,10 @@ object DownloadState {
     // onStart also runs when the existing activity returns from the background.
     @Synchronized fun beginVisibleSession() {
         history = ""
+        clearCompletedOperation()
+    }
+
+    @Synchronized fun clearCompletedOperation() {
         if (!running.get()) {
             hasOperation = false
             cancelled = false

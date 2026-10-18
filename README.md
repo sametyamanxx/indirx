@@ -4,9 +4,16 @@ Tamamen Türkçe; koyu lacivert zemin, antrasit kartlar ve yumuşak mavi vurgula
 
 **Desteklenen platformlar: yalnızca YouTube ve Instagram.** TikTok desteği kaldırılmıştır.
 
-**[İndirX 0.2.8 APK indir](https://github.com/sametyamanxx/indirx/releases/download/v0.2.8/IndirX-0.2.8.apk)** · [Sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/v0.2.8)
+**[İndirX 0.2.9 APK indir](https://github.com/sametyamanxx/indirx/releases/download/v0.2.9/IndirX-0.2.9.apk)** · [Sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/v0.2.9)
 
 Android 8.0 ve üzeri içindir. Debug imzalı test APK'sıdır; önceki sürüm farklı imzalıysa kaldırıp kurmak gerekebilir. Dış klasördeki medya dosyaları korunur.
+
+## Android 0.2.9 — tek bul/indir düğmesi
+
+- Üstteki **İçerikleri bul** düğmesi içerik bulunduğunda **İndir** olur. Çalma listesinde seçilenleri, tek içerikte doğrudan o içeriği indirir.
+- İndirme tercihleri bölümündeki ayrı **Seçilenleri indir** düğmesi kaldırıldı; Video/Ses, biçim ve kayıt klasörü seçenekleri korunur.
+- Bağlantı silinir veya yenisi yapıştırılırsa eski sonuçlar temizlenir ve düğme yeniden **İçerikleri bul** olur. Yeni arama düğmeye basılarak başlar; eski isteğin geç gelen sonucu yeni bağlantıya uygulanmaz.
+- Devam eden indirme, ilerleme ve iptal korunur. Windows 0.2.13 değiştirilmedi.
 
 ## Android 0.2.8 — durum ve iptal aynı içerik bölümünde
 
@@ -87,7 +94,7 @@ Windows 0.2.13: Bağlantının yanındaki İçerikleri bul düğmesi içerik bul
 1. Bir video veya çalma listesi bağlantısını yapıştırıp **İçerikleri bul** düğmesine dokun.
 2. Listeden tek tek seçim yap veya duruma göre değişen **Tümünü Seç / Tümünü Kaldır** düğmesini kullan.
 3. Ses/video biçimini ve Android dosya seçicisiyle kayıt klasörünü seç.
-4. **Seçilenleri indir** düğmesine dokun. İndirme, dönüştürme ve klasöre kaydetme aşamaları ayrı gösterilir.
+4. Üstteki aynı düğme artık **İndir** yazar; ona dokun. İndirme, dönüştürme ve klasöre kaydetme aşamaları ayrı gösterilir.
 5. Kaydı tamamlanan dosyanın adı, **İndirildi** durumuyla geçmişte görünür.
 
 YouTube uygulamasındaki Paylaş menüsünden de bağlantı gönderebilirsin. Liste içeren bağlantılar çalma listesi olarak çözülür; yalnızca istediğin içerikleri işaretleyebilirsin.

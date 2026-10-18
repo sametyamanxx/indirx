@@ -1,4 +1,11 @@
-# İndirX — doğrulama durumu (Android 0.2.8 / Windows 0.2.13)
+# İndirX — doğrulama durumu (Android 0.2.9 / Windows 0.2.13)
+
+## Android 0.2.9 — Tek bul/indir düğmesi
+
+- İndirme tercihleri bölümündeki Seçilenleri indir kaldırıldı; üstteki İçerikleri bul başarılı sonuçtan sonra İndir olur. Biçim ve klasör seçenekleri korunur.
+- Gerçek metin değişikliği dinleyicisi sonuçları ve tamamlanmış işlem görünümünü sıfırlar. İstek sürüm işareti, eski aramanın yeni bağlantıya sonuç yazmasını engeller. Devam eden indirme ve iptal korunur; servis başlamadan önce ikinci dokunma engellenir.
+- Robolectric/SDK 28 testleri eklendi: ayrı düğmenin yokluğu, tek içerik ve liste seçimleri, üst düğmeden doğru kuyruk/biçim/klasörle servis niyeti, çift dokunma, silme/doğrudan değiştirme/paylaşılmış bağlantı, eski sonucun reddi ve aktif indirmeyi koruma. Tamamlanmış durumun geçmişi silmeden temizlenmesi için durum testleri eklendi. Testler ağdan içerik indirmez veya gerçek indirme servisini çalıştırmaz.
+- Yerel ve CI doğrulaması/yayın henüz tamamlanmadı; sonuçlar eklenecektir. Windows 0.2.13 değiştirilmedi.
 
 ## Windows 0.2.13 — Tek bul/indir düğmesi ve bağlantı değişimi
 
