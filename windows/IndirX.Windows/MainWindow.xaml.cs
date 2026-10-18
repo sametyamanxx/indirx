@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using IndirX.Core;
 using Microsoft.Win32;
 
@@ -90,18 +91,51 @@ public partial class MainWindow : Window
         finally { PreferencesCard.MinHeight = original; UpdateLayout(); }
     }
 
-    private bool ResultsStayInFlow()
+    private bool ResultsStayInFlow(string? previewFile)
     {
-        var visibility = ResultsCard.Visibility;
-        var minimum = ResultsCard.MinHeight;
+        // Exercise the same renderer used by successful inspection, without network
+        // requests or persistent data. Both single-video and playlist detection
+        // must replace the placeholder inside the existing, fixed-size card.
+        if (items.Count != 0 || history.Count != 0 || cancellation != null) return false;
+        var initial = new[] { Position(LinkCard), Position(DownloadsCard), Position(PreferencesCard), Position(UpdateCard) };
+        var height = DownloadsCard.ActualHeight;
         try
         {
-            ResultsCard.Visibility = Visibility.Visible;
-            ResultsCard.MinHeight = 160;
-            UpdateLayout();
-            return LayoutMatchesRequest() && Position(DownloadsCard).Y >= Position(ResultsCard).Y + ResultsCard.ActualHeight;
+            foreach (var collection in new[] { false, true })
+            {
+                var media = Enumerable.Range(1, collection ? 12 : 1)
+                    .Select(index => new MediaItem($"Örnek video {index} — yerleşim testi", "https://www.youtube.com/watch?v=BaW_jenozKc", "0:30")).ToArray();
+                RenderFound(new MediaResult("Örnek liste — yerleşim testi", media, collection));
+                UpdateLayout();
+                var current = new[] { Position(LinkCard), Position(DownloadsCard), Position(PreferencesCard), Position(UpdateCard) };
+                if (initial.Where((point, index) => (point - current[index]).Length > 1).Any() ||
+                    Math.Abs(DownloadsCard.ActualHeight - height) > 1 || !LayoutMatchesRequest() ||
+                    !ResultsPanel.IsDescendantOf(DownloadsCard) || ResultsList.Items.Count != media.Length ||
+                    EmptyContentHint.Visibility != Visibility.Collapsed || OperationPanel.Visibility != Visibility.Collapsed ||
+                    PlaylistHeader.Visibility != (collection ? Visibility.Visible : Visibility.Collapsed) ||
+                    (!collection && SelectionText.Text.Length != 0)) return false;
+                if (collection)
+                {
+                    if (items.Any(item => item.Selected)) return false;
+                    SelectAll_Click(this, new RoutedEventArgs());
+                    if (!items.All(item => item.Selected)) return false;
+                    SelectAll_Click(this, new RoutedEventArgs());
+                    if (items.Any(item => item.Selected)) return false;
+                }
+                else if (!items.Single().Selected) return false;
+                if (!collection && previewFile != null)
+                {
+                    var bitmap = new RenderTargetBitmap((int)ActualWidth, (int)ActualHeight, 96, 96, PixelFormats.Pbgra32);
+                    bitmap.Render(this);
+                    var encoder = new PngBitmapEncoder();
+                    encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                    using var stream = File.Create(previewFile);
+                    encoder.Save(stream);
+                }
+            }
+            return true;
         }
-        finally { ResultsCard.MinHeight = minimum; ResultsCard.Visibility = visibility; UpdateLayout(); }
+        finally { ResetFound(); ClearStatus(); UpdateLayout(); }
     }
 
     private static bool HasFolderOpenButton(DependencyObject parent)
@@ -112,7 +146,7 @@ public partial class MainWindow : Window
         return false;
     }
 
-    public object Diagnostics() => new
+    public object Diagnostics(string? detectedPreview = null) => new
     {
         Title, Platforms = PlatformLabel.Text, ItemCount = items.Count, HistoryCount = history.Count,
         ToolsPresent = new[] { "yt-dlp.exe", "ffmpeg.exe", "ffprobe.exe", "deno.exe" }.All(file => File.Exists(Path.Combine(tools, file))),
@@ -120,7 +154,9 @@ public partial class MainWindow : Window
         DownloadEnabled = DownloadButton.IsEnabled,
         WindowIconPresent = Icon != null, BrandLogoPresent = BrandLogo.Source != null,
         LayoutCorrect = LayoutMatchesRequest(), FolderOpenRemoved = !HasFolderOpenButton(this),
-        IndependentColumns = ColumnsAreIndependent(), ResultsFlowCorrect = ResultsStayInFlow(),
+        IndependentColumns = ColumnsAreIndependent(), ResultsFlowCorrect = ResultsStayInFlow(detectedPreview),
+        ResultsInDownloads = ResultsPanel.IsDescendantOf(DownloadsCard),
+        IdleStatusHidden = OperationPanel.Visibility == Visibility.Collapsed && StatusText.Text.Length == 0,
         DarkTitleBar = NativeChrome.IsDark(this), CaptionMatchesTheme = NativeChrome.HasMatchingCaption(this),
         NativeCaption = NativeChrome.Diagnostics(this),
         AndroidLogoHash = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Assets", "Branding.sha256")).Trim(),
@@ -140,25 +176,14 @@ public partial class MainWindow : Window
         try { url = PlatformPolicy.FromText(LinkBox.Text); }
         catch (Exception error) { ShowError(error); return; }
         LinkBox.Text = url;
-        items.Clear(); ResultsCard.Visibility = Visibility.Collapsed; UpdateSelection();
+        ResetFound();
         operation = BusyAsync(async token =>
         {
             EnsureTools();
             SetStatus("İçerikler aranıyor…", "Bağlantı çözümleniyor. Çalma listelerinde en fazla 500 içerik gösterilir.");
             var json = await ProcessRunner.RunAsync(Path.Combine(tools, "yt-dlp.exe"), Commands.Inspect(url, tools), tools, token);
             var found = MediaParser.Parse(json, url);
-            playlist = found.IsPlaylist;
-            CollectionTitle.Text = found.Title;
-            foreach (var item in found.Items)
-            {
-                var choice = new SelectableItem(item, playlist);
-                choice.PropertyChanged += (_, _) => UpdateSelection();
-                items.Add(choice);
-            }
-            ResultsCard.Visibility = Visibility.Visible;
-            SelectAllButton.Visibility = playlist ? Visibility.Visible : Visibility.Collapsed;
-            UpdateSelection();
-            SetStatus("İçerikler bulundu", $"{items.Count} içerik • indirmeye hazır", 0);
+            RenderFound(found);
         });
         await operation;
     }
@@ -170,9 +195,36 @@ public partial class MainWindow : Window
         UpdateSelection();
     }
 
+    private void ResetFound()
+    {
+        items.Clear(); playlist = false;
+        ResultsPanel.Visibility = PlaylistHeader.Visibility = Visibility.Collapsed;
+        EmptyContentHint.Visibility = Visibility.Visible;
+        CollectionTitle.Text = "";
+        UpdateSelection();
+    }
+
+    private void RenderFound(MediaResult found)
+    {
+        items.Clear();
+        playlist = found.IsPlaylist;
+        CollectionTitle.Text = playlist ? found.Title : "";
+        foreach (var item in found.Items)
+        {
+            var choice = new SelectableItem(item, playlist);
+            choice.PropertyChanged += (_, _) => UpdateSelection();
+            items.Add(choice);
+        }
+        ResultsPanel.Visibility = Visibility.Visible;
+        PlaylistHeader.Visibility = playlist ? Visibility.Visible : Visibility.Collapsed;
+        EmptyContentHint.Visibility = Visibility.Collapsed;
+        UpdateSelection();
+        ClearStatus();
+    }
+
     private void UpdateSelection()
     {
-        SelectionText.Text = playlist ? $"{items.Count} içerik • {items.Count(item => item.Selected)} seçili" : "İndirmeye hazır";
+        SelectionText.Text = playlist ? $"{items.Count} içerik • {items.Count(item => item.Selected)} seçili" : "";
         SelectAllButton.Content = items.Count > 0 && items.All(item => item.Selected) ? "Tümünü Kaldır" : "Tümünü Seç";
         DownloadButton.Content = playlist ? "Seçilenleri indir ↓" : "İndir ↓";
         DownloadButton.IsEnabled = cancellation == null && items.Any(item => item.Selected);
@@ -278,6 +330,7 @@ public partial class MainWindow : Window
         history.Insert(0, value);
         if (history.Count > 100) history.RemoveAt(history.Count - 1);
         HistoryText.Text = string.Join("\n\n", history);
+        HistoryPanel.Visibility = Visibility.Visible;
     }
 
     private async void Update_Click(object sender, RoutedEventArgs e)
@@ -297,7 +350,7 @@ public partial class MainWindow : Window
     {
         using var source = new CancellationTokenSource();
         cancellation = source;
-        ControlsPanel.IsEnabled = PreferencesPanel.IsEnabled = UpdateButton.IsEnabled = false;
+        ControlsPanel.IsEnabled = ResultsPanel.IsEnabled = PreferencesPanel.IsEnabled = UpdateButton.IsEnabled = false;
         CancelButton.IsEnabled = true;
         try { await work(source.Token); }
         catch (OperationCanceledException) { SetStatus("İptal edildi", "İşlem durduruldu. Tamamlanan dosyalar korunur.", 0); }
@@ -305,7 +358,7 @@ public partial class MainWindow : Window
         finally
         {
             cancellation = null;
-            ControlsPanel.IsEnabled = PreferencesPanel.IsEnabled = UpdateButton.IsEnabled = true;
+            ControlsPanel.IsEnabled = ResultsPanel.IsEnabled = PreferencesPanel.IsEnabled = UpdateButton.IsEnabled = true;
             CancelButton.IsEnabled = false;
             DownloadProgress.IsIndeterminate = false;
             UpdateSelection();
@@ -321,9 +374,18 @@ public partial class MainWindow : Window
     private void Cancel_Click(object sender, RoutedEventArgs e) { cancellation?.Cancel(); CancelButton.IsEnabled = false; }
     private void SetStatus(string status, string? detail, double progress = -1)
     {
+        OperationPanel.Visibility = Visibility.Visible;
         StatusText.Text = status; DetailText.Text = detail ?? "";
         DownloadProgress.IsIndeterminate = progress < 0;
         if (progress >= 0) DownloadProgress.Value = progress;
+    }
+
+    private void ClearStatus()
+    {
+        OperationPanel.Visibility = Visibility.Collapsed;
+        StatusText.Text = DetailText.Text = "";
+        DownloadProgress.IsIndeterminate = false;
+        DownloadProgress.Value = 0;
     }
 
     private static string Explain(Exception error)

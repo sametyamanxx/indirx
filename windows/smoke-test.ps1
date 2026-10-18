@@ -33,7 +33,7 @@ foreach ($run in @(1,2)) {
     $state = Get-Content $result -Raw | ConvertFrom-Json
     $expectedPlatforms = 'YouTube ' + [char]0x00B7 + ' Instagram'
     if ($state.Platforms -ne $expectedPlatforms -or $state.HistoryCount -ne 0 -or $state.ItemCount -ne 0 -or !$state.ToolsPresent -or $state.Version -ne $version -or $state.Background -ne '#FF0F1520' -or !$state.Format -or $state.DownloadEnabled) { throw 'UI startup diagnostics failed' }
-    if (!$state.WindowIconPresent -or !$state.BrandLogoPresent -or !$state.LayoutCorrect -or !$state.IndependentColumns -or !$state.ResultsFlowCorrect -or !$state.FolderOpenRemoved -or !$state.DarkTitleBar -or !$state.CaptionMatchesTheme) {
+    if (!$state.WindowIconPresent -or !$state.BrandLogoPresent -or !$state.LayoutCorrect -or !$state.IndependentColumns -or !$state.ResultsFlowCorrect -or !$state.ResultsInDownloads -or !$state.IdleStatusHidden -or !$state.FolderOpenRemoved -or !$state.DarkTitleBar -or !$state.CaptionMatchesTheme) {
         Write-Host (Get-Content $result -Raw)
         throw 'Branding, layout or native dark title bar check failed'
     }

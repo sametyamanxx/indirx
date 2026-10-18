@@ -16,23 +16,39 @@
             <TextBox x:Name="LinkBox" MinHeight="66" TextWrapping="Wrap" VerticalContentAlignment="Center" AutomationProperties.Name="Video veya çalma listesi bağlantısı" />
             <WrapPanel Margin="0,16,0,0"><Button Content="Panodan yapıştır" Click="Paste_Click" /><Button Content="İçerikleri bul →" Background="#7B9CF5" Foreground="#0E182B" Click="Find_Click" /></WrapPanel>
           </StackPanel></Border>
-          <Border x:Name="ResultsCard" Style="{StaticResource Card}" Visibility="Collapsed"><StackPanel>
-            <TextBlock x:Name="CollectionTitle" Style="{StaticResource Heading}" />
-            <TextBlock x:Name="SelectionText" Foreground="{StaticResource Muted}" Margin="0,0,0,8" />
-            <Button x:Name="SelectAllButton" Content="Tümünü Seç" Click="SelectAll_Click" HorizontalAlignment="Left" />
-            <ListBox x:Name="ResultsList" MaxHeight="280" BorderThickness="0" Background="#182131" Foreground="#E2E8F4" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-              <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="Focusable" Value="False" /><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><ContentPresenter /></ControlTemplate></Setter.Value></Setter></Style></ListBox.ItemContainerStyle>
-              <ListBox.ItemTemplate><DataTemplate><Border Background="#0F1520" CornerRadius="8" Padding="12" Margin="0,0,0,8"><DockPanel><CheckBox IsChecked="{Binding Selected, Mode=TwoWay}" Visibility="{Binding SelectionVisibility}" Margin="0,0,12,0" AutomationProperties.Name="İçeriği seç" /><StackPanel><TextBlock Text="{Binding Item.Title}" FontWeight="SemiBold" /><TextBlock Text="{Binding Item.Duration}" Foreground="{StaticResource Muted}" Margin="0,6,0,0" /></StackPanel></DockPanel></Border></DataTemplate></ListBox.ItemTemplate>
-            </ListBox>
-          </StackPanel></Border>
         </StackPanel>
           <Border x:Name="DownloadsCard" Style="{StaticResource Card}"><StackPanel>
             <TextBlock Text="İndirmeler" Style="{StaticResource Heading}" />
-            <TextBlock x:Name="StatusText" Text="İndirmeye hazır" FontSize="18" />
-            <TextBlock x:Name="DetailText" Text="Seçtiğin içerikler burada görünecek." Foreground="{StaticResource Muted}" Margin="0,8,0,16" />
-            <ProgressBar x:Name="DownloadProgress" Height="8" Minimum="0" Maximum="100" Foreground="#7B9CF5" Background="#2D394E" BorderThickness="0" Margin="0,0,0,16" />
-            <Button x:Name="CancelButton" Content="İşlemi iptal et" Click="Cancel_Click" IsEnabled="False" />
-            <TextBlock x:Name="HistoryText" Text="Henüz indirme yok." FontSize="12" Margin="0,8,0,0" />
+            <Grid x:Name="DownloadsViewport" Height="220">
+              <Grid.RowDefinitions><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+              <Grid x:Name="MediaRegion" Grid.Row="0">
+                <TextBlock x:Name="EmptyContentHint" Text="Bulunan videolar burada gösterilecek." Foreground="{StaticResource Muted}" VerticalAlignment="Center" />
+                <DockPanel x:Name="ResultsPanel" Visibility="Collapsed">
+                  <StackPanel x:Name="PlaylistHeader" DockPanel.Dock="Top" Visibility="Collapsed">
+                    <TextBlock x:Name="CollectionTitle" FontSize="15" FontWeight="SemiBold" MaxHeight="40" Margin="0,0,0,8" />
+                    <DockPanel Margin="0,0,0,8">
+                      <Button x:Name="SelectAllButton" Content="Tümünü Seç" Click="SelectAll_Click" DockPanel.Dock="Right" MinHeight="32" Padding="10,4" Margin="8,0,0,0" />
+                      <TextBlock x:Name="SelectionText" Foreground="{StaticResource Muted}" VerticalAlignment="Center" />
+                    </DockPanel>
+                  </StackPanel>
+                  <ListBox x:Name="ResultsList" BorderThickness="0" Background="#182131" Foreground="#E2E8F4" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListBox.ItemContainerStyle><Style TargetType="ListBoxItem"><Setter Property="HorizontalContentAlignment" Value="Stretch" /><Setter Property="Focusable" Value="False" /><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><ContentPresenter /></ControlTemplate></Setter.Value></Setter></Style></ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate><DataTemplate><Border Background="#0F1520" CornerRadius="8" Padding="12" Margin="0,0,0,8"><DockPanel><CheckBox IsChecked="{Binding Selected, Mode=TwoWay}" Visibility="{Binding SelectionVisibility}" Margin="0,0,12,0" AutomationProperties.Name="İçeriği seç" /><StackPanel><TextBlock Text="{Binding Item.Title}" FontWeight="SemiBold" /><TextBlock Text="{Binding Item.Duration}" Foreground="{StaticResource Muted}" Margin="0,6,0,0" /></StackPanel></DockPanel></Border></DataTemplate></ListBox.ItemTemplate>
+                  </ListBox>
+                </DockPanel>
+              </Grid>
+              <StackPanel x:Name="OperationPanel" Grid.Row="1" Visibility="Collapsed" Margin="0,8,0,0">
+                <TextBlock x:Name="StatusText" FontSize="15" />
+                <TextBlock x:Name="DetailText" Foreground="{StaticResource Muted}" FontSize="12" MaxHeight="32" Margin="0,4,0,8" />
+                <DockPanel>
+                  <Button x:Name="CancelButton" Content="İptal" DockPanel.Dock="Right" Click="Cancel_Click" IsEnabled="False" MinHeight="32" Padding="10,4" Margin="12,0,0,0" />
+                  <ProgressBar x:Name="DownloadProgress" Height="8" Minimum="0" Maximum="100" Foreground="#7B9CF5" Background="#2D394E" BorderThickness="0" VerticalAlignment="Center" />
+                </DockPanel>
+              </StackPanel>
+            </Grid>
+            <ScrollViewer x:Name="HistoryPanel" MaxHeight="96" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
+              <TextBlock x:Name="HistoryText" FontSize="12" />
+            </ScrollViewer>
           </StackPanel></Border>
       </StackPanel>
       <StackPanel x:Name="RightColumn" Grid.Row="1" Grid.Column="2" VerticalAlignment="Top">

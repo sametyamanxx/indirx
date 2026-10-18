@@ -1,4 +1,11 @@
-# İndirX — doğrulama durumu (Android 0.2.7 / Windows 0.2.9)
+# İndirX — doğrulama durumu (Android 0.2.7 / Windows 0.2.10)
+
+## Windows 0.2.10 — Tespit edilen içeriği mevcut İndirmeler kutusunda gösterme
+
+- Ayrı sonuç kartı kaldırıldı; gerçek `RenderFound` yöntemi video/listeyi mevcut İndirmeler kutusuna yerleştirir. Sabit yükseklikteki içerik alanı, tespitten sonra kutuların konum ve boyutunu korur.
+- Boş durum ve tek video seçimi için İndirmeye hazır metni gösterilmez. Arama/indirme/iptal/dönüştürme bilgileri yalnızca gerçek işlem sırasında aynı kutuda gösterilir; liste seçimleri korunur.
+- Yerel WPF derlemesi 0 hata / 0 uyarıyla başarılı. Gerçek gösterim yöntemiyle örnek tek video ve 12 öğeli liste test edildi: kart konumları ve boyutu değişmedi; sonuçlar mevcut kutunun içinde kaldı; tek içerik doğrudan seçildi, listede Tümünü Seç/Kaldır çalıştı. Örnek veri test sonunda temizlenir, hiçbir ağ isteği yapılmaz veya geçmiş kaydedilmez. Önce/sonra görüntüleri incelendi; `.detected.png` yalnızca örnek test içeriği gösterir.
+- Paketli kurulum/yayın sonuçları henüz alınmadı; önceki sürüm sonuçları bu sürümün testi sayılmaz. Gerçek YouTube/Instagram indirmeleri bu görsel değişiklikte ayrıca denenmedi.
 
 ## Windows 0.2.9 — İndirmeler bölümünü bağlantının altına hizalama
 
