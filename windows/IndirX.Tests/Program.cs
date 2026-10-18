@@ -91,4 +91,5 @@ try
     Check(exited, "cancel terminates child process");
 }
 finally { Directory.Delete(root, recursive: true); }
+await UpdateTests.Run(Check);
 Console.WriteLine($"PASS: {assertions} offline assertions.");

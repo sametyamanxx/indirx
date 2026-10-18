@@ -13,11 +13,20 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
 import android.widget.*
-import com.yausername.youtubedl_android.YoutubeDL
 import org.json.JSONArray
 import org.json.JSONObject
 
 class MainActivity : Activity() {
+    companion object {
+        internal var updateBackendFactory: (Context) -> UpdateBackend = { GitHubUpdates(it) }
+    }
+    private lateinit var updateBackend: UpdateBackend
+    private var nextUpdateCheck = 0L
+    private var checkingUpdates = false
+    private var foreground = false
+    private var pendingOffer: UpdateOffer? = null
+    private var pendingInstaller: Pair<java.io.File, AppUpdate>? = null
+    private val appInstaller by lazy { AppInstaller(this) }
     private val accent = Color.rgb(123, 156, 245)
     private val ink = Color.rgb(226, 232, 244)
     private val border = Color.rgb(45, 57, 78)
@@ -63,6 +72,7 @@ class MainActivity : Activity() {
     private val refresh = object : Runnable {
         override fun run() {
             refreshDownloadUi()
+            checkAutomaticUpdates()
             handler.postDelayed(this, 400)
         }
     }
@@ -103,7 +113,6 @@ class MainActivity : Activity() {
         root.add(text("İNDİRX", 28f).apply { gravity = Gravity.CENTER; letterSpacing = .10f; typeface = Typeface.DEFAULT_BOLD })
         root.add(text("YouTube · Instagram", 13f, muted).apply { gravity = Gravity.CENTER })
         section("Bağlantı ekle").apply {
-            add(text("Yalnızca YouTube ve Instagram bağlantıları", 12f, muted))
             link = EditText(this@MainActivity).apply {
                 id = R.id.link_input
                 hint = "Video veya çalma listesi bağlantısı"; setTextColor(ink); setHintTextColor(muted)
@@ -173,12 +182,12 @@ class MainActivity : Activity() {
                 startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION or Intent.FLAG_GRANT_PREFIX_URI_PERMISSION), 41)
             })
         }
-        root.add(button("İndirme altyapısını güncelle") { updateEngine() })
         root.add(text("İndirX • ${BuildConfig.VERSION_NAME}\nYalnızca indirme hakkın olan içerikleri kaydet.", 11f, muted).apply { gravity = Gravity.CENTER })
         // Önceki indirme kayıtları uygulama yeniden açıldığında gösterilmez.
         prefs.edit().remove("history").apply()
         // Search results are session-only. Remove data persisted by older versions.
         prefs.edit().remove("link").remove("items").remove("collection").remove("playlist").apply()
+        updateBackend = updateBackendFactory(applicationContext)
         link.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -210,8 +219,8 @@ class MainActivity : Activity() {
         DownloadState.beginVisibleSession()
         refreshDownloadUi()
     }
-    override fun onResume() { super.onResume(); handler.post(refresh) }
-    override fun onPause() { handler.removeCallbacks(refresh); prefs.edit().putBoolean("format_schema2", true).putInt("format", selectedFormat).putInt("video_format", videoFormat).putInt("audio_format", audioFormat).apply(); super.onPause() }
+    override fun onResume() { super.onResume(); foreground = true; handler.post(refresh) }
+    override fun onPause() { foreground = false; handler.removeCallbacks(refresh); prefs.edit().putBoolean("format_schema2", true).putInt("format", selectedFormat).putInt("video_format", videoFormat).putInt("audio_format", audioFormat).apply(); super.onPause() }
     private fun updateCount() {
         if (bulkSelecting) return
         val checked = boxes.count { it.second?.isChecked != false }
@@ -230,7 +239,7 @@ class MainActivity : Activity() {
             ready -> "İndir"
             else -> "İçerikleri bul"
         }
-        find.isEnabled = !loading && !downloadStarting && !DownloadState.running.get() &&
+        find.isEnabled = !loading && !downloadStarting && !UpdateState.applying.get() && !DownloadState.running.get() &&
             (if (ready) boxes.any { it.second?.isChecked != false } else link.text.isNotBlank())
         find.alpha = if (find.isEnabled) 1f else .45f
     }
@@ -284,7 +293,7 @@ class MainActivity : Activity() {
         }; updateCount()
     }
     private fun inspect() {
-        if (loading || downloadStarting || DownloadState.running.get()) return
+        if (updateBusy()) return
         val url = link.text.toString().trim()
         if (!Engine.validUrl(url)) { toast(SupportedPlatforms.message); return }
         val revision = linkRevision
@@ -332,7 +341,7 @@ class MainActivity : Activity() {
         updateAction()
     }
     private fun startDownload() {
-        if (loading || downloadStarting || DownloadState.running.get() || !hasCurrentResults()) return
+        if (updateBusy() || !hasCurrentResults()) return
         val tree = prefs.getString("tree", null) ?: run { toast("Önce kayıt klasörünü seç."); return }
         val selected = boxes.filter { it.second?.isChecked != false }
         if (selected.isEmpty()) { toast("En az bir içerik seç."); return }
@@ -348,18 +357,69 @@ class MainActivity : Activity() {
             file.delete(); downloadStarting = false; refreshDownloadUi(); toast(Errors.message(e))
         }
     }
-    private fun updateEngine() {
-        if (DownloadState.running.get() || downloadStarting || loading) { toast("Önce devam eden işlemin bitmesini bekle."); return }
-        loading = true; updateAction(); toast("İndirme altyapısı güncelleniyor…")
+    private fun updateBusy() = loading || downloadStarting || UpdateState.applying.get() || DownloadState.running.get()
+    private fun checkAutomaticUpdates() {
+        if (!foreground || isDestroyed || isFinishing || updateBusy()) return
+        pendingInstaller?.let { ready ->
+            pendingInstaller = null
+            try { appInstaller.prepare(ready.first, ready.second) }
+            catch (e: Exception) { updateError(e.message ?: "Güncelleme kurulamadı.") }
+            return
+        }
+        pendingOffer?.let { offer -> pendingOffer = null; presentUpdateOffer(offer); return }
+        if (checkingUpdates || System.currentTimeMillis() < nextUpdateCheck) return
+        checkingUpdates = true
+        nextUpdateCheck = System.currentTimeMillis() + 6 * 60 * 60 * 1000L
         Thread {
-            try { Engine.init(this); YoutubeDL.updateYoutubeDL(this); runOnUiThread { toast("İndirme altyapısı güncel.") } }
-            catch (e: Exception) { runOnUiThread { toast("Güncelleme başarısız: ${Errors.message(e)}") } }
-            finally { runOnUiThread { loading = false; if (!isDestroyed) refreshDownloadUi() } }
+            val offer = runCatching { updateBackend.check() }.getOrDefault(UpdateOffer())
+            runOnUiThread {
+                checkingUpdates = false
+                if (!isDestroyed && !isFinishing && offer.available) {
+                    pendingOffer = offer
+                    if (foreground && !updateBusy()) { pendingOffer = null; presentUpdateOffer(offer) }
+                }
+            }
         }.start()
+    }
+    internal fun presentUpdateOffer(offer: UpdateOffer) {
+        if (!offer.available || isDestroyed || isFinishing) return
+        if (!foreground || updateBusy()) { pendingOffer = offer; return }
+        val message = listOfNotNull(offer.app?.let { "İndirX ${it.version} mevcut." }, offer.engine?.let { "İndirme altyapısı $it mevcut." })
+            .joinToString("\n") + "\n\nGüncellemeler yüklensin mi? Uygulama için Android'in kurulum onayı da istenir."
+        AlertDialog.Builder(this).setTitle("Güncelleme mevcut").setMessage(message)
+            .setNegativeButton("Daha sonra", null)
+            .setPositiveButton("Yükle") { _, _ -> applyUpdates(offer) }.show()
+    }
+    private fun applyUpdates(offer: UpdateOffer) {
+        if (updateBusy()) { pendingOffer = offer; return }
+        if (!UpdateState.applying.compareAndSet(false, true)) { pendingOffer = offer; return }
+        loading = true; updateAction(); toast("Onaylanan güncellemeler hazırlanıyor…")
+        Thread {
+            var error: String? = null
+            if (offer.engine != null) runCatching { updateBackend.updateEngine() }.onFailure { error = Errors.message(it as? Exception ?: Exception(it)) }
+            val file = offer.app?.let { app -> runCatching { updateBackend.download(app) }.onFailure { error = Errors.message(it as? Exception ?: Exception(it)) }.getOrNull() }
+            runOnUiThread {
+                UpdateState.applying.set(false)
+                loading = false
+                if (!isDestroyed && !isFinishing) {
+                    refreshDownloadUi()
+                    if (file != null) pendingInstaller = file to requireNotNull(offer.app)
+                    else if (error == null) toast("İndirme altyapısı güncellendi.")
+                    error?.let { if (file != null) toast("İndirme altyapısı güncellenemedi: $it") else updateError(it) }
+                    if (file != null || error == null) checkAutomaticUpdates()
+                }
+            }
+        }.start()
+    }
+    private fun updateError(message: String) {
+        AlertDialog.Builder(this).setTitle("Güncelleme yüklenemedi").setMessage(message).setPositiveButton("Tamam", null).show()
     }
     private fun showFolder() { folderLabel.text = prefs.getString("tree", null)?.let { "Kayıt yeri: ${Uri.decode(Uri.parse(it).lastPathSegment ?: it)}" } ?: "Kayıt klasörü seçilmedi" }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == AppInstaller.PERMISSION_REQUEST) {
+            try { appInstaller.continueInstall(false) } catch (e: Exception) { updateError(e.message ?: "Kurulum başlatılamadı.") }
+        }
         if (requestCode == 41 && resultCode == RESULT_OK) data?.data?.let { uri ->
             try {
                 val required = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION

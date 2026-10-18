@@ -44,6 +44,7 @@ public partial class App : Application
                 }
             }));
         }
+        else window.StartAutomaticUpdates();
     }
 
     protected override void OnExit(ExitEventArgs e)

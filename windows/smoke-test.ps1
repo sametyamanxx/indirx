@@ -34,7 +34,7 @@ foreach ($run in @(1,2)) {
     $expectedPlatforms = 'YouTube ' + [char]0x00B7 + ' Instagram'
     $expectedTitle = [string][char]0x0130 + 'ND' + [char]0x0130 + 'RX'
     if ($state.Title -cne $expectedTitle -or $state.Platforms -ne $expectedPlatforms -or $state.HistoryCount -ne 0 -or $state.ItemCount -ne 0 -or !$state.ToolsPresent -or $state.Version -ne $version -or $state.Background -ne '#FF0F1520' -or !$state.Format -or $state.DownloadEnabled) { throw 'UI startup diagnostics failed' }
-    if (!$state.WindowIconPresent -or !$state.BrandLogoPresent -or !$state.LayoutCorrect -or !$state.AlignedRows -or !$state.ResultsFlowCorrect -or !$state.ResultsInDownloads -or !$state.IdleStatusHidden -or !$state.DownloadThemeCorrect -or !$state.ContentActionFlowCorrect -or !$state.FolderOpenRemoved -or !$state.DarkTitleBar -or !$state.CaptionMatchesTheme) {
+    if (!$state.WindowIconPresent -or !$state.BrandLogoPresent -or !$state.LayoutCorrect -or !$state.CenteredCards -or !$state.UpdateControlsRemoved -or !$state.ResultsFlowCorrect -or !$state.ResultsInDownloads -or !$state.IdleStatusHidden -or !$state.DownloadThemeCorrect -or !$state.ContentActionFlowCorrect -or !$state.FolderOpenRemoved -or !$state.DarkTitleBar -or !$state.CaptionMatchesTheme) {
         Write-Host (Get-Content $result -Raw)
         throw 'Branding, layout or native dark title bar check failed'
     }

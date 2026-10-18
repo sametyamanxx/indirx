@@ -6,12 +6,21 @@ android {
         applicationId = "com.indirx.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 11
-        versionName = "0.2.9"
+        versionCode = 12
+        versionName = "0.2.10"
         ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64") }
     }
     val localTestKey = rootProject.file("test-signing/indirx-debug.keystore")
-    if (localTestKey.exists()) {
+    val persistentKey = System.getenv("INDIRX_SIGNING_STORE")
+    if (!persistentKey.isNullOrBlank()) {
+        signingConfigs { getByName("debug") {
+            storeFile = file(persistentKey)
+            storeType = "PKCS12"
+            storePassword = requireNotNull(System.getenv("INDIRX_SIGNING_PASSWORD"))
+            keyAlias = "indirx"
+            keyPassword = storePassword
+        } }
+    } else if (localTestKey.exists()) {
         signingConfigs { getByName("debug") { storeFile = localTestKey } }
     }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
@@ -21,6 +30,7 @@ android {
     packaging { jniLibs.useLegacyPackaging = true; resources.excludes += setOf("META-INF/DEPENDENCIES", "META-INF/LICENSE*", "META-INF/NOTICE*") }
 }
 dependencies {
+    implementation("androidx.core:core:1.15.0")
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.14.1")
     implementation("androidx.documentfile:documentfile:1.0.1")

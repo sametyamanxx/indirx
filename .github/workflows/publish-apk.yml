@@ -24,6 +24,15 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.11.1'
+      - name: Restore persistent Android signing
+        env:
+          SIGNING_KEYSTORE: ${{ secrets.ANDROID_SIGNING_KEYSTORE }}
+          SIGNING_PASSWORD: ${{ secrets.ANDROID_SIGNING_PASSWORD }}
+        run: |
+          test -n "$SIGNING_KEYSTORE" && test -n "$SIGNING_PASSWORD"
+          printf '%s' "$SIGNING_KEYSTORE" | base64 --decode > "$RUNNER_TEMP/indirx-signing.p12"
+          echo "INDIRX_SIGNING_STORE=$RUNNER_TEMP/indirx-signing.p12" >> "$GITHUB_ENV"
+          echo "INDIRX_SIGNING_PASSWORD=$SIGNING_PASSWORD" >> "$GITHUB_ENV"
       - run: gradle :app:testDebugUnitTest :app:lintDebug :app:assembleDebug
       - name: Save Android test and lint reports
         if: always()

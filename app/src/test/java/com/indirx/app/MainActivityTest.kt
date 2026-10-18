@@ -33,6 +33,12 @@ class MainActivityTest {
     private var controller: ActivityController<MainActivity>? = null
 
     @Before fun reset() {
+        UpdateState.applying.set(false)
+        MainActivity.updateBackendFactory = { object : UpdateBackend {
+            override fun check() = UpdateOffer()
+            override fun updateEngine() = error("Unexpected engine update in UI test")
+            override fun download(update: AppUpdate): File = error("Unexpected application download in UI test")
+        } }
         DownloadState.running.set(false)
         DownloadState.beginVisibleSession()
     }
@@ -41,6 +47,7 @@ class MainActivityTest {
         controller?.pause()?.stop()?.destroy()
         DownloadState.running.set(false)
         DownloadState.beginVisibleSession()
+        MainActivity.updateBackendFactory = { GitHubUpdates(it) }
     }
 
     private fun launch(): MainActivity {
@@ -171,6 +178,8 @@ class MainActivityTest {
         assertEquals(1, descendants(activity.window.decorView).count { it.id == R.id.content_action })
         assertEquals("İçerikleri bul", action.text.toString())
         assertFalse(action.isEnabled)
+        val texts = descendants(activity.window.decorView).filterIsInstance<TextView>().map { it.text.toString() }
+        assertFalse(texts.any { it.contains("İndirme altyapısını güncelle") || it.contains("Yalnızca YouTube ve Instagram bağlantıları") || it.contains("Geçmiş yalnızca bu oturumda gösterilir") })
     }
 
     @Test fun singleButtonStartsDownloadWithSelectedFormatAndBlocksDoubleTap() {

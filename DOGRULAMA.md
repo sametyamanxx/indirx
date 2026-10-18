@@ -1,4 +1,13 @@
-# İndirX — doğrulama durumu (Android 0.2.9 / Windows 0.2.14)
+# İndirX — doğrulama durumu (Android 0.2.10 / Windows 0.2.15)
+
+## Android 0.2.10 / Windows 0.2.15 — Otomatik güncelleme ve ortalı arayüz
+
+- Windows tek sütunlu ve ortalı Android benzeri düzene taşındı. Manuel güncelleme düğmesi iki platformdan, bağlantı kartındaki platform açıklaması iki platformdan ve oturum geçmişi alt yazısı Windows'tan kaldırıldı. Oturum içi geçmiş davranışı değiştirilmedi.
+- Açılışta ve etkin kullanımda altı saat arayla platforma özel kararlı uygulama sürümü ve yt-dlp sürümü denetlenir. Bir kontrolün başarısızlığı diğerinin sonucunu engellemez. Uygun güncelleme kullanıcıya sorulur; onaysız paket indirilmez veya altyapı değiştirilmez. Aktif indirme sırasında kurulum ertelenir.
+- Uygulama paketi tam resmî GitHub adresi, boyut ve SHA-256 ile doğrulanır. Android ayrıca APK sürüm kodu, paket adı ve kurulu imzayı karşılaştırır; FileProvider yalnızca updates önbelleğini paylaşır ve sistem kurulum izni/onayı gerekir. Windows doğrulanmış Setup'ı kurulu konumla başlatır; portable için ayrı kurulum oluşur.
+- Android 0.2.10 itibarıyla yeni kalıcı imza anahtarı GitHub Actions secrets içinde saklanır. Anahtar/şifre depoya eklenmedi. Eski 0.2.9 ve öncesinin farklı imzası korunamadığı için ilk geçişin üzerine kurulacağı iddia edilmez; uygulama eski kurulumu/verileri kaldırmaz.
+- Windows'ta 77 çevrimdışı assertion ve iki paketli WPF açılışı başarılı: sürüm sıralaması, platform/taslak/ön sürüm/eksik paket filtresi, URL/hash/boyut doğrulaması, iptal ve kısmi dosya temizliği; beş pencere boyutunda ortalama, tek bul/indir, liste, tekerlek, koyu tema, simge ve araç denetimleri. Android'de 25 test, derleme ve lint yerel olarak geçti; kullanıcı reddedince altyapının değişmediği, kabul edince sahte güncelleyicinin bir kez çalıştığı, paket/imza/sürüm/hash/URL kontrolleri ve kaldırılan yazıların yokluğu test edildi. Kalıcı anahtarla APK oluşturuldu. Bozuk paylaşılan SDK'ya dokunmadan ayrı yerel SDK çalışma klasörü kullanıldı.
+- Testler gerçek indirme altyapısını güncellemez veya mevcut kullanıcı kurulumunu değiştirmez. Fiziksel cihazda/sistemde uçtan uca gelecekteki sürüme yükseltme ayrıca denenmedi. CI ve yayın sonuçları henüz eklenmedi.
 
 ## Windows 0.2.14 — Başlık çubuğu ve alt kartların hizası
 

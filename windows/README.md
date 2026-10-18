@@ -1,12 +1,12 @@
-# İndirX 0.2.14 — Windows masaüstü projesi
+# İndirX 0.2.15 — Windows masaüstü projesi
 
-**[Setup.exe indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.14/IndirX-0.2.14-Windows-x64-Setup.exe)** · [Portable.zip](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.14/IndirX-0.2.14-Windows-x64-Portable.zip) · [Sürüm kaynak kodunu indir](https://github.com/sametyamanxx/indirx/archive/refs/tags/windows-v0.2.14.zip)
+**[Setup.exe indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.15/IndirX-0.2.15-Windows-x64-Setup.exe)** · [Portable.zip](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.15/IndirX-0.2.15-Windows-x64-Portable.zip) · [Sürüm kaynak kodunu indir](https://github.com/sametyamanxx/indirx/archive/refs/tags/windows-v0.2.15.zip)
 
 Windows 10 **22H2 (19045)** / Windows 11, **x64** için bağımsız WPF masaüstü uygulaması. Android APK'sını veya emülatör kullanmaz. .NET 10 çalışma ortamı, yt-dlp, FFmpeg/ffprobe ve YouTube için Deno kurulumun içinde gelir; ayrıca Python, Java veya .NET kurmak gerekmez.
 
 ## Özellikler
 
-- Android ile aynı logo; üst ortada logo, hemen altında ortalı İNDİRX. Yerel pencere başlık çubuğunda yalnızca **İNDİRX** yazar. Üst sırada solda Bağlantı ekle, sağda İndirme tercihleri bulunur. Alt sıradaki İndirmeler ve İndirme altyapısını güncelle kutularının üst kenarları aynı hizadadır; üst kartlardan biri büyüdüğünde ikisi birlikte aşağı taşınır. Tespit edilen içerik doğrudan mevcut İndirmeler kutusunda gösterilir; bağlantının altına ayrı sonuç kartı eklenmez. Tek içerik yalnızca kendi satırı kadar yer kaplar. Çalma listesi pencerenin kalan yüksekliğini panelin altına kadar kullanır; pencere büyütülünce liste de uzar. Fare tekerleği liste içinde kaydırır; başta/sonda dış sayfaya geçmez. Kısa pencerelerde en az bir tam içerik satırı korunur ve gerekirse dış sayfa kaydırılır. Gereksiz İndirmeye hazır yazıları kaldırılmıştır. Kayıt klasörünü aç düğmesi ve işlevi yoktur; kayıt klasörünü seç özelliği korunur.
+- Android benzeri ortalı tek sütun: logo, İNDİRX, YouTube · Instagram ve eşit genişlikli kartlar aynı merkezdedir. Yerel başlık çubuğu yalnızca **İNDİRX** yazar. Sıralama Bağlantı ekle, gerektiğinde Bulunan içerikler ve İndirme tercihleri şeklindedir. Tek içerik kompakt, çalma listesi pencere boyutuna uyarlanan kendi kaydırıcısındadır. Kısa pencerelerde dış sayfa da kayar. Güncelleme düğmesi/kartı, bağlantı kartının platform açıklaması ve alttaki oturum geçmişi açıklaması kaldırıldı. Klasör/biçim ve tek bul/indir akışı korunur.
 - EXE/Setup, Başlat menüsü/masaüstü kısayolları ve pencere/görev çubuğu simgesi aynı Android logosunu kullanır. Yerel Windows başlık çubuğu koyudur; destekleyen Windows 11 sürümlerinde başlık/yazı/kenarlık renkleri de uygulama temasıyla eşleştirilir. Özel renk desteklenmiyorsa yerel koyu başlık çubuğu korunur.
 - İndirme ve dönüştürme sırasında devre dışı kalan içerik listesi de koyu temada kalır; Windows'un beyaz devre dışı kontrol arka planı kullanılmaz. Liste ve kaydırma çubukları koyu stiller kullanır. İşlem ilerlemesi, iptal ve ilk yerleşim korunur.
 
@@ -18,12 +18,12 @@ Windows 10 **22H2 (19045)** / Windows 11, **x64** için bağımsız WPF masaüst
 - Gerçek ilerleme, iptal ve dönüştürme; bir içerik başarısız olsa da kalan kuyruk devam eder.
 - Windows klasör seçicisi; varsayılan `Kullanıcı\Downloads\IndirX`. Başlık tabanlı dosya adı, aynı ad varsa `(2)` eki; mevcut dosyalar silinmez.
 - Geçmiş yalnızca bu uygulama işleminin belleğinde tutulur. Kapatıp açınca önceki indirmeler veya bağlantılar geri gelmez. Yalnızca klasör/biçim tercihleri `%LOCALAPPDATA%\IndirX\settings.json` içinde saklanır.
-- Resmî yt-dlp kararlı sürümüne uygulama içinden güncelleme. FFmpeg/Deno ve uygulama güncellemeleri yeni Setup ile dağıtılır.
+- Açılışta ve etkin kullanımda altı saat arayla resmî yt-dlp ve Windows uygulama sürümü otomatik denetlenir. Kullanıcı onaylarsa altyapı güncellenir; uygulama paketi HTTPS, boyut ve SHA-256 ile doğrulanıp Setup açılır. Kurulu uygulamanın özel kurulum konumu korunur; portable sürüm için Setup ayrı kurulum oluşturur. İşlem sürerken kurulum başlatılmaz; uygulama yüklemesi öncesi İndirX kapanır. Çevrimdışıyken indirme kullanımı engellenmez. FFmpeg/Deno yeni uygulama paketiyle güncellenir.
 - İndirme önce uygulamanın özel geçici klasöründe yapılır, başarıyla tamamlanınca seçilen klasöre kopyalanır. İptalde uygulamanın oluşturduğu yarım kopya silinir; tamamlanmış dosyalar korunur.
 
 ## Kurulum ve kaldırma
 
-GitHub Releases içindeki **IndirX-0.2.14-Windows-x64-Setup.exe** dosyasını çalıştır. Kullanıcı başına `%LOCALAPPDATA%\Programs\IndirX` konumuna kurulur; yönetici izni gerektirmez. Önceki Windows sürümüyle aynı kurulum kimliği kullanılır; aynı konuma kurarak güncellenebilir. Başlat menüsü ve isteğe bağlı masaüstü kısayolu eklenir. Windows Ayarlar → Yüklü uygulamalar üzerinden kaldırılır. Kaldırma medya dosyalarını silmez. Tercihler de güncelleme için korunur. Windows, önceden sabitlenmiş eski kısayolun simgesini önbellekten gösterirse kısayolu kaldırıp tekrar sabitlemek gerekebilir.
+GitHub Releases içindeki **IndirX-0.2.15-Windows-x64-Setup.exe** dosyasını çalıştır. Kullanıcı başına `%LOCALAPPDATA%\Programs\IndirX` konumuna kurulur; yönetici izni gerektirmez. Önceki Windows sürümüyle aynı kurulum kimliği kullanılır; aynı konuma kurarak güncellenebilir. Başlat menüsü ve isteğe bağlı masaüstü kısayolu eklenir. Windows Ayarlar → Yüklü uygulamalar üzerinden kaldırılır. Kaldırma medya dosyalarını silmez. Tercihler de güncelleme için korunur. Windows, önceden sabitlenmiş eski kısayolun simgesini önbellekten gösterirse kısayolu kaldırıp tekrar sabitlemek gerekebilir.
 
 Setup ve uygulama **Authenticode imzalı değildir**. Windows SmartScreen bilinmeyen yayıncı uyarısı gösterebilir. Yalnızca kendi güvenilir GitHub yayınının dosyasını kullan; sağlanan `.sha256` ile hash karşılaştır. Antivirüsü kapatmak gerekmez. 32 bit Windows ve yerel ARM64 paketi sunulmaz.
 

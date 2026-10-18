@@ -4,9 +4,17 @@ Tamamen Türkçe; koyu lacivert zemin, antrasit kartlar ve yumuşak mavi vurgula
 
 **Desteklenen platformlar: yalnızca YouTube ve Instagram.** TikTok desteği kaldırılmıştır.
 
-**[İndirX 0.2.9 APK indir](https://github.com/sametyamanxx/indirx/releases/download/v0.2.9/IndirX-0.2.9.apk)** · [Sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/v0.2.9)
+**[İndirX 0.2.10 APK indir](https://github.com/sametyamanxx/indirx/releases/download/v0.2.10/IndirX-0.2.10.apk)** · [Sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/v0.2.10)
 
 Android 8.0 ve üzeri içindir. Debug imzalı test APK'sıdır; önceki sürüm farklı imzalıysa kaldırıp kurmak gerekebilir. Dış klasördeki medya dosyaları korunur.
+
+## Android 0.2.10 / Windows 0.2.15 — otomatik güncelleme kontrolü
+
+- İndirme altyapısını güncelle düğmesi iki platformdan da kaldırıldı. Uygulama açıldığında ve açık/etkin kullanımda altı saat arayla resmî yt-dlp altyapısı ve doğru platformun yayımlanmış uygulama sürümleri otomatik kontrol edilir. İnternet yoksa hata penceresi gösterilmez; sonraki açılışta yeniden kontrol edilir.
+- Güncelleme bulunduğunda **yüklensin mi?** diye sorulur. Onay verilmeden altyapı değiştirilmez veya uygulama paketi indirilmez. Devam eden işlemler sırasında kurulum başlatılmaz. Uygulama paketi HTTPS, beklenen dosya boyutu ve GitHub SHA-256 bilgisiyle doğrulanır; taslak/ön sürüm, eksik paket ve sürüm düşürme teklif edilmez.
+- Windows'ta logo, İNDİRX, YouTube · Instagram ve bütün kartlar Android benzeri ortalı tek sütundadır. Bulunan içerikler yalnızca gerektiğinde görünür; çalma listesi kendi içinde kaydırılır. İki platformda bağlantı kartının platform açıklaması, Windows altında oturum geçmişi açıklaması kaldırıldı.
+- Windows Setup onaydan sonra açılır ve kurulu sürümün konumunu kullanır. Portable kullanıcıları için Setup ayrı kurulum oluşturur. Windows SmartScreen/kurulum onayı atlanmaz.
+- Android'de APK'nın paket adı, daha yüksek sürüm kodu ve kurulu uygulamayla aynı imza denetlenir. Android kurulum izni ve sistem onayı gerekir. **0.2.10'dan itibaren yayınlar kalıcı imza kullanır; 0.2.9 ve daha eski, farklı imzalı test APK'larından ilk geçiş elle kurulum gerektirebilir.** Uygulama eski kurulumu veya kullanıcı verilerini otomatik silmez. APK imza anahtarı GitHub Actions secrets içinde tutulur; depoya konmaz.
 
 ## Android 0.2.9 — tek bul/indir düğmesi
 
@@ -23,11 +31,11 @@ Android 8.0 ve üzeri içindir. Debug imzalı test APK'sıdır; önceki sürüm 
 
 ## Windows masaüstü projesi
 
-**[Windows 0.2.14 Setup indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.14/IndirX-0.2.14-Windows-x64-Setup.exe)** · [Taşınabilir ZIP](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.14/IndirX-0.2.14-Windows-x64-Portable.zip) · [Windows sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/windows-v0.2.14)
+**[Windows 0.2.15 Setup indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.15/IndirX-0.2.15-Windows-x64-Setup.exe)** · [Taşınabilir ZIP](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.15/IndirX-0.2.15-Windows-x64-Portable.zip) · [Windows sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/windows-v0.2.15)
 
 Ayrı, yerel Windows uygulaması `windows/` klasöründedir: **[Windows projesi ve derleme talimatları](windows/README.md)**. Windows 10 22H2 / Windows 11 x64 için .NET 10 WPF, kullanıcı başına Setup ve portable paket üretir. Yalnızca YouTube ve Instagram desteklenir. Android APK'sı veya emülatör kullanmaz. Kurulum dijital imzalı değildir. Windows etiketleri `windows-v…` biçimindedir; Android ve Windows ayrı sürümlerle yayımlanır.
 
-Windows 0.2.14: Pencerenin üst başlık çubuğunda yalnızca İNDİRX yazar. İndirmeler ve İndirme altyapısını güncelle kutuları aynı yatay hizaya getirildi; farklı pencere boyutlarında da birlikte hizalanır. Tek bul/indir düğmesi, bağlantı değişiminde temizleme, kompakt tek içerik ve panel boyunca uzayan kaydırılabilir çalma listesi korunur.
+Windows 0.2.15: Android benzeri ortalı tek sütun; ortada logo, İNDİRX ve YouTube · Instagram. Manuel güncelleme kartı ve gereksiz açıklamalar kaldırıldı. Altyapı ve uygulama sürümü otomatik denetlenir; yükleme için izin istenir. Tek bul/indir düğmesi ve bağlantı değişiminde temizleme korunur.
 
 ## 0.2.7 yalnızca YouTube ve Instagram
 
@@ -114,7 +122,7 @@ YouTube uygulamasındaki Paylaş menüsünden de bağlantı gönderebilirsin. Li
 - Gerçek ilerleme, arka plan ön plan servisi, bildirim ve iptal.
 - Başarısız bir içerik kalan seçili içerikleri engellemez.
 - İndirme geçmişi yalnızca uygulamanın açık olduğu oturum boyunca gösterilir; uygulama her yeniden açıldığında önceki kayıtlar temizlenir. Biçim ve klasör tercihleri cihazda saklanır. Arama bağlantısı ve bulunan içerikler kalıcı olarak saklanmaz.
-- Uygulama içinden indirme altyapısını güncelleme.
+- Altyapı ve uygulama sürümünü otomatik kontrol etme; güncelleme varsa kullanıcı onayıyla hazırlama ve sistem kurulumuna geçme.
 
 ## Gerçek sınırlar
 

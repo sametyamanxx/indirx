@@ -43,8 +43,9 @@ public partial class MainWindow : Window
         settings = store.Load();
         InitializeComponent();
         ResultsList.ItemsSource = items;
+        PageScroller.SizeChanged += (_, _) => UpdateResultsLayout();
         PlatformLabel.Text = PlatformPolicy.DisplayName;
-        VersionText.Text = $"İndirX • {Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)} • Windows x64\nYalnızca indirme hakkın olan içerikleri kaydet. Geçmiş yalnızca bu oturumda gösterilir.";
+        VersionText.Text = $"İndirX • {Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)} • Windows x64\nYalnızca indirme hakkın olan içerikleri kaydet.";
         AudioMode.IsChecked = settings.AudioMode;
         VideoMode.IsChecked = !settings.AudioMode;
         RefreshFormat();
@@ -71,19 +72,19 @@ public partial class MainWindow : Window
     {
         var logo = Position(BrandLogo); var title = Position(BrandTitle);
         var link = Position(LinkCard); var preferences = Position(PreferencesCard);
-        var downloads = Position(DownloadsCard); var update = Position(UpdateCard);
+        var downloads = Position(DownloadsCard);
         return Math.Abs(logo.X + BrandLogo.ActualWidth / 2 - MainLayout.ActualWidth / 2) < 2 &&
             Math.Abs(title.X + BrandTitle.ActualWidth / 2 - MainLayout.ActualWidth / 2) < 2 &&
             logo.Y + BrandLogo.ActualHeight <= title.Y && title.Y + BrandTitle.ActualHeight < link.Y &&
-            link.X < preferences.X && Math.Abs(link.Y - preferences.Y) < 2 &&
-            Math.Abs(downloads.X - link.X) < 2 &&
-            Math.Abs(downloads.Y - Math.Max(link.Y + LinkCard.ActualHeight + LinkCard.Margin.Bottom,
-                preferences.Y + PreferencesCard.ActualHeight + PreferencesCard.Margin.Bottom)) < 2 &&
-            downloads.X < update.X && Math.Abs(update.X - preferences.X) < 2 &&
-            Math.Abs(downloads.Y - update.Y) < 2;
+            Math.Abs(link.X - preferences.X) < 2 && Math.Abs(LinkCard.ActualWidth - PreferencesCard.ActualWidth) < 2 &&
+            Math.Abs(MainLayout.TranslatePoint(new Point(MainLayout.ActualWidth / 2, 0), PageScroller).X - PageScroller.ViewportWidth / 2) < 2 &&
+            (DownloadsCard.Visibility != Visibility.Visible || (Math.Abs(downloads.X - link.X) < 2 &&
+                Math.Abs(DownloadsCard.ActualWidth - LinkCard.ActualWidth) < 2 && downloads.Y >= link.Y + LinkCard.ActualHeight)) &&
+            preferences.Y >= link.Y + LinkCard.ActualHeight &&
+            (DownloadsCard.Visibility != Visibility.Visible || preferences.Y >= downloads.Y + DownloadsCard.ActualHeight);
     }
 
-    private bool RowsStayAligned()
+    private bool CenteredCardsResize()
     {
         var originalPreferences = PreferencesCard.MinHeight;
         var originalLink = LinkCard.MinHeight;
@@ -107,7 +108,7 @@ public partial class MainWindow : Window
         var originalWidth = Width; var originalHeight = Height;
         try
         {
-            foreach (var size in new[] { (1120, 900), (1120, 800), (840, 640), (1440, 1000) })
+            foreach (var size in new[] { (900, 900), (480, 640), (1120, 900), (1120, 800), (1440, 1000) })
             {
                 ResetFound(); ClearStatus();
                 Width = size.Item1; Height = size.Item2;
@@ -127,8 +128,7 @@ public partial class MainWindow : Window
                         SaveThemePreview(collection ? previewFile.Replace(".detected.png", ".playlist.png") : previewFile);
                     if (collection)
                     {
-                        var bottom = Position(DownloadsCard).Y + DownloadsCard.ActualHeight + DownloadsCard.Margin.Bottom;
-                        if (Math.Abs(bottom - Position(LeftColumn).Y - LeftColumn.ActualHeight) > 2 || ResultsList.ActualHeight < 30) { resultsLayoutDetail = $"Fill: {size}, bottom={bottom}, column={Position(LeftColumn).Y + LeftColumn.ActualHeight}, list={ResultsList.ActualHeight}"; return false; }
+                        if (ResultsList.ActualHeight < 30 || ResultsList.ActualHeight > ResultsList.MaxHeight + 2) { resultsLayoutDetail = $"List viewport: {size}"; return false; }
                         if (items.Any(item => item.Selected)) return false;
                         SelectAll_Click(this, new RoutedEventArgs());
                         if (!items.All(item => item.Selected)) return false;
@@ -143,7 +143,7 @@ public partial class MainWindow : Window
                     }
                 }
             }
-            resultsLayoutDetail = "PASS: compact single, full-height playlists, routed wheel down/up/boundary at four window sizes";
+            resultsLayoutDetail = "PASS: centered column, compact single, scrollable playlists, routed wheel at five window sizes";
             return true;
         }
         finally { ResetFound(); ClearStatus(); Width = originalWidth; Height = originalHeight; UpdateLayout(); }
@@ -186,7 +186,8 @@ public partial class MainWindow : Window
         ContentActionFlowCorrect = ContentActionFlowMatches(),
         WindowIconPresent = Icon != null, BrandLogoPresent = BrandLogo.Source != null,
         LayoutCorrect = LayoutMatchesRequest(), FolderOpenRemoved = !HasFolderOpenButton(this),
-        AlignedRows = RowsStayAligned(), ResultsFlowCorrect = ResultsStayInFlow(detectedPreview),
+        CenteredCards = CenteredCardsResize(), ResultsFlowCorrect = ResultsStayInFlow(detectedPreview),
+        UpdateControlsRemoved = !HasRemovedText(this),
         ResultsLayoutDetail = resultsLayoutDetail,
         ResultsInDownloads = ResultsPanel.IsDescendantOf(DownloadsCard),
         IdleStatusHidden = OperationPanel.Visibility == Visibility.Collapsed && StatusText.Text.Length == 0,
@@ -288,24 +289,21 @@ public partial class MainWindow : Window
 
     private void UpdateResultsLayout()
     {
-        DownloadsCard.VerticalAlignment = playlist ? VerticalAlignment.Stretch : VerticalAlignment.Top;
-        DownloadsContentRow.Height = playlist ? new GridLength(1, GridUnitType.Star) : GridLength.Auto;
-        MediaRow.Height = playlist ? new GridLength(1, GridUnitType.Star) : GridLength.Auto;
+        DownloadsCard.Visibility = items.Count > 0 || OperationPanel.Visibility == Visibility.Visible || HistoryPanel.Visibility == Visibility.Visible
+            ? Visibility.Visible : Visibility.Collapsed;
+        ResultsList.MaxHeight = playlist ? Math.Max(180, PageScroller.ViewportHeight * .45) : double.PositiveInfinity;
+        DownloadsContentRow.Height = MediaRow.Height = GridLength.Auto;
     }
 
-    private void MainLayout_LayoutUpdated(object? sender, EventArgs e)
+    private static bool HasRemovedText(DependencyObject parent)
     {
-        if (!initialized) return;
-        // On short/narrow windows keep at least one complete row visible, with
-        // progress and history below it. Only then allow the outer page to scroll.
-        var cardMinimum = DownloadsCard.Padding.Top + DownloadsCard.Padding.Bottom +
-            DownloadsCard.BorderThickness.Top + DownloadsCard.BorderThickness.Bottom + DownloadsCard.Margin.Top + DownloadsCard.Margin.Bottom +
-            DownloadsHeading.DesiredSize.Height + PlaylistHeader.DesiredSize.Height + 80 +
-            OperationPanel.DesiredSize.Height + HistoryPanel.DesiredSize.Height;
-        var minimum = Math.Max(650, HeaderPanel.DesiredSize.Height + VersionText.DesiredSize.Height +
-            Math.Max(ControlsPanel.DesiredSize.Height, PreferencesCard.DesiredSize.Height) +
-            Math.Max(cardMinimum, UpdateCard.DesiredSize.Height));
-        if (Math.Abs(MainLayout.MinHeight - minimum) > 1) MainLayout.MinHeight = minimum;
+        var text = parent is Button button ? button.Content?.ToString() : (parent as TextBlock)?.Text;
+        if (text != null && (text.Contains("İndirme altyapısını güncelle", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("Yalnızca YouTube ve Instagram bağlantıları", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("Geçmiş yalnızca bu oturumda gösterilir", StringComparison.OrdinalIgnoreCase))) return true;
+        for (var i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            if (HasRemovedText(VisualTreeHelper.GetChild(parent, i))) return true;
+        return false;
     }
 
     private void ResultsList_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -431,19 +429,6 @@ public partial class MainWindow : Window
         HistoryPanel.Visibility = Visibility.Visible;
     }
 
-    private async void Update_Click(object sender, RoutedEventArgs e)
-    {
-        if (cancellation != null) return;
-        operation = BusyAsync(async token =>
-        {
-            EnsureTools();
-            SetStatus("İndirme altyapısı güncelleniyor…", "Resmî yt-dlp kararlı sürümü denetleniyor.");
-            var result = await ProcessRunner.RunAsync(Path.Combine(tools, "yt-dlp.exe"), ["--ignore-config", "--no-plugin-dirs", "--update"], tools, token);
-            SetStatus("Güncelleme kontrolü tamamlandı", result.Trim(), 0);
-        });
-        await operation;
-    }
-
     private async Task BusyAsync(Func<CancellationToken, Task> work)
     {
         using var source = new CancellationTokenSource();
@@ -463,7 +448,7 @@ public partial class MainWindow : Window
 
     private void SetBusyControls(bool busy)
     {
-        ControlsPanel.IsEnabled = ResultsPanel.IsEnabled = PreferencesPanel.IsEnabled = UpdateButton.IsEnabled = !busy;
+        ControlsPanel.IsEnabled = ResultsPanel.IsEnabled = PreferencesPanel.IsEnabled = !busy;
         CancelButton.IsEnabled = busy;
     }
 
@@ -477,6 +462,7 @@ public partial class MainWindow : Window
     private void SetStatus(string status, string? detail, double progress = -1)
     {
         OperationPanel.Visibility = Visibility.Visible;
+        UpdateResultsLayout();
         StatusText.Text = status; DetailText.Text = detail ?? "";
         DownloadProgress.IsIndeterminate = progress < 0;
         if (progress >= 0) DownloadProgress.Value = progress;
@@ -488,6 +474,7 @@ public partial class MainWindow : Window
         StatusText.Text = DetailText.Text = "";
         DownloadProgress.IsIndeterminate = false;
         DownloadProgress.Value = 0;
+        UpdateResultsLayout();
     }
 
     private static string Explain(Exception error)
