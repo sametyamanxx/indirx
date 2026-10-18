@@ -71,7 +71,37 @@ public partial class MainWindow : Window
             Math.Abs(title.X + BrandTitle.ActualWidth / 2 - MainLayout.ActualWidth / 2) < 2 &&
             logo.Y + BrandLogo.ActualHeight <= title.Y && title.Y + BrandTitle.ActualHeight < link.Y &&
             link.X < preferences.X && Math.Abs(link.Y - preferences.Y) < 2 &&
-            downloads.Y > link.Y && downloads.X < update.X && Math.Abs(downloads.Y - update.Y) < 2;
+            Math.Abs(downloads.X - link.X) < 2 &&
+            Math.Abs(downloads.Y - Position(ControlsPanel).Y - ControlsPanel.ActualHeight) < 2 &&
+            downloads.X < update.X && Math.Abs(update.X - preferences.X) < 2 &&
+            Math.Abs(update.Y - preferences.Y - PreferencesCard.ActualHeight - PreferencesCard.Margin.Bottom) < 2;
+    }
+
+    private bool ColumnsAreIndependent()
+    {
+        var original = PreferencesCard.MinHeight;
+        var downloadTop = Position(DownloadsCard).Y;
+        try
+        {
+            PreferencesCard.MinHeight = PreferencesCard.ActualHeight + 120;
+            UpdateLayout();
+            return Math.Abs(Position(DownloadsCard).Y - downloadTop) < 2 && LayoutMatchesRequest();
+        }
+        finally { PreferencesCard.MinHeight = original; UpdateLayout(); }
+    }
+
+    private bool ResultsStayInFlow()
+    {
+        var visibility = ResultsCard.Visibility;
+        var minimum = ResultsCard.MinHeight;
+        try
+        {
+            ResultsCard.Visibility = Visibility.Visible;
+            ResultsCard.MinHeight = 160;
+            UpdateLayout();
+            return LayoutMatchesRequest() && Position(DownloadsCard).Y >= Position(ResultsCard).Y + ResultsCard.ActualHeight;
+        }
+        finally { ResultsCard.MinHeight = minimum; ResultsCard.Visibility = visibility; UpdateLayout(); }
     }
 
     private static bool HasFolderOpenButton(DependencyObject parent)
@@ -90,6 +120,7 @@ public partial class MainWindow : Window
         DownloadEnabled = DownloadButton.IsEnabled,
         WindowIconPresent = Icon != null, BrandLogoPresent = BrandLogo.Source != null,
         LayoutCorrect = LayoutMatchesRequest(), FolderOpenRemoved = !HasFolderOpenButton(this),
+        IndependentColumns = ColumnsAreIndependent(), ResultsFlowCorrect = ResultsStayInFlow(),
         DarkTitleBar = NativeChrome.IsDark(this), CaptionMatchesTheme = NativeChrome.HasMatchingCaption(this),
         NativeCaption = NativeChrome.Diagnostics(this),
         AndroidLogoHash = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Assets", "Branding.sha256")).Trim(),

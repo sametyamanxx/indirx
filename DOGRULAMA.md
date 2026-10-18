@@ -1,4 +1,10 @@
-# İndirX — doğrulama durumu (Android 0.2.7 / Windows 0.2.8)
+# İndirX — doğrulama durumu (Android 0.2.7 / Windows 0.2.9)
+
+## Windows 0.2.9 — İndirmeler bölümünü bağlantının altına hizalama
+
+- Sol ve sağ sütun bağımsız dikey akışa taşındı. İndirmeler sol sütunda bağlantı/sonuç bölümünün hemen altındadır; sağdaki tercih paneli sol sütunda boşluk oluşturmaz.
+- Açılış kontrolleri gerçek öğe koordinatlarını ve aralığı denetler. Sağ panelin yüksekliği 120 px artırıldığında İndirmeler yerinde kalmalıdır. Bulunan içerikler gösterilince sol sütundaki akış ve çakışmasız yerleşim de kontrol edilir.
+- Yerel WPF derlemesi 0 hata / 0 uyarıyla başarılı. Gerçek açılış tanılarında yerleşim, bağımsız sütun ve bulunan içeriklerin akış kontrolü başarılı; arayüz görüntüsü incelendi. Paketli Setup/kurulum sonuçları henüz alınmadı. Önceki sürüm testleri bu sürümün doğrulaması sayılmaz. Gerçek YouTube/Instagram indirmeleri bu görsel güncellemede ayrıca denenmedi.
 
 ## Windows 0.2.8 — Android logosu ve yeni yerleşim
 

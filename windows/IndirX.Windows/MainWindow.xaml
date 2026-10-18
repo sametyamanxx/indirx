@@ -2,13 +2,14 @@
   <ScrollViewer VerticalScrollBarVisibility="Auto">
     <Grid x:Name="MainLayout" Margin="24">
       <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="24" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-      <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+      <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
       <StackPanel x:Name="HeaderPanel" Grid.Row="0" Grid.ColumnSpan="3" HorizontalAlignment="Center" Margin="0,0,0,24">
         <Image x:Name="BrandLogo" Source="Assets/Logo.png" Width="72" Height="72" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality" AutomationProperties.Name="Android ile aynı İndirX logosu" />
         <TextBlock x:Name="BrandTitle" Text="İNDİRX" TextAlignment="Center" FontSize="32" FontWeight="Bold" Margin="0,8,0,6" />
         <TextBlock x:Name="PlatformLabel" Text="YouTube · Instagram" TextAlignment="Center" Foreground="{StaticResource Muted}" FontSize="14" />
       </StackPanel>
-        <StackPanel x:Name="ControlsPanel" Grid.Row="1" Grid.Column="0">
+      <StackPanel x:Name="LeftColumn" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top">
+        <StackPanel x:Name="ControlsPanel">
           <Border x:Name="LinkCard" Style="{StaticResource Card}"><StackPanel>
             <TextBlock Text="Bağlantı ekle" Style="{StaticResource Heading}" />
             <TextBlock Text="Yalnızca YouTube ve Instagram bağlantıları" Foreground="{StaticResource Muted}" Margin="0,0,0,12" />
@@ -25,7 +26,17 @@
             </ListBox>
           </StackPanel></Border>
         </StackPanel>
-          <Border x:Name="PreferencesCard" Grid.Row="1" Grid.Column="2" Style="{StaticResource Card}" VerticalAlignment="Top"><StackPanel x:Name="PreferencesPanel">
+          <Border x:Name="DownloadsCard" Style="{StaticResource Card}"><StackPanel>
+            <TextBlock Text="İndirmeler" Style="{StaticResource Heading}" />
+            <TextBlock x:Name="StatusText" Text="İndirmeye hazır" FontSize="18" />
+            <TextBlock x:Name="DetailText" Text="Seçtiğin içerikler burada görünecek." Foreground="{StaticResource Muted}" Margin="0,8,0,16" />
+            <ProgressBar x:Name="DownloadProgress" Height="8" Minimum="0" Maximum="100" Foreground="#7B9CF5" Background="#2D394E" BorderThickness="0" Margin="0,0,0,16" />
+            <Button x:Name="CancelButton" Content="İşlemi iptal et" Click="Cancel_Click" IsEnabled="False" />
+            <TextBlock x:Name="HistoryText" Text="Henüz indirme yok." FontSize="12" Margin="0,8,0,0" />
+          </StackPanel></Border>
+      </StackPanel>
+      <StackPanel x:Name="RightColumn" Grid.Row="1" Grid.Column="2" VerticalAlignment="Top">
+          <Border x:Name="PreferencesCard" Style="{StaticResource Card}"><StackPanel x:Name="PreferencesPanel">
             <TextBlock Text="İndirme tercihleri" Style="{StaticResource Heading}" />
             <WrapPanel><RadioButton x:Name="VideoMode" GroupName="Mode" Content="Video" IsChecked="True" Checked="Mode_Changed" /><RadioButton x:Name="AudioMode" GroupName="Mode" Content="Ses" Checked="Mode_Changed" /></WrapPanel>
             <ComboBox x:Name="FormatBox" DisplayMemberPath="Name" SelectionChanged="Format_Changed" AutomationProperties.Name="Dosya biçimi" />
@@ -34,18 +45,11 @@
             <Button Content="Kayıt klasörünü seç" Click="ChooseFolder_Click" />
             <Button x:Name="DownloadButton" Content="İndir ↓" Click="Download_Click" Background="#7B9CF5" Foreground="#0E182B" IsEnabled="False" />
           </StackPanel></Border>
-          <Border x:Name="DownloadsCard" Grid.Row="2" Grid.Column="0" Style="{StaticResource Card}" VerticalAlignment="Top"><StackPanel>
-            <TextBlock Text="İndirmeler" Style="{StaticResource Heading}" />
-            <TextBlock x:Name="StatusText" Text="İndirmeye hazır" FontSize="18" />
-            <TextBlock x:Name="DetailText" Text="Seçtiğin içerikler burada görünecek." Foreground="{StaticResource Muted}" Margin="0,8,0,16" />
-            <ProgressBar x:Name="DownloadProgress" Height="8" Minimum="0" Maximum="100" Foreground="#7B9CF5" Background="#2D394E" BorderThickness="0" Margin="0,0,0,16" />
-            <Button x:Name="CancelButton" Content="İşlemi iptal et" Click="Cancel_Click" IsEnabled="False" />
-            <TextBlock x:Name="HistoryText" Text="Henüz indirme yok." FontSize="12" Margin="0,8,0,0" />
-          </StackPanel></Border>
-      <Border x:Name="UpdateCard" Grid.Row="2" Grid.Column="2" Style="{StaticResource Card}" VerticalAlignment="Top">
+      <Border x:Name="UpdateCard" Style="{StaticResource Card}">
         <Button x:Name="UpdateButton" Content="İndirme altyapısını güncelle" Click="Update_Click" Margin="0" />
       </Border>
-      <TextBlock x:Name="VersionText" Grid.Row="3" Grid.ColumnSpan="3" TextAlignment="Center" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,8,0,0" />
+      </StackPanel>
+      <TextBlock x:Name="VersionText" Grid.Row="2" Grid.ColumnSpan="3" TextAlignment="Center" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,8,0,0" />
     </Grid>
   </ScrollViewer>
 </Window>
