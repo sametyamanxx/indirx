@@ -5,7 +5,10 @@
 - Yerel pencere başlığı yalnızca büyük harfli İNDİRX olarak değiştirildi. Ana içerikteki platform açıklamaları ve YouTube/Instagram sınırı korunur.
 - İki sütunun üst kartları ortak otomatik satır yüksekliğine bağlandı. İndirmeler ile İndirme altyapısını güncelle kutularının üst kenarı aynıdır. Sol veya sağ üst kart büyüdüğünde alt kartlar birlikte taşınır; önceki bağımsız sütun beklentisinin yerini hizalı satır beklentisi aldı.
 - Yerel .NET 10 derlemesi, 57 çevrimdışı assertion ve iki temiz paketli WPF açılışı başarılı. Tam başlık metni büyük/küçük harfe duyarlı denetlendi. `AlignedRows=true`, `LayoutCorrect=true`, `ResultsFlowCorrect=true`, `ContentActionFlowCorrect=true` ve `DownloadThemeCorrect=true`. Üst kartların sırayla büyütülmesi ve dört pencere boyutunda tekli/1-500 öğeli liste/tekerlek testleri geçti; başlık çubuğunu içeren görüntü ve liste görüntüsü incelendi.
-- Paketli araçlar, MP3 dönüşümü, TikTok reddi, Android simgesi ve koyu başlık çubuğu denetimleri de başarılı. Setup ve GitHub yayını henüz doğrulanmadı; sonuçlar eklenecek. Gerçek YouTube/Instagram indirmeleri bu görsel değişiklik için ayrıca denenmedi. Android 0.2.9 değiştirilmedi.
+- Paketli araçlar, MP3 dönüşümü, TikTok reddi, Android simgesi ve koyu başlık çubuğu denetimleri de başarılı.
+- [Windows 0.2.14 yayın iş akışı](https://github.com/sametyamanxx/indirx/actions/runs/39154082918), commit `9fd28492c60ddca394ba9ddf49a27ff6e4b05a71`: başarılı. Başlık/hizalama ve önceki arayüz kontrolleri, 57 çevrimdışı assertion, paketli araçlar, Setup üretimi ve sessiz kurulum/açılış/kaldırma geçti. Setup, portable ZIP ve checksum dosyaları [windows-v0.2.14](https://github.com/sametyamanxx/indirx/releases/tag/windows-v0.2.14) yayınına eklendi.
+- Setup: 177.000.729 bayt; SHA-256 `e98094c60053aa2eb305f999e28162c7792091da3766e9347f0f82c22d454ec2`. Portable ZIP: 205.515.467 bayt; SHA-256 `ab74a2118b9ce7c317a8d215ee977aaeb1cc8c8d2611a267acf27d709eb7dee5`. İki anonim indirme bağlantısı HTTP HEAD isteğine 200 döndü; yükleme digest değerleri checksum dosyalarıyla eşleşti.
+- Gerçek YouTube/Instagram indirmeleri bu görsel değişiklik için ayrıca denenmedi. Setup/EXE dijital imzasızdır. Android 0.2.9 değiştirilmedi.
 
 ## Android 0.2.9 — Tek bul/indir düğmesi
 
