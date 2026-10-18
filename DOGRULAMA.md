@@ -6,7 +6,7 @@
 - TikTok alan adı kabul listesinden çıkarıldı; normal, mobil, kısa bağlantı, profil ve canlı yayın biçimleri reddedilir.
 - yt-dlp seçicisinde yalnızca `youtube.*` ve `instagram.*` vardır. TikTok ve genel site çözücüleri kapalıdır.
 - Birim testleri iki platformun kabulünü, TikTok biçimlerinin reddini ve çözücü filtresini kontrol eder. Paketlenmiş gerçek yt-dlp üzerindeki çevrimdışı test de yalnızca iki platformun yüklendiğini ve TikTok bağlantılarının hiçbir yüklü çözücüyle eşleşmediğini denetler.
-- Bu sürümün otomatik test/derleme/yayın sonuçları tamamlanınca eklenecektir. Önceki sürümlerin sonuçları bu sürümün doğrulaması sayılmaz.
+- [Android APK #16](https://github.com/sametyamanxx/indirx/actions/runs/39130379864), commit `79ac2b1e8d3ca7ecdaa85493d2d617c25a6184c8`: birim testleri, lint, APK derlemesi, yalnızca YouTube/Instagram çözücülerinin etkin olduğunun gerçek paketlenmiş yt-dlp ile çevrimdışı denetimi, imza doğrulama ve APK artifact yüklemesi başarılı.
 - Fiziksel telefonda uçtan uca YouTube/Instagram indirme testi yapılmadı.
 
 ## Önceki sürümlerin doğrulama kayıtları
