@@ -1,4 +1,4 @@
-# İndirX 0.2.3 — doğrulama durumu
+# İndirX 0.2.4 — doğrulama durumu
 
 13 Ekim 2026.
 
