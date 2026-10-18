@@ -77,22 +77,26 @@ public partial class MainWindow : Window
             logo.Y + BrandLogo.ActualHeight <= title.Y && title.Y + BrandTitle.ActualHeight < link.Y &&
             link.X < preferences.X && Math.Abs(link.Y - preferences.Y) < 2 &&
             Math.Abs(downloads.X - link.X) < 2 &&
-            Math.Abs(downloads.Y - Position(ControlsPanel).Y - ControlsPanel.ActualHeight) < 2 &&
+            Math.Abs(downloads.Y - Math.Max(link.Y + LinkCard.ActualHeight + LinkCard.Margin.Bottom,
+                preferences.Y + PreferencesCard.ActualHeight + PreferencesCard.Margin.Bottom)) < 2 &&
             downloads.X < update.X && Math.Abs(update.X - preferences.X) < 2 &&
-            Math.Abs(update.Y - preferences.Y - PreferencesCard.ActualHeight - PreferencesCard.Margin.Bottom) < 2;
+            Math.Abs(downloads.Y - update.Y) < 2;
     }
 
-    private bool ColumnsAreIndependent()
+    private bool RowsStayAligned()
     {
-        var original = PreferencesCard.MinHeight;
-        var downloadTop = Position(DownloadsCard).Y;
+        var originalPreferences = PreferencesCard.MinHeight;
+        var originalLink = LinkCard.MinHeight;
         try
         {
             PreferencesCard.MinHeight = PreferencesCard.ActualHeight + 120;
             UpdateLayout();
-            return Math.Abs(Position(DownloadsCard).Y - downloadTop) < 2 && LayoutMatchesRequest();
+            if (!LayoutMatchesRequest()) return false;
+            LinkCard.MinHeight = PreferencesCard.ActualHeight + 120;
+            UpdateLayout();
+            return LayoutMatchesRequest();
         }
-        finally { PreferencesCard.MinHeight = original; UpdateLayout(); }
+        finally { PreferencesCard.MinHeight = originalPreferences; LinkCard.MinHeight = originalLink; UpdateLayout(); }
     }
 
     private bool ResultsStayInFlow(string? previewFile)
@@ -182,7 +186,7 @@ public partial class MainWindow : Window
         ContentActionFlowCorrect = ContentActionFlowMatches(),
         WindowIconPresent = Icon != null, BrandLogoPresent = BrandLogo.Source != null,
         LayoutCorrect = LayoutMatchesRequest(), FolderOpenRemoved = !HasFolderOpenButton(this),
-        IndependentColumns = ColumnsAreIndependent(), ResultsFlowCorrect = ResultsStayInFlow(detectedPreview),
+        AlignedRows = RowsStayAligned(), ResultsFlowCorrect = ResultsStayInFlow(detectedPreview),
         ResultsLayoutDetail = resultsLayoutDetail,
         ResultsInDownloads = ResultsPanel.IsDescendantOf(DownloadsCard),
         IdleStatusHidden = OperationPanel.Visibility == Visibility.Collapsed && StatusText.Text.Length == 0,
@@ -299,7 +303,8 @@ public partial class MainWindow : Window
             DownloadsHeading.DesiredSize.Height + PlaylistHeader.DesiredSize.Height + 80 +
             OperationPanel.DesiredSize.Height + HistoryPanel.DesiredSize.Height;
         var minimum = Math.Max(650, HeaderPanel.DesiredSize.Height + VersionText.DesiredSize.Height +
-            Math.Max(ControlsPanel.DesiredSize.Height + cardMinimum, RightColumn.DesiredSize.Height));
+            Math.Max(ControlsPanel.DesiredSize.Height, PreferencesCard.DesiredSize.Height) +
+            Math.Max(cardMinimum, UpdateCard.DesiredSize.Height));
         if (Math.Abs(MainLayout.MinHeight - minimum) > 1) MainLayout.MinHeight = minimum;
     }
 

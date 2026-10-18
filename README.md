@@ -23,11 +23,11 @@ Android 8.0 ve üzeri içindir. Debug imzalı test APK'sıdır; önceki sürüm 
 
 ## Windows masaüstü projesi
 
-**[Windows 0.2.13 Setup indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.13/IndirX-0.2.13-Windows-x64-Setup.exe)** · [Taşınabilir ZIP](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.13/IndirX-0.2.13-Windows-x64-Portable.zip) · [Windows sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/windows-v0.2.13)
+**[Windows 0.2.14 Setup indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.14/IndirX-0.2.14-Windows-x64-Setup.exe)** · [Taşınabilir ZIP](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.14/IndirX-0.2.14-Windows-x64-Portable.zip) · [Windows sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/windows-v0.2.14)
 
 Ayrı, yerel Windows uygulaması `windows/` klasöründedir: **[Windows projesi ve derleme talimatları](windows/README.md)**. Windows 10 22H2 / Windows 11 x64 için .NET 10 WPF, kullanıcı başına Setup ve portable paket üretir. Yalnızca YouTube ve Instagram desteklenir. Android APK'sı veya emülatör kullanmaz. Kurulum dijital imzalı değildir. Windows etiketleri `windows-v…` biçimindedir; Android ve Windows ayrı sürümlerle yayımlanır.
 
-Windows 0.2.13: Bağlantının yanındaki İçerikleri bul düğmesi içerik bulunduktan sonra İndir olur; tercihler panelindeki ayrı indirme düğmesi kaldırıldı. Bağlantı silinip değiştirilince sonuçlar temizlenir, düğme yeniden İçerikleri bul olur. Tek içerik kompakt kalır; çalma listesi panelin altına kadar uzar ve fare tekerleğiyle kaydırılır.
+Windows 0.2.14: Pencerenin üst başlık çubuğunda yalnızca İNDİRX yazar. İndirmeler ve İndirme altyapısını güncelle kutuları aynı yatay hizaya getirildi; farklı pencere boyutlarında da birlikte hizalanır. Tek bul/indir düğmesi, bağlantı değişiminde temizleme, kompakt tek içerik ve panel boyunca uzayan kaydırılabilir çalma listesi korunur.
 
 ## 0.2.7 yalnızca YouTube ve Instagram
 

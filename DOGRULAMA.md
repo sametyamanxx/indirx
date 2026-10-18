@@ -1,4 +1,11 @@
-# İndirX — doğrulama durumu (Android 0.2.9 / Windows 0.2.13)
+# İndirX — doğrulama durumu (Android 0.2.9 / Windows 0.2.14)
+
+## Windows 0.2.14 — Başlık çubuğu ve alt kartların hizası
+
+- Yerel pencere başlığı yalnızca büyük harfli İNDİRX olarak değiştirildi. Ana içerikteki platform açıklamaları ve YouTube/Instagram sınırı korunur.
+- İki sütunun üst kartları ortak otomatik satır yüksekliğine bağlandı. İndirmeler ile İndirme altyapısını güncelle kutularının üst kenarı aynıdır. Sol veya sağ üst kart büyüdüğünde alt kartlar birlikte taşınır; önceki bağımsız sütun beklentisinin yerini hizalı satır beklentisi aldı.
+- Yerel .NET 10 derlemesi, 57 çevrimdışı assertion ve iki temiz paketli WPF açılışı başarılı. Tam başlık metni büyük/küçük harfe duyarlı denetlendi. `AlignedRows=true`, `LayoutCorrect=true`, `ResultsFlowCorrect=true`, `ContentActionFlowCorrect=true` ve `DownloadThemeCorrect=true`. Üst kartların sırayla büyütülmesi ve dört pencere boyutunda tekli/1-500 öğeli liste/tekerlek testleri geçti; başlık çubuğunu içeren görüntü ve liste görüntüsü incelendi.
+- Paketli araçlar, MP3 dönüşümü, TikTok reddi, Android simgesi ve koyu başlık çubuğu denetimleri de başarılı. Setup ve GitHub yayını henüz doğrulanmadı; sonuçlar eklenecek. Gerçek YouTube/Instagram indirmeleri bu görsel değişiklik için ayrıca denenmedi. Android 0.2.9 değiştirilmedi.
 
 ## Android 0.2.9 — Tek bul/indir düğmesi
 
