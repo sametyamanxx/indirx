@@ -4,9 +4,16 @@ Tamamen Türkçe; koyu lacivert zemin, antrasit kartlar ve yumuşak mavi vurgula
 
 **Desteklenen platformlar: yalnızca YouTube ve Instagram.** TikTok desteği kaldırılmıştır.
 
-**[İndirX 0.2.10 APK indir](https://github.com/sametyamanxx/indirx/releases/download/v0.2.10/IndirX-0.2.10.apk)** · [Sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/v0.2.10)
+**[İndirX 0.2.11 APK indir](https://github.com/sametyamanxx/indirx/releases/download/v0.2.11/IndirX-0.2.11.apk)** · [Sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/v0.2.11)
 
 Android 8.0 ve üzeri içindir. Debug imzalı test APK'sıdır; önceki sürüm farklı imzalıysa kaldırıp kurmak gerekebilir. Dış klasördeki medya dosyaları korunur.
+
+## Android 0.2.11 / Windows 0.2.16 — tercihler sabit, indirme en altta
+
+- İndirme tercihleri her zaman Bağlantı ekle bölümünün hemen altındadır. Sonuçlar tercihlerin altındaki Bulunan içerikler bölümüne gelir; içerik bulunduğunda ekran bu bölüme kayar.
+- Bağlantı kartındaki düğme yalnızca **İçerikleri bul** işlevindedir; artık İndir'e dönüşmez. **İndir**, bütün içerik ve açıklamalardan sonra, sayfanın en sonundaki ortalı ayrı düğmedir. Sonuç yokken gizlenir; listede seçim yapılmadan etkinleşmez.
+- Bağlantı değişince eski içerikler ve alttaki indirme düğmesi temizlenir. Gecikmiş arama cevabı veya kaydırma isteği yeni bağlantıyı etkilemez.
+- Otomatik altyapı/uygulama güncelleme kontrolü ve Android 0.2.10'dan beri kullanılan kalıcı imza korunur.
 
 ## Android 0.2.10 / Windows 0.2.15 — otomatik güncelleme kontrolü
 
@@ -31,11 +38,11 @@ Android 8.0 ve üzeri içindir. Debug imzalı test APK'sıdır; önceki sürüm 
 
 ## Windows masaüstü projesi
 
-**[Windows 0.2.15 Setup indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.15/IndirX-0.2.15-Windows-x64-Setup.exe)** · [Taşınabilir ZIP](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.15/IndirX-0.2.15-Windows-x64-Portable.zip) · [Windows sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/windows-v0.2.15)
+**[Windows 0.2.16 Setup indir](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.16/IndirX-0.2.16-Windows-x64-Setup.exe)** · [Taşınabilir ZIP](https://github.com/sametyamanxx/indirx/releases/download/windows-v0.2.16/IndirX-0.2.16-Windows-x64-Portable.zip) · [Windows sürüm notları](https://github.com/sametyamanxx/indirx/releases/tag/windows-v0.2.16)
 
 Ayrı, yerel Windows uygulaması `windows/` klasöründedir: **[Windows projesi ve derleme talimatları](windows/README.md)**. Windows 10 22H2 / Windows 11 x64 için .NET 10 WPF, kullanıcı başına Setup ve portable paket üretir. Yalnızca YouTube ve Instagram desteklenir. Android APK'sı veya emülatör kullanmaz. Kurulum dijital imzalı değildir. Windows etiketleri `windows-v…` biçimindedir; Android ve Windows ayrı sürümlerle yayımlanır.
 
-Windows 0.2.15: Android benzeri ortalı tek sütun; ortada logo, İNDİRX ve YouTube · Instagram. Manuel güncelleme kartı ve gereksiz açıklamalar kaldırıldı. Altyapı ve uygulama sürümü otomatik denetlenir; yükleme için izin istenir. Tek bul/indir düğmesi ve bağlantı değişiminde temizleme korunur.
+Windows 0.2.16: Ortalı tek sütunda Bağlantı ekle → İndirme tercihleri → Bulunan içerikler sırası korunur. Üstte yalnızca İçerikleri bul, sayfanın en sonunda ortalı İndir düğmesi vardır. İçerik bulununca sonuçlara otomatik kayılır. Otomatik güncellemeler kullanıcı onayıyla yüklenir.
 
 ## 0.2.7 yalnızca YouTube ve Instagram
 
@@ -102,7 +109,7 @@ Windows 0.2.15: Android benzeri ortalı tek sütun; ortada logo, İNDİRX ve You
 1. Bir video veya çalma listesi bağlantısını yapıştırıp **İçerikleri bul** düğmesine dokun.
 2. Listeden tek tek seçim yap veya duruma göre değişen **Tümünü Seç / Tümünü Kaldır** düğmesini kullan.
 3. Ses/video biçimini ve Android dosya seçicisiyle kayıt klasörünü seç.
-4. Üstteki aynı düğme artık **İndir** yazar; ona dokun. İndirme, dönüştürme ve klasöre kaydetme aşamaları ayrı gösterilir.
+4. Sayfanın **en sonundaki ortalı İndir** düğmesine dokun. Üstteki İçerikleri bul yalnızca yeniden arama yapar. İndirme, dönüştürme ve klasöre kaydetme aşamaları ayrı gösterilir.
 5. Kaydı tamamlanan dosyanın adı, **İndirildi** durumuyla geçmişte görünür.
 
 YouTube uygulamasındaki Paylaş menüsünden de bağlantı gönderebilirsin. Liste içeren bağlantılar çalma listesi olarak çözülür; yalnızca istediğin içerikleri işaretleyebilirsin.

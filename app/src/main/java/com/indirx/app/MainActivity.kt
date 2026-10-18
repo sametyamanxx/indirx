@@ -35,6 +35,7 @@ class MainActivity : Activity() {
     private val surface = Color.rgb(24, 33, 49)
     private val onAccent = Color.rgb(14, 24, 43)
     private lateinit var root: LinearLayout
+    private lateinit var pageScroll: ScrollView
     private lateinit var link: EditText
     private lateinit var results: LinearLayout
     private lateinit var count: TextView
@@ -47,6 +48,7 @@ class MainActivity : Activity() {
     private lateinit var cancel: Button
     private lateinit var folderLabel: TextView
     private lateinit var find: Button
+    private lateinit var download: Button
     private lateinit var selectAll: Button
     private lateinit var contentSection: LinearLayout
     private lateinit var videoTab: Button
@@ -60,7 +62,6 @@ class MainActivity : Activity() {
     private var selectedFormat = 0
     private val boxes = mutableListOf<Pair<MediaItem, CheckBox?>>()
     private var loading = false
-    private var inspecting = false
     private var downloadStarting = false
     private var resolvedLink: String? = null
     internal var linkRevision = 0L
@@ -103,16 +104,17 @@ class MainActivity : Activity() {
             ) { finish() }
         }
         window.statusBarColor = bg; window.navigationBarColor = bg
-        val scroll = ScrollView(this).apply { setBackgroundColor(bg); isFillViewport = true; clipToPadding = false }
-        root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(20), dp(18), dp(20), dp(28)) }
-        scroll.addView(root); setContentView(scroll)
-        scroll.setOnApplyWindowInsetsListener { v, insets ->
+        pageScroll = ScrollView(this).apply { id = R.id.page_scroll; setBackgroundColor(bg); isFillViewport = true; clipToPadding = false }
+        root = LinearLayout(this).apply { id = R.id.main_content; orientation = LinearLayout.VERTICAL; isFocusableInTouchMode = true; setPadding(dp(20), dp(18), dp(20), dp(28)) }
+        pageScroll.addView(root); setContentView(pageScroll)
+        pageScroll.setOnApplyWindowInsetsListener { v, insets ->
             v.setPadding(0, insets.systemWindowInsetTop, 0, insets.systemWindowInsetBottom); insets
         }
         root.add(ImageView(this).apply { setImageResource(R.drawable.logo); contentDescription = "X ve altında indirme oku"; scaleType = ImageView.ScaleType.FIT_CENTER }, 76)
         root.add(text("İNDİRX", 28f).apply { gravity = Gravity.CENTER; letterSpacing = .10f; typeface = Typeface.DEFAULT_BOLD })
         root.add(text("YouTube · Instagram", 13f, muted).apply { gravity = Gravity.CENTER })
         section("Bağlantı ekle").apply {
+            id = R.id.link_section
             link = EditText(this@MainActivity).apply {
                 id = R.id.link_input
                 hint = "Video veya çalma listesi bağlantısı"; setTextColor(ink); setHintTextColor(muted)
@@ -124,9 +126,7 @@ class MainActivity : Activity() {
                 if (clip != null && clip.itemCount > 0) link.setText(clip.getItemAt(0).coerceToText(this@MainActivity))
                 else toast("Panoda bağlantı bulunamadı.")
             })
-            find = button("İçerikleri bul", true) {
-                if (hasCurrentResults()) startDownload() else inspect()
-            }.apply { id = R.id.content_action }; add(find)
+            find = button("İçerikleri bul", true) { inspect() }.apply { id = R.id.content_action }; add(find)
         }
         contentSection = section("Bulunan içerikler").apply {
             id = R.id.found_contents
@@ -161,7 +161,7 @@ class MainActivity : Activity() {
                 history = text("", 13f).apply { id = R.id.download_history }; add(history)
             }; add(downloadStatus)
         }
-        section("İndirme tercihleri").apply {
+        val preferencesSection = section("İndirme tercihleri").apply {
             id = R.id.download_preferences
             add(text("Biçim", 13f, muted))
             val previous = readFormat("format", 8)
@@ -182,7 +182,17 @@ class MainActivity : Activity() {
                 startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION or Intent.FLAG_GRANT_PREFIX_URI_PERMISSION), 41)
             })
         }
+        // Preferences always immediately follow the link card, including after
+        // results become visible. All actions below are outside that card.
+        root.removeView(preferencesSection)
+        root.addView(preferencesSection, root.indexOfChild(contentSection))
         root.add(text("İndirX • ${BuildConfig.VERSION_NAME}\nYalnızca indirme hakkın olan içerikleri kaydet.", 11f, muted).apply { gravity = Gravity.CENTER })
+        download = button("İndir", true) { startDownload() }.apply {
+            id = R.id.start_download; visibility = View.GONE; isEnabled = false; minWidth = dp(180)
+        }
+        root.addView(download, LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+            gravity = Gravity.CENTER_HORIZONTAL; topMargin = dp(16)
+        })
         // Önceki indirme kayıtları uygulama yeniden açıldığında gösterilmez.
         prefs.edit().remove("history").apply()
         // Search results are session-only. Remove data persisted by older versions.
@@ -233,15 +243,13 @@ class MainActivity : Activity() {
     private fun hasCurrentResults() = boxes.isNotEmpty() && resolvedLink == link.text.toString()
     private fun updateAction() {
         val ready = hasCurrentResults()
-        find.text = when {
-            loading && inspecting -> "İçerikler aranıyor…"
-            loading -> "Güncelleniyor…"
-            ready -> "İndir"
-            else -> "İçerikleri bul"
-        }
-        find.isEnabled = !loading && !downloadStarting && !UpdateState.applying.get() && !DownloadState.running.get() &&
-            (if (ready) boxes.any { it.second?.isChecked != false } else link.text.isNotBlank())
+        find.text = "İçerikleri bul"
+        val idle = !loading && !downloadStarting && !UpdateState.applying.get() && !DownloadState.running.get()
+        find.isEnabled = idle && link.text.isNotBlank()
         find.alpha = if (find.isEnabled) 1f else .45f
+        download.visibility = if (ready) View.VISIBLE else View.GONE
+        download.isEnabled = idle && ready && boxes.any { it.second?.isChecked != false }
+        download.alpha = if (download.isEnabled) 1f else .45f
     }
     private fun readFormat(key: String, fallback: Int): Int {
         if (!prefs.contains(key)) return fallback
@@ -297,12 +305,12 @@ class MainActivity : Activity() {
         val url = link.text.toString().trim()
         if (!Engine.validUrl(url)) { toast(SupportedPlatforms.message); return }
         val revision = linkRevision
-        loading = true; inspecting = true; resolvedLink = null; updateAction()
+        loading = true; resolvedLink = null; updateAction()
         boxes.clear(); results.removeAllViews(); isPlaylist = false; selectAll.visibility = View.GONE; contentSection.visibility = View.VISIBLE; count.visibility = View.VISIBLE; count.text = "Bağlantı çözümleniyor…"; collectionName.text = "İçerik seçimi"
         Thread {
             try { val found = Engine.inspect(this, url); runOnUiThread { completeInspection(found, revision) } }
             catch (e: Exception) { runOnUiThread { if (!isDestroyed && revision == linkRevision) { count.text = "İçerik bulunamadı"; AlertDialog.Builder(this).setTitle("İçerik bulunamadı").setMessage(Errors.message(e)).setPositiveButton("Tamam", null).show() } } }
-            finally { runOnUiThread { loading = false; inspecting = false; if (!isDestroyed) refreshDownloadUi() } }
+            finally { runOnUiThread { loading = false; if (!isDestroyed) refreshDownloadUi() } }
         }.start()
     }
     internal fun completeInspection(found: MediaResult, revision: Long) {
@@ -314,6 +322,22 @@ class MainActivity : Activity() {
         render(found.items)
         collectionName.text = found.title
         refreshDownloadUi()
+        scrollToFound()
+    }
+
+    private fun scrollToFound() {
+        val revision = linkRevision
+        link.clearFocus()
+        root.requestFocus()
+        (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager).hideSoftInputFromWindow(link.windowToken, 0)
+        pageScroll.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                pageScroll.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                if (!isDestroyed && revision == linkRevision && hasCurrentResults() && contentSection.visibility == View.VISIBLE)
+                    pageScroll.scrollTo(0, contentSection.top)
+            }
+        })
+        pageScroll.requestLayout()
     }
 
     private fun refreshDownloadUi() {

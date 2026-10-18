@@ -1,4 +1,11 @@
-# İndirX — doğrulama durumu (Android 0.2.10 / Windows 0.2.15)
+# İndirX — doğrulama durumu (Android 0.2.11 / Windows 0.2.16)
+
+## Android 0.2.11 / Windows 0.2.16 — Tercihler üstte, İndir en sonda
+
+- İki platformda sıralama Bağlantı ekle → İndirme tercihleri → Bulunan içerikler. Arama düğmesi yalnızca içerik bulur; indirme, sürüm alt yazısından da sonra gelen son ve ortalı ayrı düğmeden başlar.
+- Geçerli içerik yokken alt düğme gizli, seçim yokken devre dışıdır. Sonuç bulma işleminde sonuçlara kayılır; eski arama/kaydırma yeni bağlantıyı etkilemez. Mevcut otomatik güncelleme ve imzalama akışı korunur.
+- Windows yerel .NET derlemesi, 77 çekirdek assertion, iki WPF açılışı, beş pencere boyutunda sabit tercih sırası/alt düğme merkezi/sonuçlara kaydırma/liste tekerleği, koyu tema, simge ve paketli araç denetimleri geçti. Sonuç ekranı görüntüsü incelendi.
+- Android'de 27 test, lint ve kalıcı imzalı APK derlemesi yerel olarak geçti. Tercih sırası, son çocuğun ortalı İndir olması, üst düğmenin yalnızca bulma işlevi, alttaki düğmeden gerçek servis niyeti, seçim/çift dokunma ve geçerli/eski sonuçların kaydırma davranışı denetlendi. CI ve yayın doğrulaması tamamlanınca eklenecek. Testler gerçek medya indirme veya fiziksel cihazda kurulum testi değildir.
 
 ## Android 0.2.10 / Windows 0.2.15 — Otomatik güncelleme ve ortalı arayüz
 

@@ -20,23 +20,26 @@ public partial class MainWindow
             .Select(index => new MediaItem($"Örnek müzik {index}", firstLink, "0:30")).ToArray(), true);
         bool ButtonMatches(string caption, bool enabled) =>
             ContentActionButton.Content?.ToString() == caption && ContentActionButton.IsEnabled == enabled;
+        bool DownloadMatches(bool visible, bool enabled) => DownloadButton.Content?.ToString() == "İndir" &&
+            DownloadButton.Visibility == (visible ? Visibility.Visible : Visibility.Collapsed) && DownloadButton.IsEnabled == enabled;
         bool Cleared() => items.Count == 0 && resolvedLink == null && !playlist &&
             ResultsPanel.Visibility == Visibility.Collapsed && EmptyContentHint.Visibility == Visibility.Visible &&
             OperationPanel.Visibility == Visibility.Collapsed && !HasCurrentResults;
         try
         {
-            if (!ContentActionButton.IsDescendantOf(LinkCard) || ContentActionButton.IsDescendantOf(PreferencesCard)) return false;
+            if (!ContentActionButton.IsDescendantOf(LinkCard) || ContentActionButton.IsDescendantOf(PreferencesCard) ||
+                DownloadButton.Parent != MainLayout || System.Windows.Controls.Grid.GetRow(DownloadButton) <= System.Windows.Controls.Grid.GetRow(VersionText)) return false;
             LinkBox.Text = "";
-            if (!ButtonMatches("İçerikleri bul", false)) return false;
+            if (!ButtonMatches("İçerikleri bul", false) || !DownloadMatches(false, false)) return false;
             LinkBox.Text = firstLink;
             if (!ButtonMatches("İçerikleri bul", true) || !Cleared()) return false;
             CompleteFind(single, linkRevision);
-            if (!HasCurrentResults || !ButtonMatches("İndir", true) || !items.Single().Selected) return false;
+            if (!HasCurrentResults || !ButtonMatches("İçerikleri bul", true) || !DownloadMatches(true, true) || !items.Single().Selected) return false;
 
             SetStatus("Tamamlandı", "Örnek işlem", 100);
             var staleRevision = linkRevision;
             LinkBox.Clear();
-            if (!Cleared() || !ButtonMatches("İçerikleri bul", false)) return false;
+            if (!Cleared() || !ButtonMatches("İçerikleri bul", false) || !DownloadMatches(false, false)) return false;
             LinkBox.Text = firstLink;
             CompleteFind(single, staleRevision);
             if (!Cleared() || !ButtonMatches("İçerikleri bul", true)) return false;
@@ -44,18 +47,18 @@ public partial class MainWindow
             LinkBox.Text = nextLink;
             if (!Cleared() || !ButtonMatches("İçerikleri bul", true)) return false;
             CompleteFind(collection, linkRevision);
-            if (!HasCurrentResults || !ButtonMatches("İndir", false) || items.Any(item => item.Selected)) return false;
+            if (!HasCurrentResults || !ButtonMatches("İçerikleri bul", true) || !DownloadMatches(true, false) || items.Any(item => item.Selected)) return false;
             items[0].Selected = true;
-            if (!ButtonMatches("İndir", true)) return false;
+            if (!ButtonMatches("İçerikleri bul", true) || !DownloadMatches(true, true)) return false;
             SelectAll_Click(this, new RoutedEventArgs());
-            if (!items.All(item => item.Selected) || !ButtonMatches("İndir", true)) return false;
+            if (!items.All(item => item.Selected) || !DownloadMatches(true, true)) return false;
             SelectAll_Click(this, new RoutedEventArgs());
-            if (items.Any(item => item.Selected) || !ButtonMatches("İndir", false)) return false;
+            if (items.Any(item => item.Selected) || !DownloadMatches(true, false) || !ButtonMatches("İçerikleri bul", true)) return false;
             items[0].Selected = true;
             SetBusyControls(true);
-            if (ContentActionButton.IsEnabled || LinkBox.IsEnabled) return false;
+            if (ContentActionButton.IsEnabled || DownloadButton.IsEnabled || LinkBox.IsEnabled) return false;
             SetBusyControls(false);
-            if (!ButtonMatches("İndir", true)) return false;
+            if (!ButtonMatches("İçerikleri bul", true) || !DownloadMatches(true, true)) return false;
 
             // Replacing text directly (Ctrl+A / paste), not only clearing first,
             // must invalidate the playlist and return to finding new content.

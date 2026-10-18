@@ -79,9 +79,11 @@ public partial class MainWindow : Window
             Math.Abs(link.X - preferences.X) < 2 && Math.Abs(LinkCard.ActualWidth - PreferencesCard.ActualWidth) < 2 &&
             Math.Abs(MainLayout.TranslatePoint(new Point(MainLayout.ActualWidth / 2, 0), PageScroller).X - PageScroller.ViewportWidth / 2) < 2 &&
             (DownloadsCard.Visibility != Visibility.Visible || (Math.Abs(downloads.X - link.X) < 2 &&
-                Math.Abs(DownloadsCard.ActualWidth - LinkCard.ActualWidth) < 2 && downloads.Y >= link.Y + LinkCard.ActualHeight)) &&
-            preferences.Y >= link.Y + LinkCard.ActualHeight &&
-            (DownloadsCard.Visibility != Visibility.Visible || preferences.Y >= downloads.Y + DownloadsCard.ActualHeight);
+                Math.Abs(DownloadsCard.ActualWidth - LinkCard.ActualWidth) < 2 && downloads.Y >= preferences.Y + PreferencesCard.ActualHeight)) &&
+            Math.Abs(preferences.Y - link.Y - LinkCard.ActualHeight - LinkCard.Margin.Bottom) < 2 &&
+            (DownloadButton.Visibility != Visibility.Visible ||
+                (Position(DownloadButton).Y >= Position(VersionText).Y + VersionText.ActualHeight &&
+                 Math.Abs(Position(DownloadButton).X + DownloadButton.ActualWidth / 2 - MainLayout.ActualWidth / 2) < 2));
     }
 
     private bool CenteredCardsResize()
@@ -119,6 +121,8 @@ public partial class MainWindow : Window
                         .Select(index => new MediaItem($"Örnek video {index} — yerleşim testi", "https://www.youtube.com/watch?v=BaW_jenozKc", "0:30")).ToArray();
                     RenderFound(new MediaResult("Örnek liste — yerleşim testi", media, collection));
                     UpdateLayout();
+                    var expectedOffset = Math.Min(Math.Max(0, Position(DownloadsCard).Y - 8), PageScroller.ScrollableHeight);
+                    if (Math.Abs(PageScroller.VerticalOffset - expectedOffset) > 2) { resultsLayoutDetail = $"Found-content scroll: {size}"; return false; }
                     if (!LayoutMatchesRequest() ||
                         !ResultsPanel.IsDescendantOf(DownloadsCard) || ResultsList.Items.Count != media.Length ||
                         EmptyContentHint.Visibility != Visibility.Collapsed || OperationPanel.Visibility != Visibility.Collapsed ||
@@ -182,7 +186,7 @@ public partial class MainWindow : Window
         Title, Platforms = PlatformLabel.Text, ItemCount = items.Count, HistoryCount = history.Count,
         ToolsPresent = new[] { "yt-dlp.exe", "ffmpeg.exe", "ffprobe.exe", "deno.exe" }.All(file => File.Exists(Path.Combine(tools, file))),
         Background = Background.ToString(), Format = (FormatBox.SelectedItem as MediaFormat)?.Name,
-        DownloadEnabled = HasCurrentResults && ContentActionButton.IsEnabled,
+        DownloadEnabled = DownloadButton.IsEnabled,
         ContentActionFlowCorrect = ContentActionFlowMatches(),
         WindowIconPresent = Icon != null, BrandLogoPresent = BrandLogo.Source != null,
         LayoutCorrect = LayoutMatchesRequest(), FolderOpenRemoved = !HasFolderOpenButton(this),
@@ -218,9 +222,10 @@ public partial class MainWindow : Window
     private async void ContentAction_Click(object sender, RoutedEventArgs e)
     {
         if (cancellation != null) return;
-        if (HasCurrentResults) await DownloadAsync();
-        else await FindAsync();
+        await FindAsync();
     }
+
+    private async void Download_Click(object sender, RoutedEventArgs e) => await DownloadAsync();
 
     private async Task FindAsync()
     {
@@ -285,6 +290,16 @@ public partial class MainWindow : Window
         UpdateResultsLayout();
         UpdateSelection();
         ClearStatus();
+        ScrollToFound();
+    }
+
+    private void ScrollToFound()
+    {
+        if (items.Count == 0) return;
+        if (LinkBox.IsKeyboardFocusWithin) Keyboard.ClearFocus();
+        UpdateLayout();
+        PageScroller.ScrollToVerticalOffset(Math.Max(0, Position(DownloadsCard).Y - 8));
+        PageScroller.UpdateLayout();
     }
 
     private void UpdateResultsLayout()
@@ -321,9 +336,11 @@ public partial class MainWindow : Window
     {
         SelectionText.Text = playlist ? $"{items.Count} içerik • {items.Count(item => item.Selected)} seçili" : "";
         SelectAllButton.Content = items.Count > 0 && items.All(item => item.Selected) ? "Tümünü Kaldır" : "Tümünü Seç";
-        ContentActionButton.Content = HasCurrentResults ? "İndir" : "İçerikleri bul";
-        ContentActionButton.IsEnabled = cancellation == null && (HasCurrentResults
-            ? items.Any(item => item.Selected) : !string.IsNullOrWhiteSpace(LinkBox.Text));
+        var idle = cancellation == null && ControlsPanel.IsEnabled;
+        ContentActionButton.Content = "İçerikleri bul";
+        ContentActionButton.IsEnabled = idle && !string.IsNullOrWhiteSpace(LinkBox.Text);
+        DownloadButton.Visibility = HasCurrentResults ? Visibility.Visible : Visibility.Collapsed;
+        DownloadButton.IsEnabled = idle && HasCurrentResults && items.Any(item => item.Selected);
     }
 
     private void Mode_Changed(object sender, RoutedEventArgs e)
@@ -449,6 +466,7 @@ public partial class MainWindow : Window
     private void SetBusyControls(bool busy)
     {
         ControlsPanel.IsEnabled = ResultsPanel.IsEnabled = PreferencesPanel.IsEnabled = !busy;
+        UpdateSelection();
         CancelButton.IsEnabled = busy;
     }
 

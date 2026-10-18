@@ -1,7 +1,7 @@
 <Window x:Class="IndirX.Windows.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Style="{StaticResource {x:Type Window}}" Title="İNDİRX" Icon="Assets/IndirX.ico" Width="900" Height="900" MinWidth="480" MinHeight="640" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
   <ScrollViewer x:Name="PageScroller" Margin="24" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
     <Grid x:Name="MainLayout" MaxWidth="620" HorizontalAlignment="Center">
-      <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+      <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
       <StackPanel x:Name="HeaderPanel" Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,24">
         <Image x:Name="BrandLogo" Source="Assets/Logo.png" Width="72" Height="72" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality" AutomationProperties.Name="Android ile aynı İndirX logosu" />
         <TextBlock x:Name="BrandTitle" Text="İNDİRX" TextAlignment="Center" FontSize="32" FontWeight="Bold" Margin="0,8,0,6" />
@@ -14,7 +14,15 @@
             <StackPanel Margin="0,16,0,0"><Button Content="Panodan yapıştır" Click="Paste_Click" Margin="0,0,0,8" /><Button x:Name="ContentActionButton" Content="İçerikleri bul" Background="#7B9CF5" Foreground="#0E182B" Click="ContentAction_Click" IsEnabled="False" Margin="0" /></StackPanel>
           </StackPanel></Border>
         </StackPanel>
-          <Border x:Name="DownloadsCard" Grid.Row="2" Style="{StaticResource Card}" Visibility="Collapsed"><Grid>
+          <Border x:Name="PreferencesCard" Grid.Row="2" Style="{StaticResource Card}"><StackPanel x:Name="PreferencesPanel">
+            <TextBlock Text="İndirme tercihleri" Style="{StaticResource Heading}" TextAlignment="Center" />
+            <WrapPanel HorizontalAlignment="Center"><RadioButton x:Name="VideoMode" GroupName="Mode" Content="Video" IsChecked="True" Checked="Mode_Changed" /><RadioButton x:Name="AudioMode" GroupName="Mode" Content="Ses" Checked="Mode_Changed" /></WrapPanel>
+            <ComboBox x:Name="FormatBox" DisplayMemberPath="Name" SelectionChanged="Format_Changed" AutomationProperties.Name="Dosya biçimi" />
+            <TextBlock Text="Seçtiğin biçimde mevcut en yüksek kaynak kalitesi. Dönüştürme kaynak kalitesini artırmaz." TextAlignment="Center" FontSize="12" Foreground="{StaticResource Muted}" Margin="0,12,0,16" />
+            <TextBlock x:Name="FolderText" TextAlignment="Center" FontSize="12" Foreground="{StaticResource Muted}" Margin="0,0,0,12" />
+            <Button Content="Kayıt klasörünü seç" Click="ChooseFolder_Click" />
+          </StackPanel></Border>
+          <Border x:Name="DownloadsCard" Grid.Row="3" Style="{StaticResource Card}" Visibility="Collapsed"><Grid>
             <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition x:Name="DownloadsContentRow" Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
             <TextBlock x:Name="DownloadsHeading" Text="Bulunan içerikler" Style="{StaticResource Heading}" TextAlignment="Center" />
             <Grid x:Name="DownloadsViewport" Grid.Row="1">
@@ -48,15 +56,8 @@
               <TextBlock x:Name="HistoryText" FontSize="12" />
             </ScrollViewer>
           </Grid></Border>
-          <Border x:Name="PreferencesCard" Grid.Row="3" Style="{StaticResource Card}"><StackPanel x:Name="PreferencesPanel">
-            <TextBlock Text="İndirme tercihleri" Style="{StaticResource Heading}" TextAlignment="Center" />
-            <WrapPanel HorizontalAlignment="Center"><RadioButton x:Name="VideoMode" GroupName="Mode" Content="Video" IsChecked="True" Checked="Mode_Changed" /><RadioButton x:Name="AudioMode" GroupName="Mode" Content="Ses" Checked="Mode_Changed" /></WrapPanel>
-            <ComboBox x:Name="FormatBox" DisplayMemberPath="Name" SelectionChanged="Format_Changed" AutomationProperties.Name="Dosya biçimi" />
-            <TextBlock Text="Seçtiğin biçimde mevcut en yüksek kaynak kalitesi. Dönüştürme kaynak kalitesini artırmaz." TextAlignment="Center" FontSize="12" Foreground="{StaticResource Muted}" Margin="0,12,0,16" />
-            <TextBlock x:Name="FolderText" TextAlignment="Center" FontSize="12" Foreground="{StaticResource Muted}" Margin="0,0,0,12" />
-            <Button Content="Kayıt klasörünü seç" Click="ChooseFolder_Click" />
-          </StackPanel></Border>
       <TextBlock x:Name="VersionText" Grid.Row="4" TextAlignment="Center" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,8,0,0" />
+      <Button x:Name="DownloadButton" Grid.Row="5" Content="İndir" Click="Download_Click" HorizontalAlignment="Center" MinWidth="180" Margin="0,16,0,0" Background="#7B9CF5" Foreground="#0E182B" Visibility="Collapsed" IsEnabled="False" />
     </Grid>
   </ScrollViewer>
 </Window>

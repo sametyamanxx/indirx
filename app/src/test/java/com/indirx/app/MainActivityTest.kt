@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.ScrollView
 import android.widget.TextView
 import org.junit.After
 import org.junit.Assert.*
@@ -128,6 +130,7 @@ class MainActivityTest {
         assertEquals(37, activity.findViewById<ProgressBar>(R.id.download_progress).progress)
         assertTrue(activity.findViewById<Button>(R.id.cancel_download).isEnabled)
         assertFalse(activity.findViewById<Button>(R.id.content_action).isEnabled)
+        assertFalse(activity.findViewById<Button>(R.id.start_download).isEnabled)
 
         DownloadState.status = "Dönüştürülüyor / kapak ekleniyor"
         DownloadState.progress = -1
@@ -182,18 +185,22 @@ class MainActivityTest {
         assertFalse(texts.any { it.contains("İndirme altyapısını güncelle") || it.contains("Yalnızca YouTube ve Instagram bağlantıları") || it.contains("Geçmiş yalnızca bu oturumda gösterilir") })
     }
 
-    @Test fun singleButtonStartsDownloadWithSelectedFormatAndBlocksDoubleTap() {
+    @Test fun bottomButtonStartsDownloadWithSelectedFormatAndBlocksDoubleTap() {
         val application: android.app.Application = RuntimeEnvironment.getApplication()
         val prefs = application.getSharedPreferences("indirx", Context.MODE_PRIVATE)
         prefs.edit().putString("tree", "content://test/folder").putBoolean("format_schema2", true)
             .putInt("format", 8).putInt("video_format", 8).commit()
         val activity = launch()
         val link = activity.findViewById<EditText>(R.id.link_input)
-        val action = activity.findViewById<Button>(R.id.content_action)
+        val find = activity.findViewById<Button>(R.id.content_action)
+        val action = activity.findViewById<Button>(R.id.start_download)
         link.setText("https://youtu.be/BaW_jenozKc")
-        assertEquals("İçerikleri bul", action.text.toString())
-        assertTrue(action.isEnabled)
+        assertEquals("İçerikleri bul", find.text.toString())
+        assertTrue(find.isEnabled)
+        assertEquals(View.GONE, action.visibility)
         showMedia(activity)
+        assertEquals("İçerikleri bul", find.text.toString())
+        assertEquals(View.VISIBLE, action.visibility)
         assertEquals("İndir", action.text.toString())
         assertTrue(action.isEnabled)
         action.performClick()
@@ -217,13 +224,15 @@ class MainActivityTest {
         assertTrue(action.isEnabled)
     }
 
-    @Test fun playlistRequiresSelectionOnTheSameActionButton() {
+    @Test fun playlistRequiresSelectionOnTheBottomDownloadButton() {
         val activity = launch()
         showMedia(activity, playlist = true)
-        val action = activity.findViewById<Button>(R.id.content_action)
+        val action = activity.findViewById<Button>(R.id.start_download)
         val boxes = descendants(activity.findViewById(R.id.found_results)).filterIsInstance<CheckBox>()
         assertEquals("İndir", action.text.toString())
         assertFalse(action.isEnabled)
+        assertEquals("İçerikleri bul", activity.findViewById<Button>(R.id.content_action).text.toString())
+        assertTrue(activity.findViewById<Button>(R.id.content_action).isEnabled)
         boxes[0].isChecked = true
         assertTrue(action.isEnabled)
         activity.findViewById<Button>(R.id.select_all).performClick()
@@ -251,6 +260,7 @@ class MainActivityTest {
         assertEquals(0, activity.findViewById<ViewGroup>(R.id.found_results).childCount)
         assertEquals(View.GONE, activity.findViewById<View>(R.id.found_contents).visibility)
         assertEquals(View.GONE, activity.findViewById<View>(R.id.download_status).visibility)
+        assertEquals(View.GONE, activity.findViewById<View>(R.id.start_download).visibility)
         assertFalse(DownloadState.hasOperation)
         assertTrue(DownloadState.history.contains("previous.mp3"))
         link.setText("https://www.instagram.com/reel/example/")
@@ -279,7 +289,8 @@ class MainActivityTest {
         assertEquals("İçerikleri bul", activity.findViewById<Button>(R.id.content_action).text.toString())
         activity.completeInspection(found, activity.linkRevision)
         assertEquals(1, activity.findViewById<ViewGroup>(R.id.found_results).childCount)
-        assertEquals("İndir", activity.findViewById<Button>(R.id.content_action).text.toString())
+        assertEquals("İçerikleri bul", activity.findViewById<Button>(R.id.content_action).text.toString())
+        assertEquals(View.VISIBLE, activity.findViewById<Button>(R.id.start_download).visibility)
     }
 
     @Test fun newSharedLinkResetsTheDownloadAction() {
@@ -308,5 +319,57 @@ class MainActivityTest {
         assertEquals(View.VISIBLE, activity.findViewById<View>(R.id.download_status).visibility)
         assertTrue(activity.findViewById<Button>(R.id.cancel_download).isEnabled)
         assertFalse(activity.findViewById<Button>(R.id.content_action).isEnabled)
+    }
+
+    private fun layoutPhone(activity: MainActivity) {
+        val decor = activity.window.decorView
+        decor.measure(View.MeasureSpec.makeMeasureSpec(480, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(640, View.MeasureSpec.EXACTLY))
+        decor.layout(0, 0, 480, 640)
+        decor.viewTreeObserver.dispatchOnGlobalLayout()
+    }
+
+    @Test fun preferencesStayBelowLinkAndDownloadIsTheLastCenteredControl() {
+        val activity = launch()
+        val root = activity.findViewById<LinearLayout>(R.id.main_content)
+        val preferences = activity.findViewById<View>(R.id.download_preferences)
+        val link = activity.findViewById<View>(R.id.link_section)
+        val found = activity.findViewById<View>(R.id.found_contents)
+        val download = activity.findViewById<Button>(R.id.start_download)
+        for (playlist in listOf(false, true)) {
+            showMedia(activity, playlist)
+            layoutPhone(activity)
+            shadowOf(Looper.getMainLooper()).idle()
+            assertEquals(root.indexOfChild(link) + 1, root.indexOfChild(preferences))
+            assertEquals(root.indexOfChild(preferences) + 1, root.indexOfChild(found))
+            assertSame(download, root.getChildAt(root.childCount - 1))
+            assertEquals(android.view.Gravity.CENTER_HORIZONTAL, (download.layoutParams as LinearLayout.LayoutParams).gravity)
+            assertTrue(kotlin.math.abs(root.width / 2 - download.left - download.width / 2) <= 1)
+            assertTrue(preferences.top >= link.bottom)
+            assertTrue(found.top >= preferences.bottom)
+            assertTrue(download.top >= found.bottom)
+            assertEquals("İçerikleri bul", activity.findViewById<Button>(R.id.content_action).text.toString())
+        }
+    }
+
+    @Test fun findingMediaScrollsToFoundContentButStaleCallbacksDoNot() {
+        val activity = launch()
+        layoutPhone(activity)
+        showMedia(activity)
+        layoutPhone(activity)
+        shadowOf(Looper.getMainLooper()).idle()
+        val scroll = activity.findViewById<ScrollView>(R.id.page_scroll)
+        val found = activity.findViewById<View>(R.id.found_contents)
+        assertTrue(scroll.scrollY > 0)
+        // Insets/IME and the next traversal can change the exact scroll range;
+        // the required result is that the found-content heading is on screen.
+        assertTrue(found.top - scroll.scrollY >= 0)
+        assertTrue(found.top - scroll.scrollY < scroll.height - scroll.paddingBottom)
+        scroll.scrollTo(0, 0)
+        showMedia(activity)
+        activity.findViewById<EditText>(R.id.link_input).setText("https://www.instagram.com/reel/another/")
+        layoutPhone(activity)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals(0, scroll.scrollY)
+        assertEquals(View.GONE, activity.findViewById<View>(R.id.start_download).visibility)
     }
 }

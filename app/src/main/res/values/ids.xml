@@ -11,4 +11,8 @@
     <item name="content_action" type="id" />
     <item name="download_preferences" type="id" />
     <item name="select_all" type="id" />
+    <item name="page_scroll" type="id" />
+    <item name="main_content" type="id" />
+    <item name="link_section" type="id" />
+    <item name="start_download" type="id" />
 </resources>
