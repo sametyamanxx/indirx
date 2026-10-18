@@ -159,7 +159,9 @@ class MainActivity : Activity() {
         }
         root.add(button("İndirme altyapısını güncelle") { updateEngine() })
         root.add(text("İndirX • 0.2.3\nYalnızca indirme hakkın olan içerikleri kaydet.", 11f, muted).apply { gravity = Gravity.CENTER })
-        DownloadState.history = prefs.getString("history", "") ?: ""
+        // Önceki indirme kayıtları uygulama yeniden açıldığında gösterilmez.
+        DownloadState.history = ""
+        prefs.edit().remove("history").apply()
         // Search results are session-only. Remove data persisted by older versions.
         prefs.edit().remove("link").remove("items").remove("collection").remove("playlist").apply()
         receive(intent)
