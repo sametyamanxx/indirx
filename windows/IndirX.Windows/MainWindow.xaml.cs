@@ -54,6 +54,12 @@ public partial class MainWindow : Window
         NativeChrome.Apply(this);
     }
 
+    protected override void OnContentRendered(EventArgs e)
+    {
+        base.OnContentRendered(e);
+        NativeChrome.Apply(this);
+    }
+
     private Point Position(FrameworkElement element) => element.TransformToAncestor(MainLayout).Transform(new Point());
 
     private bool LayoutMatchesRequest()
@@ -85,6 +91,7 @@ public partial class MainWindow : Window
         WindowIconPresent = Icon != null, BrandLogoPresent = BrandLogo.Source != null,
         LayoutCorrect = LayoutMatchesRequest(), FolderOpenRemoved = !HasFolderOpenButton(this),
         DarkTitleBar = NativeChrome.IsDark(this), CaptionMatchesTheme = NativeChrome.HasMatchingCaption(this),
+        NativeCaption = NativeChrome.Diagnostics(this),
         AndroidLogoHash = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "Assets", "Branding.sha256")).Trim(),
         Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3)
     };

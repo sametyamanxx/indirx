@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
@@ -9,6 +10,8 @@ internal static class NativeChrome
 {
     private const int DarkMode = 20, OldDarkMode = 19, CaptionColor = 35, TextColor = 36, BorderColor = 34;
     private const int Caption = 0x0020150F, Text = 0x00F4E8E2, Border = 0x004E392D;
+    private sealed class ThemeState { public int CaptionResult = int.MinValue; }
+    private static readonly ConditionalWeakTable<Window, ThemeState> Themes = new();
 
     [DllImport("dwmapi.dll")]
     private static extern int DwmSetWindowAttribute(nint window, int attribute, ref int value, int size);
@@ -24,7 +27,7 @@ internal static class NativeChrome
         // Explicit caption/border colors are supported on Windows 11; Windows 10
         // keeps its native dark caption with the immersive-dark-mode setting above.
         var caption = Caption; var text = Text; var border = Border;
-        DwmSetWindowAttribute(handle, CaptionColor, ref caption, sizeof(int));
+        Themes.GetValue(window, _ => new ThemeState()).CaptionResult = DwmSetWindowAttribute(handle, CaptionColor, ref caption, sizeof(int));
         DwmSetWindowAttribute(handle, TextColor, ref text, sizeof(int));
         DwmSetWindowAttribute(handle, BorderColor, ref border, sizeof(int));
     }
@@ -36,9 +39,25 @@ internal static class NativeChrome
             (DwmGetWindowAttribute(handle, OldDarkMode, out value, sizeof(int)) == 0 && value == 1);
     }
 
+    // DWMWA_CAPTION_COLOR is documented for DwmSetWindowAttribute; some Windows
+    // builds reject a matching DwmGetWindowAttribute request. Check the setter's
+    // HRESULT, not an unsupported getter, to verify the requested color was applied.
     public static bool HasMatchingCaption(Window window) =>
-        Environment.OSVersion.Version.Build < 22000 ||
-        (DwmGetWindowAttribute(new WindowInteropHelper(window).Handle, CaptionColor, out var value, sizeof(int)) == 0 && value == Caption);
+        Themes.TryGetValue(window, out var state) &&
+        (state.CaptionResult == 0 ||
+            // Optional custom colors are unsupported on Windows 10 and some
+            // server/desktop builds. Keep the verified native dark caption there.
+            (state.CaptionResult == unchecked((int)0x80070057) && IsDark(window)));
+
+    public static object Diagnostics(Window window)
+    {
+        var query = DwmGetWindowAttribute(new WindowInteropHelper(window).Handle, CaptionColor, out var value, sizeof(int));
+        return new
+        {
+            CaptionSetResult = Themes.TryGetValue(window, out var state) ? state.CaptionResult : int.MinValue,
+            CaptionQueryResult = query, CaptionValue = $"0x{(uint)value:X8}", WindowsBuild = Environment.OSVersion.Version.Build
+        };
+    }
 
     [StructLayout(LayoutKind.Sequential)]
     private struct Rect { public int Left, Top, Right, Bottom; }

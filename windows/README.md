@@ -7,7 +7,7 @@ Windows 10 **22H2 (19045)** / Windows 11, **x64** için bağımsız WPF masaüst
 ## Özellikler
 
 - Android ile aynı logo; üst ortada logo, hemen altında ortalı İNDİRX. Bağlantı ekle sol üstte, tercihler yanında sağda; indirmeler alt satır solda, altyapı güncelleme yanında sağda. Kayıt klasörünü aç düğmesi ve işlevi yoktur; kayıt klasörünü seç özelliği korunur.
-- EXE/Setup, Başlat menüsü/masaüstü kısayolları ve pencere/görev çubuğu simgesi aynı Android logosunu kullanır. Yerel Windows başlık çubuğu koyudur; Windows 11'de başlık/yazı/kenarlık renkleri uygulama temasıyla eşleştirilir.
+- EXE/Setup, Başlat menüsü/masaüstü kısayolları ve pencere/görev çubuğu simgesi aynı Android logosunu kullanır. Yerel Windows başlık çubuğu koyudur; destekleyen Windows 11 sürümlerinde başlık/yazı/kenarlık renkleri de uygulama temasıyla eşleştirilir. Özel renk desteklenmiyorsa yerel koyu başlık çubuğu korunur.
 
 - Ana ekranda yalnızca **YouTube · Instagram**. TikTok ve diğer siteler hem bağlantı kabulünde hem yt-dlp çözücü seçiminde kapalıdır.
 - Video veya çalma listesi bulma; tek içerik doğrudan, listeler tek tek veya topluca seçilerek indirilir. İlk sürümde liste başına en fazla 500 içerik aranır.
